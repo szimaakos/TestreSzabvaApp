@@ -30,41 +30,33 @@ namespace TestreSzabva.Controllers
         [HttpPost("Register")]
         public async Task<IActionResult> Register([FromBody] RegisterDto dto)
         {
-            // Ellenőrizzük, hogy létezik-e már a felhasználó az adott e-maillel.
+            // 1. Ellenőrizzük, hogy létezik-e már a felhasználó az adott e-maillel.
             var existingUser = await _userManager.FindByEmailAsync(dto.Email);
             if (existingUser != null)
             {
                 return Conflict("Email already in use.");
             }
 
-            // Létrehozzuk az Identity felhasználót
+            // 2. Létrehozzuk az Identity felhasználót
             var user = new Felhasznalo
             {
                 UserName = dto.UserName,
                 Email = dto.Email,
-                Weight = dto.Weight,
-                Height = dto.Height,
-                Age = dto.Age,
-                Gender = dto.Gender,
-                ActivityLevel = dto.ActivityLevel,
-                GoalWeight = dto.GoalWeight
+                // az egyéb mezők (Gender, ActivityLevel, stb.) üresen maradnak
+                // vagy default (pl. null), amíg onboarding nem történik
             };
 
-            // A nyers jelszót itt adjuk meg
+            // 3. Jelszó beállítása
             var result = await _userManager.CreateAsync(user, dto.Password);
             if (!result.Succeeded)
             {
                 return BadRequest(result.Errors);
             }
 
-            // Dönthetsz úgy, hogy regisztrációnál rögtön adsz vissza JWT tokent
-            // (az alábbi 2 sor is egy lehetséges megoldás):
-            // var token = GenerateJwtToken(user);
-            // return Ok(new { Token = token });
-
-            // Vagy maradhat a jelenlegi CreatedAtAction:
+            // Sikeres regisztráció -> 201 Created
             return CreatedAtAction(nameof(GetById), new { id = user.Id }, user);
         }
+
 
         // ====== LOGIN (új metódus) ======
         [HttpPost("Login")]
@@ -114,6 +106,7 @@ namespace TestreSzabva.Controllers
                 return NotFound();
             }
 
+            // Csak a plusz mezők:
             user.Weight = updatedUser.Weight;
             user.Height = updatedUser.Height;
             user.Age = updatedUser.Age;
@@ -121,7 +114,9 @@ namespace TestreSzabva.Controllers
             user.ActivityLevel = updatedUser.ActivityLevel;
             user.GoalWeight = updatedUser.GoalWeight;
 
-            // Itt is bővíthető, ha emailt vagy jelszót is módosítani kell
+            user.IsProfileComplete = true;
+            await _userManager.UpdateAsync(user);
+            // Mentés
             var result = await _userManager.UpdateAsync(user);
             if (!result.Succeeded)
             {
@@ -130,6 +125,7 @@ namespace TestreSzabva.Controllers
 
             return NoContent();
         }
+
 
         // ====== DELETE USER (meglévő metódus) ======
         [HttpDelete("{id}")]

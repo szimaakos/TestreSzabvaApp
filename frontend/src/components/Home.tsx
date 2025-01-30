@@ -269,10 +269,10 @@ const Home: React.FC<HomeProps> = ({ isLoggedIn, setIsLoggedIn }) => {
         activeTab={activeTab}
         onClose={() => setIsModalOpen(false)}
         onTabChange={(tab) => setActiveTab(tab)}
-        // Hozzáadjuk ezt a sort:
         onLoginSuccess={() => {
+          // Ha a bejelentkezés sikeres
           setIsLoggedIn(true);
-          setIsModalOpen(false); // ha automatikusan zárni akarod a modált
+          setIsModalOpen(false); // ha akarjuk, zárjuk is be a modált
         }}
       />
       )}

@@ -1,0 +1,330 @@
+[
+  {
+    "ContainingType": "TestreSzabva.Controllers.EtelController",
+    "Method": "GetAllEtelek",
+    "RelativePath": "api/Etel",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "TestreSzabva.Controllers.EtelController",
+    "Method": "CreateEtel",
+    "RelativePath": "api/Etel",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "etel",
+        "Type": "TestreSzabva.Models.Etel",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "TestreSzabva.Controllers.EtelController",
+    "Method": "GetEtel",
+    "RelativePath": "api/Etel/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "TestreSzabva.Controllers.EtelController",
+    "Method": "UpdateEtel",
+    "RelativePath": "api/Etel/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "updatedEtel",
+        "Type": "TestreSzabva.Models.Etel",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "TestreSzabva.Controllers.EtelController",
+    "Method": "DeleteEtel",
+    "RelativePath": "api/Etel/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "TestreSzabva.Controllers.FelhasznaloController",
+    "Method": "GetById",
+    "RelativePath": "api/Felhasznalo/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "TestreSzabva.Controllers.FelhasznaloController",
+    "Method": "UpdateUser",
+    "RelativePath": "api/Felhasznalo/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.String",
+        "IsRequired": true
+      },
+      {
+        "Name": "updatedUser",
+        "Type": "TestreSzabva.Models.Felhasznalo",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "TestreSzabva.Controllers.FelhasznaloController",
+    "Method": "DeleteUser",
+    "RelativePath": "api/Felhasznalo/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "TestreSzabva.Controllers.FelhasznaloController",
+    "Method": "Login",
+    "RelativePath": "api/Felhasznalo/Login",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "TestreSzabva.Controllers.LoginDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "TestreSzabva.Controllers.FelhasznaloController",
+    "Method": "Register",
+    "RelativePath": "api/Felhasznalo/Register",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "TestreSzabva.Controllers.RegisterDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "TestreSzabva.Controllers.HetiEtrendController",
+    "Method": "CreateEtrend",
+    "RelativePath": "api/HetiEtrend",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "etrend",
+        "Type": "TestreSzabva.Models.HetiEtrend",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "TestreSzabva.Controllers.HetiEtrendController",
+    "Method": "GetEtrend",
+    "RelativePath": "api/HetiEtrend/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "TestreSzabva.Controllers.HetiEtrendController",
+    "Method": "UpdateEtrend",
+    "RelativePath": "api/HetiEtrend/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "updatedEtrend",
+        "Type": "TestreSzabva.Models.HetiEtrend",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "TestreSzabva.Controllers.HetiEtrendController",
+    "Method": "DeleteEtrend",
+    "RelativePath": "api/HetiEtrend/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "TestreSzabva.Controllers.HetiEtrendController",
+    "Method": "GetEtrendByUser",
+    "RelativePath": "api/HetiEtrend/Felhasznalo/{userId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "userId",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "TestreSzabva.Controllers.KategoriaController",
+    "Method": "GetAllKategoriak",
+    "RelativePath": "api/Kategoria",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "TestreSzabva.Controllers.KategoriaController",
+    "Method": "CreateKategoria",
+    "RelativePath": "api/Kategoria",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "kategoria",
+        "Type": "TestreSzabva.Models.Kategoria",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "TestreSzabva.Controllers.KategoriaController",
+    "Method": "GetKategoria",
+    "RelativePath": "api/Kategoria/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "TestreSzabva.Controllers.KategoriaController",
+    "Method": "UpdateKategoria",
+    "RelativePath": "api/Kategoria/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "updatedKategoria",
+        "Type": "TestreSzabva.Models.Kategoria",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "TestreSzabva.Controllers.KategoriaController",
+    "Method": "DeleteKategoria",
+    "RelativePath": "api/Kategoria/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  }
+]

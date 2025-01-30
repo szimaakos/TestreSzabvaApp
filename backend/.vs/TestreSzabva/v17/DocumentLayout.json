@@ -1,66 +1,66 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "C:\\Users\\szima.akos\\source\\repos\\Testreszabva_ujra\\TestreSzabva\\",
+  "WorkspaceRootPath": "C:\\Users\\szima.akos\\Documents\\TestreSzabvaApp\\backend\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{4F9BF8D8-10A5-45A7-9FD2-714AD289E82E}|TestreSzabva\\TestreSzabva.csproj|c:\\users\\szima.akos\\source\\repos\\testreszabva_ujra\\testreszabva\\testreszabva\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{4F9BF8D8-10A5-45A7-9FD2-714AD289E82E}|TestreSzabva\\TestreSzabva.csproj|solutionrelative:testreszabva\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{4F9BF8D8-10A5-45A7-9FD2-714AD289E82E}|TestreSzabva\\TestreSzabva.csproj|c:\\users\\szima.akos\\source\\repos\\testreszabva_ujra\\testreszabva\\testreszabva\\controllers\\registerdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{4F9BF8D8-10A5-45A7-9FD2-714AD289E82E}|TestreSzabva\\TestreSzabva.csproj|solutionrelative:testreszabva\\controllers\\registerdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{4F9BF8D8-10A5-45A7-9FD2-714AD289E82E}|TestreSzabva\\TestreSzabva.csproj|c:\\users\\szima.akos\\source\\repos\\testreszabva_ujra\\testreszabva\\testreszabva\\controllers\\kategoriacontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{4F9BF8D8-10A5-45A7-9FD2-714AD289E82E}|TestreSzabva\\TestreSzabva.csproj|solutionrelative:testreszabva\\controllers\\kategoriacontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{4F9BF8D8-10A5-45A7-9FD2-714AD289E82E}|TestreSzabva\\TestreSzabva.csproj|c:\\users\\szima.akos\\source\\repos\\testreszabva_ujra\\testreszabva\\testreszabva\\controllers\\hetietrendcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{4F9BF8D8-10A5-45A7-9FD2-714AD289E82E}|TestreSzabva\\TestreSzabva.csproj|solutionrelative:testreszabva\\controllers\\hetietrendcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{4F9BF8D8-10A5-45A7-9FD2-714AD289E82E}|TestreSzabva\\TestreSzabva.csproj|c:\\users\\szima.akos\\source\\repos\\testreszabva_ujra\\testreszabva\\testreszabva\\controllers\\felhasznalocontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{4F9BF8D8-10A5-45A7-9FD2-714AD289E82E}|TestreSzabva\\TestreSzabva.csproj|c:\\users\\szima.akos\\documents\\testreszabvaapp\\backend\\testreszabva\\controllers\\felhasznalocontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{4F9BF8D8-10A5-45A7-9FD2-714AD289E82E}|TestreSzabva\\TestreSzabva.csproj|solutionrelative:testreszabva\\controllers\\felhasznalocontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{4F9BF8D8-10A5-45A7-9FD2-714AD289E82E}|TestreSzabva\\TestreSzabva.csproj|c:\\users\\szima.akos\\source\\repos\\testreszabva_ujra\\testreszabva\\testreszabva\\controllers\\etelcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{4F9BF8D8-10A5-45A7-9FD2-714AD289E82E}|TestreSzabva\\TestreSzabva.csproj|solutionrelative:testreszabva\\controllers\\etelcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{4F9BF8D8-10A5-45A7-9FD2-714AD289E82E}|TestreSzabva\\TestreSzabva.csproj|c:\\users\\szima.akos\\source\\repos\\testreszabva_ujra\\testreszabva\\testreszabva\\models\\etelkategoria.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{4F9BF8D8-10A5-45A7-9FD2-714AD289E82E}|TestreSzabva\\TestreSzabva.csproj|solutionrelative:testreszabva\\models\\etelkategoria.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{4F9BF8D8-10A5-45A7-9FD2-714AD289E82E}|TestreSzabva\\TestreSzabva.csproj|c:\\users\\szima.akos\\source\\repos\\testreszabva_ujra\\testreszabva\\testreszabva\\data\\testreszabvacontextfactory.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{4F9BF8D8-10A5-45A7-9FD2-714AD289E82E}|TestreSzabva\\TestreSzabva.csproj|solutionrelative:testreszabva\\data\\testreszabvacontextfactory.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{4F9BF8D8-10A5-45A7-9FD2-714AD289E82E}|TestreSzabva\\TestreSzabva.csproj|c:\\users\\szima.akos\\source\\repos\\testreszabva_ujra\\testreszabva\\testreszabva\\data\\seeddata.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{4F9BF8D8-10A5-45A7-9FD2-714AD289E82E}|TestreSzabva\\TestreSzabva.csproj|solutionrelative:testreszabva\\data\\seeddata.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{4F9BF8D8-10A5-45A7-9FD2-714AD289E82E}|TestreSzabva\\TestreSzabva.csproj|c:\\users\\szima.akos\\source\\repos\\testreszabva_ujra\\testreszabva\\testreszabva\\data\\testreszabvacontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{4F9BF8D8-10A5-45A7-9FD2-714AD289E82E}|TestreSzabva\\TestreSzabva.csproj|solutionrelative:testreszabva\\data\\testreszabvacontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{4F9BF8D8-10A5-45A7-9FD2-714AD289E82E}|TestreSzabva\\TestreSzabva.csproj|c:\\users\\szima.akos\\source\\repos\\testreszabva_ujra\\testreszabva\\testreszabva\\models\\etel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{4F9BF8D8-10A5-45A7-9FD2-714AD289E82E}|TestreSzabva\\TestreSzabva.csproj|solutionrelative:testreszabva\\models\\etel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{4F9BF8D8-10A5-45A7-9FD2-714AD289E82E}|TestreSzabva\\TestreSzabva.csproj|c:\\users\\szima.akos\\source\\repos\\testreszabva_ujra\\testreszabva\\testreszabva\\models\\felhasznalo.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{4F9BF8D8-10A5-45A7-9FD2-714AD289E82E}|TestreSzabva\\TestreSzabva.csproj|c:\\users\\szima.akos\\documents\\testreszabvaapp\\backend\\testreszabva\\models\\felhasznalo.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{4F9BF8D8-10A5-45A7-9FD2-714AD289E82E}|TestreSzabva\\TestreSzabva.csproj|solutionrelative:testreszabva\\models\\felhasznalo.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{4F9BF8D8-10A5-45A7-9FD2-714AD289E82E}|TestreSzabva\\TestreSzabva.csproj|c:\\users\\szima.akos\\source\\repos\\testreszabva_ujra\\testreszabva\\testreszabva\\models\\hetietrend.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{4F9BF8D8-10A5-45A7-9FD2-714AD289E82E}|TestreSzabva\\TestreSzabva.csproj|c:\\users\\szima.akos\\documents\\testreszabvaapp\\backend\\testreszabva\\controllers\\registerdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{4F9BF8D8-10A5-45A7-9FD2-714AD289E82E}|TestreSzabva\\TestreSzabva.csproj|solutionrelative:testreszabva\\controllers\\registerdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4F9BF8D8-10A5-45A7-9FD2-714AD289E82E}|TestreSzabva\\TestreSzabva.csproj|c:\\users\\szima.akos\\documents\\testreszabvaapp\\backend\\testreszabva\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{4F9BF8D8-10A5-45A7-9FD2-714AD289E82E}|TestreSzabva\\TestreSzabva.csproj|solutionrelative:testreszabva\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4F9BF8D8-10A5-45A7-9FD2-714AD289E82E}|TestreSzabva\\TestreSzabva.csproj|c:\\users\\szima.akos\\documents\\testreszabvaapp\\backend\\testreszabva\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{4F9BF8D8-10A5-45A7-9FD2-714AD289E82E}|TestreSzabva\\TestreSzabva.csproj|solutionrelative:testreszabva\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4F9BF8D8-10A5-45A7-9FD2-714AD289E82E}|TestreSzabva\\TestreSzabva.csproj|c:\\users\\szima.akos\\documents\\testreszabvaapp\\backend\\testreszabva\\controllers\\kategoriacontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{4F9BF8D8-10A5-45A7-9FD2-714AD289E82E}|TestreSzabva\\TestreSzabva.csproj|solutionrelative:testreszabva\\controllers\\kategoriacontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4F9BF8D8-10A5-45A7-9FD2-714AD289E82E}|TestreSzabva\\TestreSzabva.csproj|c:\\users\\szima.akos\\documents\\testreszabvaapp\\backend\\testreszabva\\controllers\\hetietrendcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{4F9BF8D8-10A5-45A7-9FD2-714AD289E82E}|TestreSzabva\\TestreSzabva.csproj|solutionrelative:testreszabva\\controllers\\hetietrendcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4F9BF8D8-10A5-45A7-9FD2-714AD289E82E}|TestreSzabva\\TestreSzabva.csproj|c:\\users\\szima.akos\\documents\\testreszabvaapp\\backend\\testreszabva\\controllers\\etelcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{4F9BF8D8-10A5-45A7-9FD2-714AD289E82E}|TestreSzabva\\TestreSzabva.csproj|solutionrelative:testreszabva\\controllers\\etelcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4F9BF8D8-10A5-45A7-9FD2-714AD289E82E}|TestreSzabva\\TestreSzabva.csproj|c:\\users\\szima.akos\\documents\\testreszabvaapp\\backend\\testreszabva\\models\\etelkategoria.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{4F9BF8D8-10A5-45A7-9FD2-714AD289E82E}|TestreSzabva\\TestreSzabva.csproj|solutionrelative:testreszabva\\models\\etelkategoria.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4F9BF8D8-10A5-45A7-9FD2-714AD289E82E}|TestreSzabva\\TestreSzabva.csproj|c:\\users\\szima.akos\\documents\\testreszabvaapp\\backend\\testreszabva\\data\\testreszabvacontextfactory.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{4F9BF8D8-10A5-45A7-9FD2-714AD289E82E}|TestreSzabva\\TestreSzabva.csproj|solutionrelative:testreszabva\\data\\testreszabvacontextfactory.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4F9BF8D8-10A5-45A7-9FD2-714AD289E82E}|TestreSzabva\\TestreSzabva.csproj|c:\\users\\szima.akos\\documents\\testreszabvaapp\\backend\\testreszabva\\data\\seeddata.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{4F9BF8D8-10A5-45A7-9FD2-714AD289E82E}|TestreSzabva\\TestreSzabva.csproj|solutionrelative:testreszabva\\data\\seeddata.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4F9BF8D8-10A5-45A7-9FD2-714AD289E82E}|TestreSzabva\\TestreSzabva.csproj|c:\\users\\szima.akos\\documents\\testreszabvaapp\\backend\\testreszabva\\data\\testreszabvacontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{4F9BF8D8-10A5-45A7-9FD2-714AD289E82E}|TestreSzabva\\TestreSzabva.csproj|solutionrelative:testreszabva\\data\\testreszabvacontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4F9BF8D8-10A5-45A7-9FD2-714AD289E82E}|TestreSzabva\\TestreSzabva.csproj|c:\\users\\szima.akos\\documents\\testreszabvaapp\\backend\\testreszabva\\models\\etel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{4F9BF8D8-10A5-45A7-9FD2-714AD289E82E}|TestreSzabva\\TestreSzabva.csproj|solutionrelative:testreszabva\\models\\etel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4F9BF8D8-10A5-45A7-9FD2-714AD289E82E}|TestreSzabva\\TestreSzabva.csproj|c:\\users\\szima.akos\\documents\\testreszabvaapp\\backend\\testreszabva\\models\\hetietrend.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{4F9BF8D8-10A5-45A7-9FD2-714AD289E82E}|TestreSzabva\\TestreSzabva.csproj|solutionrelative:testreszabva\\models\\hetietrend.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{4F9BF8D8-10A5-45A7-9FD2-714AD289E82E}|TestreSzabva\\TestreSzabva.csproj|c:\\users\\szima.akos\\source\\repos\\testreszabva_ujra\\testreszabva\\testreszabva\\models\\kategoria.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{4F9BF8D8-10A5-45A7-9FD2-714AD289E82E}|TestreSzabva\\TestreSzabva.csproj|c:\\users\\szima.akos\\documents\\testreszabvaapp\\backend\\testreszabva\\models\\kategoria.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{4F9BF8D8-10A5-45A7-9FD2-714AD289E82E}|TestreSzabva\\TestreSzabva.csproj|solutionrelative:testreszabva\\models\\kategoria.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{4F9BF8D8-10A5-45A7-9FD2-714AD289E82E}|TestreSzabva\\TestreSzabva.csproj|c:\\users\\szima.akos\\source\\repos\\testreszabva_ujra\\testreszabva\\testreszabva\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
-      "RelativeMoniker": "D:0:0:{4F9BF8D8-10A5-45A7-9FD2-714AD289E82E}|TestreSzabva\\TestreSzabva.csproj|solutionrelative:testreszabva\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
     }
   ],
   "DocumentGroupContainers": [
@@ -70,8 +70,12 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 11,
+          "SelectedChildIndex": 10,
           "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{cce594b6-0c39-4442-ba28-10c64ac7e89f}"
+            },
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
@@ -82,83 +86,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "RegisterDto.cs",
-              "DocumentMoniker": "C:\\Users\\szima.akos\\source\\repos\\Testreszabva_ujra\\TestreSzabva\\TestreSzabva\\Controllers\\RegisterDto.cs",
-              "RelativeDocumentMoniker": "TestreSzabva\\Controllers\\RegisterDto.cs",
-              "ToolTip": "C:\\Users\\szima.akos\\source\\repos\\Testreszabva_ujra\\TestreSzabva\\TestreSzabva\\Controllers\\RegisterDto.cs",
-              "RelativeToolTip": "TestreSzabva\\Controllers\\RegisterDto.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABEAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-01-30T10:05:10.737Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "KategoriaController.cs",
-              "DocumentMoniker": "C:\\Users\\szima.akos\\source\\repos\\Testreszabva_ujra\\TestreSzabva\\TestreSzabva\\Controllers\\KategoriaController.cs",
-              "RelativeDocumentMoniker": "TestreSzabva\\Controllers\\KategoriaController.cs",
-              "ToolTip": "C:\\Users\\szima.akos\\source\\repos\\Testreszabva_ujra\\TestreSzabva\\TestreSzabva\\Controllers\\KategoriaController.cs",
-              "RelativeToolTip": "TestreSzabva\\Controllers\\KategoriaController.cs",
-              "ViewState": "AgIAADEAAAAAAAAAAAAYwFEAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-01-30T10:04:58.818Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "HetiEtrendController.cs",
-              "DocumentMoniker": "C:\\Users\\szima.akos\\source\\repos\\Testreszabva_ujra\\TestreSzabva\\TestreSzabva\\Controllers\\HetiEtrendController.cs",
-              "RelativeDocumentMoniker": "TestreSzabva\\Controllers\\HetiEtrendController.cs",
-              "ToolTip": "C:\\Users\\szima.akos\\source\\repos\\Testreszabva_ujra\\TestreSzabva\\TestreSzabva\\Controllers\\HetiEtrendController.cs",
-              "RelativeToolTip": "TestreSzabva\\Controllers\\HetiEtrendController.cs",
-              "ViewState": "AgIAAD4AAAAAAAAAAAAYwF4AAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-01-30T10:04:50.618Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "FelhasznaloController.cs",
-              "DocumentMoniker": "C:\\Users\\szima.akos\\source\\repos\\Testreszabva_ujra\\TestreSzabva\\TestreSzabva\\Controllers\\FelhasznaloController.cs",
-              "RelativeDocumentMoniker": "TestreSzabva\\Controllers\\FelhasznaloController.cs",
-              "ToolTip": "C:\\Users\\szima.akos\\source\\repos\\Testreszabva_ujra\\TestreSzabva\\TestreSzabva\\Controllers\\FelhasznaloController.cs",
-              "RelativeToolTip": "TestreSzabva\\Controllers\\FelhasznaloController.cs",
-              "ViewState": "AgIAAKEAAAAAAAAAAAAYwMEAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-01-30T10:04:39.92Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "EtelController.cs",
-              "DocumentMoniker": "C:\\Users\\szima.akos\\source\\repos\\Testreszabva_ujra\\TestreSzabva\\TestreSzabva\\Controllers\\EtelController.cs",
-              "RelativeDocumentMoniker": "TestreSzabva\\Controllers\\EtelController.cs",
-              "ToolTip": "C:\\Users\\szima.akos\\source\\repos\\Testreszabva_ujra\\TestreSzabva\\TestreSzabva\\Controllers\\EtelController.cs",
-              "RelativeToolTip": "TestreSzabva\\Controllers\\EtelController.cs",
-              "ViewState": "AgIAADgAAAAAAAAAAAAYwFUAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-01-30T10:04:31.696Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 8,
-              "Title": "SeedData.cs",
-              "DocumentMoniker": "C:\\Users\\szima.akos\\source\\repos\\Testreszabva_ujra\\TestreSzabva\\TestreSzabva\\Data\\SeedData.cs",
-              "RelativeDocumentMoniker": "TestreSzabva\\Data\\SeedData.cs",
-              "ToolTip": "C:\\Users\\szima.akos\\source\\repos\\Testreszabva_ujra\\TestreSzabva\\TestreSzabva\\Data\\SeedData.cs",
-              "RelativeToolTip": "TestreSzabva\\Data\\SeedData.cs",
-              "ViewState": "AgIAAEIAAAAAAAAAAAAYwJUAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-01-30T10:03:57.337Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 9,
               "Title": "TestreSzabvaContextFactory.cs",
-              "DocumentMoniker": "C:\\Users\\szima.akos\\source\\repos\\Testreszabva_ujra\\TestreSzabva\\TestreSzabva\\Data\\TestreSzabvaContextFactory.cs",
+              "DocumentMoniker": "C:\\Users\\szima.akos\\Documents\\TestreSzabvaApp\\backend\\TestreSzabva\\Data\\TestreSzabvaContextFactory.cs",
               "RelativeDocumentMoniker": "TestreSzabva\\Data\\TestreSzabvaContextFactory.cs",
-              "ToolTip": "C:\\Users\\szima.akos\\source\\repos\\Testreszabva_ujra\\TestreSzabva\\TestreSzabva\\Data\\TestreSzabvaContextFactory.cs",
+              "ToolTip": "C:\\Users\\szima.akos\\Documents\\TestreSzabvaApp\\backend\\TestreSzabva\\Data\\TestreSzabvaContextFactory.cs",
               "RelativeToolTip": "TestreSzabva\\Data\\TestreSzabvaContextFactory.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABcAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -166,11 +98,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 9,
+              "DocumentIndex": 11,
               "Title": "TestreSzabvaContext.cs",
-              "DocumentMoniker": "C:\\Users\\szima.akos\\source\\repos\\Testreszabva_ujra\\TestreSzabva\\TestreSzabva\\Data\\TestreSzabvaContext.cs",
+              "DocumentMoniker": "C:\\Users\\szima.akos\\Documents\\TestreSzabvaApp\\backend\\TestreSzabva\\Data\\TestreSzabvaContext.cs",
               "RelativeDocumentMoniker": "TestreSzabva\\Data\\TestreSzabvaContext.cs",
-              "ToolTip": "C:\\Users\\szima.akos\\source\\repos\\Testreszabva_ujra\\TestreSzabva\\TestreSzabva\\Data\\TestreSzabvaContext.cs",
+              "ToolTip": "C:\\Users\\szima.akos\\Documents\\TestreSzabvaApp\\backend\\TestreSzabva\\Data\\TestreSzabvaContext.cs",
               "RelativeToolTip": "TestreSzabva\\Data\\TestreSzabvaContext.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAFIAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -178,11 +110,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 8,
               "Title": "EtelKategoria.cs",
-              "DocumentMoniker": "C:\\Users\\szima.akos\\source\\repos\\Testreszabva_ujra\\TestreSzabva\\TestreSzabva\\Models\\EtelKategoria.cs",
+              "DocumentMoniker": "C:\\Users\\szima.akos\\Documents\\TestreSzabvaApp\\backend\\TestreSzabva\\Models\\EtelKategoria.cs",
               "RelativeDocumentMoniker": "TestreSzabva\\Models\\EtelKategoria.cs",
-              "ToolTip": "C:\\Users\\szima.akos\\source\\repos\\Testreszabva_ujra\\TestreSzabva\\TestreSzabva\\Models\\EtelKategoria.cs",
+              "ToolTip": "C:\\Users\\szima.akos\\Documents\\TestreSzabvaApp\\backend\\TestreSzabva\\Models\\EtelKategoria.cs",
               "RelativeToolTip": "TestreSzabva\\Models\\EtelKategoria.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABQAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -190,11 +122,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 4,
               "Title": "Program.cs",
-              "DocumentMoniker": "C:\\Users\\szima.akos\\source\\repos\\Testreszabva_ujra\\TestreSzabva\\TestreSzabva\\Program.cs",
+              "DocumentMoniker": "C:\\Users\\szima.akos\\Documents\\TestreSzabvaApp\\backend\\TestreSzabva\\Program.cs",
               "RelativeDocumentMoniker": "TestreSzabva\\Program.cs",
-              "ToolTip": "C:\\Users\\szima.akos\\source\\repos\\Testreszabva_ujra\\TestreSzabva\\TestreSzabva\\Program.cs",
+              "ToolTip": "C:\\Users\\szima.akos\\Documents\\TestreSzabvaApp\\backend\\TestreSzabva\\Program.cs",
               "RelativeToolTip": "TestreSzabva\\Program.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABgAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -202,16 +134,112 @@
               "EditorCaption": ""
             },
             {
-              "$type": "Bookmark",
-              "Name": "ST:0:0:{cce594b6-0c39-4442-ba28-10c64ac7e89f}"
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "appsettings.json",
+              "DocumentMoniker": "C:\\Users\\szima.akos\\Documents\\TestreSzabvaApp\\backend\\TestreSzabva\\appsettings.json",
+              "RelativeDocumentMoniker": "TestreSzabva\\appsettings.json",
+              "ToolTip": "C:\\Users\\szima.akos\\Documents\\TestreSzabvaApp\\backend\\TestreSzabva\\appsettings.json",
+              "RelativeToolTip": "TestreSzabva\\appsettings.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAMAAAAmAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2025-01-30T10:02:07.298Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "RegisterDto.cs",
+              "DocumentMoniker": "C:\\Users\\szima.akos\\Documents\\TestreSzabvaApp\\backend\\TestreSzabva\\Controllers\\RegisterDto.cs",
+              "RelativeDocumentMoniker": "TestreSzabva\\Controllers\\RegisterDto.cs",
+              "ToolTip": "C:\\Users\\szima.akos\\Documents\\TestreSzabvaApp\\backend\\TestreSzabva\\Controllers\\RegisterDto.cs",
+              "RelativeToolTip": "TestreSzabva\\Controllers\\RegisterDto.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-01-30T10:05:10.737Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "EtelController.cs",
+              "DocumentMoniker": "C:\\Users\\szima.akos\\Documents\\TestreSzabvaApp\\backend\\TestreSzabva\\Controllers\\EtelController.cs",
+              "RelativeDocumentMoniker": "TestreSzabva\\Controllers\\EtelController.cs",
+              "ToolTip": "C:\\Users\\szima.akos\\Documents\\TestreSzabvaApp\\backend\\TestreSzabva\\Controllers\\EtelController.cs",
+              "RelativeToolTip": "TestreSzabva\\Controllers\\EtelController.cs",
+              "ViewState": "AgIAADgAAAAAAAAAAAAYwFUAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-01-30T10:04:31.696Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "FelhasznaloController.cs",
+              "DocumentMoniker": "C:\\Users\\szima.akos\\Documents\\TestreSzabvaApp\\backend\\TestreSzabva\\Controllers\\FelhasznaloController.cs",
+              "RelativeDocumentMoniker": "TestreSzabva\\Controllers\\FelhasznaloController.cs",
+              "ToolTip": "C:\\Users\\szima.akos\\Documents\\TestreSzabvaApp\\backend\\TestreSzabva\\Controllers\\FelhasznaloController.cs",
+              "RelativeToolTip": "TestreSzabva\\Controllers\\FelhasznaloController.cs",
+              "ViewState": "AgIAABIAAAAAAAAAAIAzwCEAAAAMAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-01-30T10:04:39.92Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "HetiEtrendController.cs",
+              "DocumentMoniker": "C:\\Users\\szima.akos\\Documents\\TestreSzabvaApp\\backend\\TestreSzabva\\Controllers\\HetiEtrendController.cs",
+              "RelativeDocumentMoniker": "TestreSzabva\\Controllers\\HetiEtrendController.cs",
+              "ToolTip": "C:\\Users\\szima.akos\\Documents\\TestreSzabvaApp\\backend\\TestreSzabva\\Controllers\\HetiEtrendController.cs",
+              "RelativeToolTip": "TestreSzabva\\Controllers\\HetiEtrendController.cs",
+              "ViewState": "AgIAAD4AAAAAAAAAAAAYwF4AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-01-30T10:04:50.618Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "Felhasznalo.cs",
+              "DocumentMoniker": "C:\\Users\\szima.akos\\Documents\\TestreSzabvaApp\\backend\\TestreSzabva\\Models\\Felhasznalo.cs",
+              "RelativeDocumentMoniker": "TestreSzabva\\Models\\Felhasznalo.cs",
+              "ToolTip": "C:\\Users\\szima.akos\\Documents\\TestreSzabvaApp\\backend\\TestreSzabva\\Models\\Felhasznalo.cs",
+              "RelativeToolTip": "TestreSzabva\\Models\\Felhasznalo.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABUAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-01-30T10:02:40.16Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 10,
+              "Title": "SeedData.cs",
+              "DocumentMoniker": "C:\\Users\\szima.akos\\Documents\\TestreSzabvaApp\\backend\\TestreSzabva\\Data\\SeedData.cs",
+              "RelativeDocumentMoniker": "TestreSzabva\\Data\\SeedData.cs",
+              "ToolTip": "C:\\Users\\szima.akos\\Documents\\TestreSzabvaApp\\backend\\TestreSzabva\\Data\\SeedData.cs",
+              "RelativeToolTip": "TestreSzabva\\Data\\SeedData.cs",
+              "ViewState": "AgIAAEIAAAAAAAAAAAAYwJUAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-01-30T10:03:57.337Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "KategoriaController.cs",
+              "DocumentMoniker": "C:\\Users\\szima.akos\\Documents\\TestreSzabvaApp\\backend\\TestreSzabva\\Controllers\\KategoriaController.cs",
+              "RelativeDocumentMoniker": "TestreSzabva\\Controllers\\KategoriaController.cs",
+              "ToolTip": "C:\\Users\\szima.akos\\Documents\\TestreSzabvaApp\\backend\\TestreSzabva\\Controllers\\KategoriaController.cs",
+              "RelativeToolTip": "TestreSzabva\\Controllers\\KategoriaController.cs",
+              "ViewState": "AgIAADEAAAAAAAAAAAAYwFEAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-01-30T10:04:58.818Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
               "Title": "Etel.cs",
-              "DocumentMoniker": "C:\\Users\\szima.akos\\source\\repos\\Testreszabva_ujra\\TestreSzabva\\TestreSzabva\\Models\\Etel.cs",
+              "DocumentMoniker": "C:\\Users\\szima.akos\\Documents\\TestreSzabvaApp\\backend\\TestreSzabva\\Models\\Etel.cs",
               "RelativeDocumentMoniker": "TestreSzabva\\Models\\Etel.cs",
-              "ToolTip": "C:\\Users\\szima.akos\\source\\repos\\Testreszabva_ujra\\TestreSzabva\\TestreSzabva\\Models\\Etel.cs",
+              "ToolTip": "C:\\Users\\szima.akos\\Documents\\TestreSzabvaApp\\backend\\TestreSzabva\\Models\\Etel.cs",
               "RelativeToolTip": "TestreSzabva\\Models\\Etel.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABkAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -219,23 +247,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 11,
-              "Title": "Felhasznalo.cs",
-              "DocumentMoniker": "C:\\Users\\szima.akos\\source\\repos\\Testreszabva_ujra\\TestreSzabva\\TestreSzabva\\Models\\Felhasznalo.cs",
-              "RelativeDocumentMoniker": "TestreSzabva\\Models\\Felhasznalo.cs",
-              "ToolTip": "C:\\Users\\szima.akos\\source\\repos\\Testreszabva_ujra\\TestreSzabva\\TestreSzabva\\Models\\Felhasznalo.cs",
-              "RelativeToolTip": "TestreSzabva\\Models\\Felhasznalo.cs",
-              "ViewState": "AgIAAAIAAAAAAAAAAAAYwCIAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-01-30T10:02:40.16Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 12,
+              "DocumentIndex": 13,
               "Title": "HetiEtrend.cs",
-              "DocumentMoniker": "C:\\Users\\szima.akos\\source\\repos\\Testreszabva_ujra\\TestreSzabva\\TestreSzabva\\Models\\HetiEtrend.cs",
+              "DocumentMoniker": "C:\\Users\\szima.akos\\Documents\\TestreSzabvaApp\\backend\\TestreSzabva\\Models\\HetiEtrend.cs",
               "RelativeDocumentMoniker": "TestreSzabva\\Models\\HetiEtrend.cs",
-              "ToolTip": "C:\\Users\\szima.akos\\source\\repos\\Testreszabva_ujra\\TestreSzabva\\TestreSzabva\\Models\\HetiEtrend.cs",
+              "ToolTip": "C:\\Users\\szima.akos\\Documents\\TestreSzabvaApp\\backend\\TestreSzabva\\Models\\HetiEtrend.cs",
               "RelativeToolTip": "TestreSzabva\\Models\\HetiEtrend.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAACQAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -243,27 +259,15 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 13,
+              "DocumentIndex": 14,
               "Title": "Kategoria.cs",
-              "DocumentMoniker": "C:\\Users\\szima.akos\\source\\repos\\Testreszabva_ujra\\TestreSzabva\\TestreSzabva\\Models\\Kategoria.cs",
+              "DocumentMoniker": "C:\\Users\\szima.akos\\Documents\\TestreSzabvaApp\\backend\\TestreSzabva\\Models\\Kategoria.cs",
               "RelativeDocumentMoniker": "TestreSzabva\\Models\\Kategoria.cs",
-              "ToolTip": "C:\\Users\\szima.akos\\source\\repos\\Testreszabva_ujra\\TestreSzabva\\TestreSzabva\\Models\\Kategoria.cs",
+              "ToolTip": "C:\\Users\\szima.akos\\Documents\\TestreSzabvaApp\\backend\\TestreSzabva\\Models\\Kategoria.cs",
               "RelativeToolTip": "TestreSzabva\\Models\\Kategoria.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABEAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-01-30T10:02:24.64Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 14,
-              "Title": "appsettings.json",
-              "DocumentMoniker": "C:\\Users\\szima.akos\\source\\repos\\Testreszabva_ujra\\TestreSzabva\\TestreSzabva\\appsettings.json",
-              "RelativeDocumentMoniker": "TestreSzabva\\appsettings.json",
-              "ToolTip": "C:\\Users\\szima.akos\\source\\repos\\Testreszabva_ujra\\TestreSzabva\\TestreSzabva\\appsettings.json",
-              "RelativeToolTip": "TestreSzabva\\appsettings.json",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABAAAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2025-01-30T10:02:07.298Z"
             }
           ]
         }

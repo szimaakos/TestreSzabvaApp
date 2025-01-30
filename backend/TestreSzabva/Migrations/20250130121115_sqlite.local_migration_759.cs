@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace TestreSzabva.Migrations
 {
     /// <inheritdoc />
-    public partial class sqlitelocal_migration_912 : Migration
+    public partial class sqlitelocal_migration_759 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -30,12 +30,13 @@ namespace TestreSzabva.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "TEXT", nullable: false),
-                    Weight = table.Column<float>(type: "REAL", nullable: false),
-                    Height = table.Column<float>(type: "REAL", nullable: false),
-                    Age = table.Column<int>(type: "INTEGER", nullable: false),
-                    Gender = table.Column<string>(type: "TEXT", nullable: false),
-                    ActivityLevel = table.Column<string>(type: "TEXT", nullable: false),
-                    GoalWeight = table.Column<float>(type: "REAL", nullable: false),
+                    Weight = table.Column<float>(type: "REAL", nullable: true),
+                    Height = table.Column<float>(type: "REAL", nullable: true),
+                    Age = table.Column<int>(type: "INTEGER", nullable: true),
+                    Gender = table.Column<string>(type: "TEXT", nullable: true),
+                    ActivityLevel = table.Column<string>(type: "TEXT", nullable: true),
+                    GoalWeight = table.Column<float>(type: "REAL", nullable: true),
+                    IsProfileComplete = table.Column<bool>(type: "INTEGER", nullable: false),
                     UserName = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),

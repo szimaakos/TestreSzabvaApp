@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\szima.akos\\source\\repos\\Testreszabva_ujra\\TestreSzabva\\TestreSzabva\\TestreSzabva.csproj": {}
+    "C:\\Users\\szima.akos\\Documents\\TestreSzabvaApp\\backend\\TestreSzabva\\TestreSzabva.csproj": {}
   },
   "projects": {
-    "C:\\Users\\szima.akos\\source\\repos\\Testreszabva_ujra\\TestreSzabva\\TestreSzabva\\TestreSzabva.csproj": {
+    "C:\\Users\\szima.akos\\Documents\\TestreSzabvaApp\\backend\\TestreSzabva\\TestreSzabva.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\szima.akos\\source\\repos\\Testreszabva_ujra\\TestreSzabva\\TestreSzabva\\TestreSzabva.csproj",
+        "projectUniqueName": "C:\\Users\\szima.akos\\Documents\\TestreSzabvaApp\\backend\\TestreSzabva\\TestreSzabva.csproj",
         "projectName": "TestreSzabva",
-        "projectPath": "C:\\Users\\szima.akos\\source\\repos\\Testreszabva_ujra\\TestreSzabva\\TestreSzabva\\TestreSzabva.csproj",
+        "projectPath": "C:\\Users\\szima.akos\\Documents\\TestreSzabvaApp\\backend\\TestreSzabva\\TestreSzabva.csproj",
         "packagesPath": "C:\\Users\\szima.akos\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\szima.akos\\source\\repos\\Testreszabva_ujra\\TestreSzabva\\TestreSzabva\\obj\\",
+        "outputPath": "C:\\Users\\szima.akos\\Documents\\TestreSzabvaApp\\backend\\TestreSzabva\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

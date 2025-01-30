@@ -198,10 +198,9 @@ namespace TestreSzabva.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("ActivityLevel")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("Age")
+                    b.Property<int?>("Age")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("ConcurrencyStamp")
@@ -216,14 +215,16 @@ namespace TestreSzabva.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Gender")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<float>("GoalWeight")
+                    b.Property<float?>("GoalWeight")
                         .HasColumnType("REAL");
 
-                    b.Property<float>("Height")
+                    b.Property<float?>("Height")
                         .HasColumnType("REAL");
+
+                    b.Property<bool>("IsProfileComplete")
+                        .HasColumnType("INTEGER");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("INTEGER");
@@ -258,7 +259,7 @@ namespace TestreSzabva.Migrations
                         .HasMaxLength(256)
                         .HasColumnType("TEXT");
 
-                    b.Property<float>("Weight")
+                    b.Property<float?>("Weight")
                         .HasColumnType("REAL");
 
                     b.HasKey("Id");

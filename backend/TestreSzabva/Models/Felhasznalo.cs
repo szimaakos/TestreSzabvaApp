@@ -6,27 +6,14 @@ namespace TestreSzabva.Models
 {
     public class Felhasznalo : IdentityUser
     {
-        [Required]
-        [Range(1, 500)]
-        public float Weight { get; set; }
+        public float? Weight { get; set; }
+        public float? Height { get; set; }
+        public int? Age { get; set; }
+        public string? Gender { get; set; }
+        public string? ActivityLevel { get; set; }
+        public float? GoalWeight { get; set; }
 
-        [Required]
-        [Range(50, 300)]
-        public float Height { get; set; }
-
-        [Required]
-        [Range(0, 200)]
-        public int Age { get; set; }
-
-        [Required]
-        public string Gender { get; set; } // "Férfi"/"Nő", de tetszőlegesen bővíthető
-
-        [Required]
-        public string ActivityLevel { get; set; } // "Alacsony"/"Közepes"/"Magas" stb.
-
-        [Required]
-        [Range(1, 500)]
-        public float GoalWeight { get; set; }
+        public bool IsProfileComplete { get; set; } = false;
 
         // Navigációs tulajdonság
         public ICollection<HetiEtrend> HetiEtrendek { get; set; } = new List<HetiEtrend>();
