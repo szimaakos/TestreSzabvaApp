@@ -12,7 +12,11 @@ const ProgressPage: React.FC<ProgressPageProps> = ({ isLoggedIn }) => {
     <div style={{ padding: "20px" }}>
       <h1>Haladás követése</h1>
       <p>Itt lehet majd mérni a súlyt, kalóriákat, BMI-t stb.</p>
-      <button onClick={() => navigate("/")}>Vissza a főoldalra</button>
+      {!isLoggedIn && (
+        <p>
+          Nincs bejelentkezve, <span onClick={() => navigate("/")}>vissza</span>
+        </p>
+      )}
     </div>
   );
 };

@@ -17,7 +17,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy("ReactPolicy", policyBuilder =>
     {
         policyBuilder
-            .WithOrigins("http://localhost:5173") // Fejlesztésben a React alapértelmezett portja
+            .WithOrigins("http://localhost:5174") // Fejlesztésben a React alapértelmezett portja
             .AllowAnyHeader()
             .AllowAnyMethod();
     });

@@ -5,23 +5,45 @@ import OnboardingPage from "./components/pages/OnBoardingPage";
 import WeeklyMenuPage from "./components/pages/WeeklyMenuPage";
 import ProgressPage from "./components/pages/ProgressPage";
 import ReceptekPage from "./components/pages/ReceptekPage";
+import DashboardPage from "./components/pages/DashboardPage";
 
 function App() {
-  // Egyszerű példa egy globális bejelentkezett állapotra
+  // Egyszerű példa: a bejelentkezett állapot
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   return (
     <Routes>
+      {/* Főoldal */}
       <Route
         path="/"
         element={<Home isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />}
       />
-      <Route path="/onboarding" element={<OnboardingPage isLoggedIn={isLoggedIn} />} />
-      <Route path="/weekly-menu" element={<WeeklyMenuPage isLoggedIn={isLoggedIn} />} />
-      <Route path="/progress" element={<ProgressPage isLoggedIn={isLoggedIn} />} />
+
+      {/* Onboarding */}
+      <Route
+        path="/onboarding"
+        element={<OnboardingPage />}
+      />
+
+      {/* Heti Menü */}
+      <Route
+        path="/weekly-menu"
+        element={<WeeklyMenuPage isLoggedIn={isLoggedIn} />}
+      />
+
+      {/* Haladás */}
+      <Route
+        path="/progress"
+        element={<ProgressPage isLoggedIn={isLoggedIn} />}
+      />
+
+      {/* Receptek */}
       <Route path="/receptek" element={<ReceptekPage />} />
 
-      {/* Esetleg 404-es oldal, ha nem talált: */}
+      {/* Dashboard */}
+      <Route path="/dashboard" element={<DashboardPage />} />
+
+      {/* 404 - nem talált */}
       {/* <Route path="*" element={<NotFoundPage />} /> */}
     </Routes>
   );

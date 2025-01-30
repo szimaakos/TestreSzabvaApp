@@ -1,10 +1,8 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
-type OnboardingPageProps = {
-  userId: string; // vagy kiszeded a JWT-ből / store-ból
-};
-
-const OnboardingPage: React.FC<OnboardingPageProps> = ({ userId }) => {
+const OnBoardingPage: React.FC = () => {
+  const navigate = useNavigate();
   const [weight, setWeight] = useState<number | undefined>(undefined);
   const [height, setHeight] = useState<number | undefined>(undefined);
   const [age, setAge] = useState<number | undefined>(undefined);
@@ -16,14 +14,20 @@ const OnboardingPage: React.FC<OnboardingPageProps> = ({ userId }) => {
 
   const handleSubmit = async () => {
     setStatusMsg("");
-    // Hívjuk a backendet: PUT /api/Felhasznalo/{userId}
+    const token = localStorage.getItem("authToken") || "";
+    const userId = localStorage.getItem("userId") || "";
+    if (!userId) {
+      setStatusMsg("Nincs userId! Kérjük, jelentkezz be újra.");
+      return;
+    }
+
     try {
-      const token = localStorage.getItem("authToken");
-      const response = await fetch(`http://localhost:5045/api/Felhasznalo/${userId}`, {
+      // PUT /api/Felhasznalo/{userId}
+      const response = await fetch(`http://localhost:5162/api/Felhasznalo/${userId}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
+          Authorization: `Bearer ${token}`
         },
         body: JSON.stringify({
           weight,
@@ -32,14 +36,14 @@ const OnboardingPage: React.FC<OnboardingPageProps> = ({ userId }) => {
           gender,
           activityLevel,
           goalWeight,
-          // + egyebek, ha kell
+          isProfileComplete: true
         })
       });
 
       if (response.ok) {
         setStatusMsg("Sikeresen mentve! 🎉");
-        // Itt átirányítod a usert a dashboardra pl.:
-        // navigate("/dashboard");
+        // Átirányítjuk a usert a dashboardra
+        navigate("/dashboard");
       } else {
         const errorText = await response.text();
         setStatusMsg("Hiba: " + errorText);
@@ -50,8 +54,9 @@ const OnboardingPage: React.FC<OnboardingPageProps> = ({ userId }) => {
   };
 
   return (
-    <div>
+    <div style={{ padding: "20px" }}>
       <h1>Onboarding</h1>
+      <p>Itt töltheted ki a további adatokat.</p>
       <div>
         <label>Súly (kg)</label>
         <input
@@ -107,12 +112,10 @@ const OnboardingPage: React.FC<OnboardingPageProps> = ({ userId }) => {
           onChange={(e) => setGoalWeight(parseFloat(e.target.value))}
         />
       </div>
-
       <button onClick={handleSubmit}>Mentés</button>
-
       {statusMsg && <p>{statusMsg}</p>}
     </div>
   );
 };
 
-export default OnboardingPage;
+export default OnBoardingPage;

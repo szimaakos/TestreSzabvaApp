@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom"; 
+import { useNavigate } from "react-router-dom";
 import "./AuthModal.css";
 
 interface AuthModalProps {
@@ -18,22 +18,23 @@ const AuthModal: React.FC<AuthModalProps> = ({
 }) => {
   const navigate = useNavigate();
 
-  // ============ Regisztrációs mezők =============
+  // ====== Regisztrációs mezők ======
   const [registerUserName, setRegisterUserName] = useState("");
   const [registerEmail, setRegisterEmail] = useState("");
   const [registerPassword, setRegisterPassword] = useState("");
 
-  // ============ Bejelentkezési mezők =============
+  // ====== Bejelentkezési mezők ======
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
 
   // Visszajelzés (siker/hiba)
   const [statusMessage, setStatusMessage] = useState("");
 
-  // ============ REGISZTRÁCIÓ =============
+  // ====== REGISZTRÁCIÓ ======
   const handleRegister = async () => {
     setStatusMessage("");
     try {
+      // Itt a fetch a te .NET API-dra mutat:
       const response = await fetch("http://localhost:5162/api/Felhasznalo/Register", {
         method: "POST",
         headers: {
@@ -43,14 +44,12 @@ const AuthModal: React.FC<AuthModalProps> = ({
           userName: registerUserName,
           email: registerEmail,
           password: registerPassword,
-          // Azért NEM küldünk Gender, ActivityLevel, stb. mezőket,
-          // mert azt később, onboarding lépésben szeretnénk bekérni.
         }),
       });
 
       if (response.ok) {
         setStatusMessage("Sikeres regisztráció!");
-        // Itt dönthetsz, hogy automatikusan a login fülre váltasz:
+        // Ha akarod, egyből login fülre vált:
         // onTabChange("login");
       } else {
         const errorText = await response.text();
@@ -61,10 +60,11 @@ const AuthModal: React.FC<AuthModalProps> = ({
     }
   };
 
-  // ============ BEJELENTKEZÉS =============
+  // ====== BEJELENTKEZÉS ======
   const handleLogin = async () => {
     setStatusMessage("");
     try {
+      // A bejelentkezés is a 5162-es portra megy
       const response = await fetch("http://localhost:5162/api/Felhasznalo/Login", {
         method: "POST",
         headers: {
@@ -76,53 +76,60 @@ const AuthModal: React.FC<AuthModalProps> = ({
         }),
       });
 
-      if (response.ok) {
-        // 1) Parse-oljuk a JSON-t (várjuk, hogy legyen benne token és userId)
-        const data = await response.json(); 
-        const token = data.token;
-        const userId = data.userId; // FONTOS: a backend küldje ezt is!
-
-        // 2) Elmentjük a token-t
-        localStorage.setItem("authToken", token);
-
-        // 3) Esetleg a Home.tsx-nek is szólunk, hogy be van jelentkezve
-        onLoginSuccess && onLoginSuccess();
-
-        setStatusMessage("Sikeres bejelentkezés!");
-
-        // 4) Lekérdezzük a user adatait, hogy kiderüljön: befejezte-e az onboardingot
-        if (userId) {
-          const userResponse = await fetch(`http://localhost:5162/api/Felhasznalo/${userId}`, {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              "Authorization": `Bearer ${token}`
-            }
-          });
-
-          if (userResponse.ok) {
-            const userData = await userResponse.json();
-            // Tegyük fel, hogy a Felhasznalo modellben van egy isProfileComplete mező
-            if (userData.isProfileComplete) {
-              // Mehet a "főoldalra", pl. /dashboard 
-              navigate("/dashboard");
-            } else {
-              // Irány az onboarding
-              navigate("/onboarding");
-            }
-          } else {
-            // Ha valami hiba van, pl. 401, 404, stb.
-            // Minimálisan mehet /onboarding-ra, vagy maradhat a statusMessage
-            setStatusMessage("Hiba a felhasználói adatok lekérésénél.");
-          }
-        } else {
-          // Ha a szerver nem küld userId-t, 
-          // pl. csinálhatnánk egy /me endpointot, vagy parse-olhatnánk a JWT-t
-          setStatusMessage("Bejelentkezés rendben, de userId nem érkezett.");
-        }
-      } else {
+      if (!response.ok) {
         const errorText = await response.text();
         setStatusMessage("Hibás belépési adatok: " + errorText);
+        return;
+      }
+
+      // Várjuk, hogy a backend { token, userId } mezőket küldjön
+      const data = await response.json();
+      const token = data.token;
+      const userId = data.userId;
+
+      if (!token) {
+        setStatusMessage("Nem kaptunk tokent a szervertől.");
+        return;
+      }
+
+      // Elmentjük a token-t és a userId-t pl. localStorage-be
+      localStorage.setItem("authToken", token);
+      localStorage.setItem("userId", userId || "");
+
+      // Szólunk a Home-nak, hogy be van jelentkezve
+      onLoginSuccess && onLoginSuccess();
+
+      setStatusMessage("Sikeres bejelentkezés!");
+
+      // Ezután megnézzük a user adatait,
+      // pl. isProfileComplete flag szerint
+      if (!userId) {
+        setStatusMessage("Bejelentkezés rendben, de userId nem érkezett.");
+        return;
+      }
+
+      // Lekérdezzük a usert
+      const userResponse = await fetch(`http://localhost:5162/api/Felhasznalo/${userId}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        }
+      });
+
+      if (!userResponse.ok) {
+        setStatusMessage("Hiba a felhasználói adatok lekérésénél.");
+        return;
+      }
+
+      const userData = await userResponse.json();
+      // Ha a backend isProfileComplete mezővel tér vissza:
+      if (userData.isProfileComplete) {
+        // Ha már kitöltötte, mehet a /dashboard
+        navigate("/dashboard");
+      } else {
+        // Egyébként /onboarding
+        navigate("/onboarding");
       }
     } catch (err: any) {
       setStatusMessage("Hiba bejelentkezéskor: " + err.message);
@@ -132,7 +139,7 @@ const AuthModal: React.FC<AuthModalProps> = ({
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-        {/* Fejléc (fülek) */}
+        {/* Fejléc: Register/Login fülek */}
         <div className="modal-header">
           <button
             className={activeTab === "register" ? "active" : ""}
@@ -147,13 +154,11 @@ const AuthModal: React.FC<AuthModalProps> = ({
             Bejelentkezés
           </button>
         </div>
-
         <span className="close-button" onClick={onClose}>
           &times;
         </span>
 
         <div className="modal-body">
-          {/* ========== REGISZTRÁCIÓS TAB ========== */}
           {activeTab === "register" && (
             <div className="tab-content tab-register">
               <h2>Regisztráció</h2>
@@ -178,14 +183,12 @@ const AuthModal: React.FC<AuthModalProps> = ({
               <button className="submit-button" onClick={handleRegister}>
                 Regisztráció
               </button>
-
               {statusMessage && (
                 <div className="status-message">{statusMessage}</div>
               )}
             </div>
           )}
 
-          {/* ========== BEJELENTKEZÉSI TAB ========== */}
           {activeTab === "login" && (
             <div className="tab-content tab-login">
               <h2>Bejelentkezés</h2>
@@ -204,7 +207,6 @@ const AuthModal: React.FC<AuthModalProps> = ({
               <button className="submit-button" onClick={handleLogin}>
                 Bejelentkezés
               </button>
-
               {statusMessage && (
                 <div className="status-message">{statusMessage}</div>
               )}

@@ -62,25 +62,29 @@ namespace TestreSzabva.Controllers
         [HttpPost("Login")]
         public async Task<IActionResult> Login([FromBody] LoginDto dto)
         {
-            // Kikeressük a felhasználót email alapján
             var user = await _userManager.FindByEmailAsync(dto.Email);
             if (user == null)
             {
                 return Unauthorized("Hibás email vagy jelszó.");
             }
 
-            // Ellenőrizzük a jelszót
             var passwordValid = await _userManager.CheckPasswordAsync(user, dto.Password);
             if (!passwordValid)
             {
                 return Unauthorized("Hibás email vagy jelszó.");
             }
 
-            // Ha minden rendben, generálunk egy JWT tokent
             var token = GenerateJwtToken(user);
 
-            // Visszaküldjük a tokent a kliensnek
-            return Ok(new { Token = token });
+            // VISSZAJÖN A TOKEN, DE HIÁNYZIK A userId 
+            //return Ok(new { Token = token });
+
+            // Bővítsd erre:
+            return Ok(new
+            {
+                Token = token,
+                UserId = user.Id
+            });
         }
 
         // ====== GET BY ID (meglévő metódus) ======
@@ -93,8 +97,22 @@ namespace TestreSzabva.Controllers
                 return NotFound();
             }
 
-            return Ok(user);
+            // Készíthetsz dto-t is, de a lényeg, hogy isProfileComplete is benne legyen
+            return Ok(new
+            {
+                user.Id,
+                user.UserName,
+                user.Email,
+                user.IsProfileComplete,
+                user.Weight,
+                user.Height,
+                user.Age,
+                user.Gender,
+                user.ActivityLevel,
+                user.GoalWeight
+            });
         }
+
 
         // ====== UPDATE USER (meglévő metódus) ======
         [HttpPut("{id}")]
