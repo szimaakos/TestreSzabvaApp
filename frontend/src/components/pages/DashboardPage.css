@@ -1,0 +1,178 @@
+/* ============== 
+   DashboardPage.css 
+   ============== */
+
+/* 
+  Konténer: 
+  - Side nav fix szélességgel
+  - Fő tartalom flexgrow
+*/
+.dashboard-container {
+    display: flex;
+    min-height: 100vh;
+    background-color: #fafafa;
+  }
+  
+  /* =========== Oldalsáv =========== */
+  .dashboard-sidebar {
+    width: 240px;
+    background-color: #fff;
+    border-right: 1px solid #eee;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+  }
+  
+  .sidebar-header {
+    margin-bottom: 30px;
+  }
+  .sidebar-header h2 {
+    color: #e30b5c;
+    margin: 0;
+  }
+  
+  .sidebar-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .sidebar-nav button {
+    background-color: #e30b5c;
+    color: #fff;
+    border: none;
+    border-radius: 20px;
+    padding: 8px 16px;
+    font-size: 15px;
+    cursor: pointer;
+    text-align: left;
+    transition: background-color 0.3s;
+  }
+  .sidebar-nav button:hover {
+    background-color: #c7094f;
+  }
+  
+  .sidebar-footer {
+    margin-top: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .logout-button {
+    background-color: #aaa;
+    color: #fff;
+    border: none;
+    border-radius: 20px;
+    padding: 8px 16px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  .logout-button:hover {
+    background-color: #888;
+  }
+  
+  /* =========== Fő tartalom =========== */
+  .dashboard-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 20px 30px;
+  }
+  
+  /* Fejléc a tartalom tetején */
+  .content-header {
+    background-color: #ffe5ef;
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  }
+  .content-header h1 {
+    margin: 0 0 8px;
+    color: #e30b5c;
+  }
+  .content-header p {
+    margin: 0;
+    color: #555;
+  }
+  
+  /* Rács (grid) a kártyáknak */
+  .dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 20px;
+    margin-bottom: 20px;
+  }
+  
+  /* Kártyák a dashboardon */
+  .dashboard-card {
+    background-color: #fff;
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    min-height: 120px;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  
+  .dashboard-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  }
+  
+  .dashboard-card h3 {
+    margin-top: 0;
+    color: #e30b5c;
+    margin-bottom: 8px;
+  }
+  .dashboard-card p,
+  .dashboard-card ul {
+    margin: 0;
+    color: #555;
+    line-height: 1.5;
+  }
+  
+  /* highlight-card - kiemelt kártyák pl. statisztikákhoz */
+  .highlight-card {
+    background-color: #ffe5ef;
+  }
+  
+  /* Mobil nézet */
+  @media (max-width: 768px) {
+    .dashboard-sidebar {
+      width: 70px;
+      padding: 10px;
+    }
+  
+    .sidebar-header h2 {
+      display: none; /* vagy lehet cserélni egy ikonra */
+    }
+  
+    .sidebar-nav button {
+      border-radius: 50px;
+      font-size: 0;
+      padding: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  
+    .sidebar-nav button::after {
+      content: attr(data-label);
+      font-size: 14px;
+      margin-left: 6px;
+      display: none; /* Mobilon elrejthető, vagy gondolkodhatunk tooltipben */
+    }
+  
+    .logout-button {
+      font-size: 0;
+      border-radius: 50px;
+    }
+  
+    .dashboard-content {
+      padding: 10px;
+    }
+  }
+  
