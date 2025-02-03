@@ -1,111 +1,174 @@
-/* =============== 
-   OnBoardingPage.css 
-   =============== */
+/* Reset minden elemre */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 
-   .onboarding-container {
-    min-height: 100vh;
-    background: #fafafa;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 40px 20px;
-    box-sizing: border-box;
+body {
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  /* Finom gradient háttér */
+  background: linear-gradient(135deg, #ece9e6, #ffffff);
+  color: #333;
+}
+
+/* A konténer, ami a teljes boxot tartalmazza, a képernyő közepén van: */
+.onboarding-container {
+  position: fixed;       /* A viewporthoz rögzítjük */
+  top: 50%;              /* Középre helyezzük függőlegesen */
+  left: 50%;             /* Középre helyezzük vízszintesen */
+  transform: translate(-50%, -50%); /* Az elem saját középpontját igazítjuk */
+  width: 90%;
+  max-width: 700px;
+  padding: 1rem;
+  z-index: 10;
+}
+
+/* A komolyabb designú onboarding kártya */
+.onboarding-card {
+  background: #fff;
+  border-radius: 15px;
+  padding: 2.5rem;
+  /* Többrétegű árnyék: a mélyebb, realisztikusabb hatásért */
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1), 0 6px 6px rgba(0, 0, 0, 0.1);
+  /* Finom belépési animáció (fade in és slide) */
+  animation: cardFadeIn 0.6s ease-out;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Hover effekt: kissé megnövekszik és intenzívebb árnyékot kap */
+.onboarding-card:hover {
+  transform: scale(1.02);
+  box-shadow: 0 15px 25px rgba(0, 0, 0, 0.15), 0 8px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Card belépési animáció */
+@keyframes cardFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
   }
-  
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Cím és bevezető szöveg stílusai */
+.onboarding-card h2 {
+  margin-bottom: 0.5rem;
+  font-size: 1.8rem;
+  color: #e30b5c;
+  font-weight: 600;
+}
+
+.onboarding-intro {
+  font-size: 1rem;
+  color: #666;
+  margin-bottom: 1.5rem;
+  line-height: 1.5;
+}
+
+/* Progress bar stílusok */
+.progress-bar {
+  background-color: #ddd;
+  border-radius: 20px;
+  height: 10px;
+  width: 100%;
+  margin-bottom: 1rem;
+  overflow: hidden;
+}
+
+.progress {
+  background-color: #e30b5c;
+  height: 100%;
+  border-radius: 20px;
+  width: 0%;
+  transition: width 0.3s;
+}
+
+/* Űrlap elrendezése */
+.onboarding-form {
+  margin-bottom: 1.5rem;
+}
+
+/* Form group-ok */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1rem;
+}
+
+.form-group label {
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: #444;
+}
+
+.form-group input[type="number"],
+.form-group select {
+  padding: 0.6rem 0.8rem;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  transition: border-color 0.3s;
+  outline: none;
+}
+
+.form-group input[type="number"]:focus,
+.form-group select:focus {
+  border-color: #e30b5c;
+}
+
+/* Hibaszöveg stílus */
+.error-message {
+  margin-bottom: 1rem;
+  color: #d10000;
+  font-weight: 600;
+}
+
+/* Gombok elrendezése */
+.button-group {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+}
+
+.onboarding-submit {
+  background-color: #e30b5c;
+  color: #fff;
+  border: none;
+  border-radius: 20px;
+  padding: 0.75rem 1.5rem;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.3s, box-shadow 0.2s;
+  box-shadow: 0 2px 6px rgba(227, 11, 92, 0.2);
+}
+
+.onboarding-submit:hover {
+  background-color: #c0094f;
+  box-shadow: 0 3px 10px rgba(227, 11, 92, 0.3);
+}
+
+/* Step indicator */
+.step-indicator {
+  text-align: center;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+/* Reszponzív stílusok kisebb képernyőkre */
+@media (max-width: 768px) {
   .onboarding-card {
-    background-color: #fff;
-    width: 100%;
-    max-width: 700px; /* nagyobb kijelzőn is szellősebb */
-    border-radius: 16px;
-    padding: 30px 40px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-    animation: fadeIn 0.4s ease;
+    padding: 1.5rem;
   }
-  
-  @keyframes fadeIn {
-    0% { opacity: 0; transform: translateY(20px);}
-    100% { opacity: 1; transform: translateY(0);}
-  }
-  
-  .onboarding-card h2 {
-    margin-top: 0;
-    color: #e30b5c;
-    font-size: 1.8rem;
-    margin-bottom: 16px;
-  }
-  
-  .onboarding-intro {
-    color: #555;
-    margin-bottom: 24px;
-    line-height: 1.5;
-  }
-  
-  /* Form grid, 2 oszlop nagyobb kijelzőn */
-  .onboarding-form {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
-    margin-bottom: 20px;
-  }
-  
-  .form-group {
-    display: flex;
+  .button-group {
     flex-direction: column;
+    align-items: stretch;
   }
-  
-  .form-group label {
-    margin-bottom: 6px;
-    font-weight: 600;
-    color: #333;
-  }
-  
-  .form-group input[type="number"],
-  .form-group select {
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    padding: 10px;
-    font-size: 14px;
-    outline: none;
-    transition: border-color 0.3s;
-  }
-  
-  .form-group input[type="number"]:focus,
-  .form-group select:focus {
-    border-color: #e30b5c;
-  }
-  
-  /* Hibaszöveg */
-  .error-message {
-    color: #d10000;
-    font-weight: 600;
-    margin-bottom: 12px;
-  }
-  
-  /* Gomb, hasonló a .cta-button stílushoz */
   .onboarding-submit {
-    background-color: #e30b5c;
-    color: #fff;
-    border: none;
-    border-radius: 24px;
-    padding: 12px 24px;
-    cursor: pointer;
-    font-size: 16px;
-    transition: background-color 0.3s, box-shadow 0.2s;
-    box-shadow: 0 3px 8px rgba(227, 11, 92, 0.25);
-    display: inline-block;
+    width: 100%;
   }
-  .onboarding-submit:hover {
-    background-color: #c7094f;
-    box-shadow: 0 4px 12px rgba(227, 11, 92, 0.3);
-  }
-  
-  /* Responsiveness */
-  @media (max-width: 768px) {
-    .onboarding-form {
-      grid-template-columns: 1fr;
-    }
-    .onboarding-card {
-      padding: 20px 24px;
-    }
-  }
-  
+}

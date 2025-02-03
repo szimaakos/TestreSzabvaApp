@@ -2,9 +2,31 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./OnBoardingPage.css";
 
+// Definiálunk két interfészt a lépésekhez
+interface NumberStep {
+  field: string;
+  label: string;
+  type: "number";
+  placeholder?: string;
+  value: number | undefined;
+  setValue: React.Dispatch<React.SetStateAction<number | undefined>>;
+}
+
+interface SelectStep {
+  field: string;
+  label: string;
+  type: "select";
+  options: { value: string; label: string }[];
+  value: string;
+  setValue: React.Dispatch<React.SetStateAction<string>>;
+}
+
+type Step = NumberStep | SelectStep;
+
 const OnBoardingPage: React.FC = () => {
   const navigate = useNavigate();
 
+  // Mezők állapotai
   const [weight, setWeight] = useState<number | undefined>(undefined);
   const [height, setHeight] = useState<number | undefined>(undefined);
   const [age, setAge] = useState<number | undefined>(undefined);
@@ -12,17 +34,115 @@ const OnBoardingPage: React.FC = () => {
   const [activityLevel, setActivityLevel] = useState<string>("");
   const [goalWeight, setGoalWeight] = useState<number | undefined>(undefined);
 
+  const [currentStep, setCurrentStep] = useState(0);
   const [errorMsg, setErrorMsg] = useState("");
 
+  // Lépések definiálása típusbiztosan
+  const steps: Step[] = [
+    {
+      field: "weight",
+      label: "Súly (kg)",
+      type: "number",
+      placeholder: "Pl. 70",
+      value: weight,
+      setValue: setWeight,
+    },
+    {
+      field: "height",
+      label: "Magasság (cm)",
+      type: "number",
+      placeholder: "Pl. 170",
+      value: height,
+      setValue: setHeight,
+    },
+    {
+      field: "age",
+      label: "Kor (év)",
+      type: "number",
+      placeholder: "Pl. 30",
+      value: age,
+      setValue: setAge,
+    },
+    {
+      field: "gender",
+      label: "Nem",
+      type: "select",
+      options: [
+        { value: "", label: "Válassz..." },
+        { value: "Male", label: "Férfi" },
+        { value: "Female", label: "Nő" },
+        { value: "Other", label: "Egyéb / nem adom meg" },
+      ],
+      value: gender,
+      setValue: setGender,
+    },
+    {
+      field: "activityLevel",
+      label: "Aktivitási szint",
+      type: "select",
+      options: [
+        { value: "", label: "Válassz..." },
+        { value: "Sedentary", label: "Ülő (ülő munka, kevés mozgás)" },
+        { value: "Light", label: "Enyhén aktív (heti 1-2 edzés)" },
+        { value: "Moderate", label: "Közepesen aktív (heti 3-4 edzés)" },
+        { value: "Active", label: "Aktív (heti 5+ edzés)" },
+        { value: "VeryActive", label: "Nagyon aktív (napi edzés, fizikai munka)" },
+      ],
+      value: activityLevel,
+      setValue: setActivityLevel,
+    },
+    {
+      field: "goalWeight",
+      label: "Cél testsúly (kg)",
+      type: "number",
+      placeholder: "Pl. 65",
+      value: goalWeight,
+      setValue: setGoalWeight,
+    },
+  ];
+
+  const totalSteps = steps.length;
+
+  // Következő lépés: validáljuk az aktuális mezőt
+  const handleNext = () => {
+    const currentData = steps[currentStep];
+    if (currentData.type === "number") {
+      if (currentData.value === undefined || currentData.value === 0) {
+        setErrorMsg("Kérlek, töltsd ki a mezőt!");
+        return;
+      }
+    } else {
+      if (currentData.value === "") {
+        setErrorMsg("Kérlek, válassz egy értéket!");
+        return;
+      }
+    }
+    setErrorMsg("");
+    if (currentStep < totalSteps - 1) {
+      setCurrentStep(currentStep + 1);
+    } else {
+      // Utolsó lépés: adatküldés
+      handleSubmit();
+    }
+  };
+
+  // Visszalépés a korábbi lépésre
+  const handleBack = () => {
+    if (currentStep > 0) {
+      setErrorMsg("");
+      setCurrentStep(currentStep - 1);
+    }
+  };
+
+  // Végső adatküldés
   const handleSubmit = async () => {
-    // Egyszerű validáció:
     if (!weight || !height || !age || !gender || !activityLevel || !goalWeight) {
       setErrorMsg("Kérlek, tölts ki minden mezőt!");
       return;
     }
     setErrorMsg("");
 
-    // localStorage-ből kivesszük a token, userId értékeket
+    // Token és userId lekérése a localStorage-ból
     const token = localStorage.getItem("authToken");
     const userId = localStorage.getItem("userId");
     if (!userId || !token) {
@@ -35,7 +155,7 @@ const OnBoardingPage: React.FC = () => {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
           weight,
@@ -44,12 +164,10 @@ const OnBoardingPage: React.FC = () => {
           gender,
           activityLevel,
           goalWeight,
-          isProfileComplete: true
-        })
+          isProfileComplete: true,
+        }),
       });
-
       if (response.ok) {
-        // Sikeres onboarding
         navigate("/dashboard");
       } else {
         const errorText = await response.text();
@@ -60,96 +178,81 @@ const OnBoardingPage: React.FC = () => {
     }
   };
 
+  // Az aktuális lépés mezőjének renderelése
+  const renderCurrentStep = () => {
+    const step = steps[currentStep];
+    if (step.type === "number") {
+      return (
+        <div className="form-group">
+          <label htmlFor={step.field}>{step.label}</label>
+          <input
+            type="number"
+            id={step.field}
+            placeholder={step.placeholder}
+            value={step.value ?? ""}
+            onChange={(e) =>
+              (step.setValue as React.Dispatch<React.SetStateAction<number | undefined>>)(
+                Number(e.target.value)
+              )
+            }
+          />
+        </div>
+      );
+    } else if (step.type === "select") {
+      return (
+        <div className="form-group">
+          <label htmlFor={step.field}>{step.label}</label>
+          <select
+            id={step.field}
+            value={step.value}
+            onChange={(e) =>
+              (step.setValue as React.Dispatch<React.SetStateAction<string>>)(e.target.value)
+            }
+          >
+            {step.options!.map((option, index) => (
+              <option key={index} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+        </div>
+      );
+    }
+  };
+
   return (
     <div className="onboarding-container">
       <div className="onboarding-card">
         <h2>Onboarding – Személyre szabás</h2>
         <p className="onboarding-intro">
-          Kérjük, add meg az alábbi adatokat, hogy még pontosabban tudjuk
-          összeállítani a számodra megfelelő étrendet és ajánlásokat.
+          Kérjük, add meg az adataidat lépésről lépésre!
         </p>
 
-        <div className="onboarding-form">
-          <div className="form-group">
-            <label htmlFor="weight">Súly (kg)</label>
-            <input
-              type="number"
-              id="weight"
-              placeholder="Pl. 70"
-              value={weight ?? ""}
-              onChange={(e) => setWeight(Number(e.target.value))}
-            />
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="height">Magasság (cm)</label>
-            <input
-              type="number"
-              id="height"
-              placeholder="Pl. 170"
-              value={height ?? ""}
-              onChange={(e) => setHeight(Number(e.target.value))}
-            />
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="age">Kor (év)</label>
-            <input
-              type="number"
-              id="age"
-              placeholder="Pl. 30"
-              value={age ?? ""}
-              onChange={(e) => setAge(Number(e.target.value))}
-            />
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="gender">Nem</label>
-            <select
-              id="gender"
-              value={gender}
-              onChange={(e) => setGender(e.target.value)}
-            >
-              <option value="">Válassz...</option>
-              <option value="Male">Férfi</option>
-              <option value="Female">Nő</option>
-              <option value="Other">Egyéb / nem adom meg</option>
-            </select>
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="activityLevel">Aktivitási szint</label>
-            <select
-              id="activityLevel"
-              value={activityLevel}
-              onChange={(e) => setActivityLevel(e.target.value)}
-            >
-              <option value="">Válassz...</option>
-              <option value="Sedentary">Ülő (ülő munka, kevés mozgás)</option>
-              <option value="Light">Enyhén aktív (heti 1-2 edzés)</option>
-              <option value="Moderate">Közepesen aktív (heti 3-4 edzés)</option>
-              <option value="Active">Aktív (heti 5+ edzés)</option>
-              <option value="VeryActive">Nagyon aktív (napi edzés, fizikai munka)</option>
-            </select>
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="goalWeight">Cél testsúly (kg)</label>
-            <input
-              type="number"
-              id="goalWeight"
-              placeholder="Pl. 65"
-              value={goalWeight ?? ""}
-              onChange={(e) => setGoalWeight(Number(e.target.value))}
-            />
-          </div>
+        {/* Progress bar */}
+        <div className="progress-bar">
+          <div
+            className="progress"
+            style={{ width: `${((currentStep + 1) / totalSteps) * 100}%` }}
+          ></div>
         </div>
+        <p className="step-indicator">
+          Lépés {currentStep + 1} / {totalSteps}
+        </p>
+
+        <div className="onboarding-form">{renderCurrentStep()}</div>
 
         {errorMsg && <p className="error-message">{errorMsg}</p>}
 
-        <button className="onboarding-submit" onClick={handleSubmit}>
-          Mentés
-        </button>
+        <div className="button-group">
+          {currentStep > 0 && (
+            <button className="onboarding-submit" onClick={handleBack}>
+              Vissza
+            </button>
+          )}
+          <button className="onboarding-submit" onClick={handleNext}>
+            {currentStep === totalSteps - 1 ? "Mentés" : "Következő"}
+          </button>
+        </div>
       </div>
     </div>
   );
