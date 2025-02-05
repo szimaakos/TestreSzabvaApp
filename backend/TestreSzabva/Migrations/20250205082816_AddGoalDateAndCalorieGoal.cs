@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace TestreSzabva.Migrations
 {
     /// <inheritdoc />
-    public partial class sqlitelocal_migration_918 : Migration
+    public partial class AddGoalDateAndCalorieGoal : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -36,6 +36,8 @@ namespace TestreSzabva.Migrations
                     Gender = table.Column<string>(type: "TEXT", nullable: true),
                     ActivityLevel = table.Column<string>(type: "TEXT", nullable: true),
                     GoalWeight = table.Column<float>(type: "REAL", nullable: true),
+                    GoalDate = table.Column<DateTime>(type: "TEXT", nullable: true),
+                    CalorieGoal = table.Column<float>(type: "REAL", nullable: true),
                     IsProfileComplete = table.Column<bool>(type: "INTEGER", nullable: false),
                     UserName = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),

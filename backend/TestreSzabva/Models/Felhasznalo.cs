@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 
 namespace TestreSzabva.Models
 {
@@ -12,6 +12,10 @@ namespace TestreSzabva.Models
         public string? Gender { get; set; }
         public string? ActivityLevel { get; set; }
         public float? GoalWeight { get; set; }
+
+        // Új mezők:
+        public DateTime? GoalDate { get; set; }  // A dátum, amire a célsúlyt el szeretné érni
+        public float? CalorieGoal { get; set; }  // A felhasználó adatai alapján kiszámított kalória cél
 
         public bool IsProfileComplete { get; set; } = false;
 

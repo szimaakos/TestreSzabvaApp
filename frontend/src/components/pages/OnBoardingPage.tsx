@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./OnBoardingPage.css";
 
-// Definiálunk két interfészt a lépésekhez
+// Létező típusok
 interface NumberStep {
   field: string;
   label: string;
@@ -21,23 +21,36 @@ interface SelectStep {
   setValue: React.Dispatch<React.SetStateAction<string>>;
 }
 
-type Step = NumberStep | SelectStep;
+// Új: DateStep típus a dátum bekéréséhez
+interface DateStep {
+  field: string;
+  label: string;
+  type: "date";
+  placeholder?: string;
+  value: string;
+  setValue: React.Dispatch<React.SetStateAction<string>>;
+}
+
+type Step = NumberStep | SelectStep | DateStep;
 
 const OnBoardingPage: React.FC = () => {
   const navigate = useNavigate();
 
-  // Mezők állapotai
+  // Meglévő mezők állapotai
   const [weight, setWeight] = useState<number | undefined>(undefined);
   const [height, setHeight] = useState<number | undefined>(undefined);
   const [age, setAge] = useState<number | undefined>(undefined);
   const [gender, setGender] = useState<string>("");
   const [activityLevel, setActivityLevel] = useState<string>("");
   const [goalWeight, setGoalWeight] = useState<number | undefined>(undefined);
+  
+  // Új mező: céldátum (input type="date", string formátumú érték pl. "2025-12-31")
+  const [goalDate, setGoalDate] = useState<string>("");
 
   const [currentStep, setCurrentStep] = useState(0);
   const [errorMsg, setErrorMsg] = useState("");
 
-  // Lépések definiálása típusbiztosan
+  // Lépések definiálása: az új lépés a végén jelenik meg
   const steps: Step[] = [
     {
       field: "weight",
@@ -99,6 +112,14 @@ const OnBoardingPage: React.FC = () => {
       value: goalWeight,
       setValue: setGoalWeight,
     },
+    {
+      field: "goalDate",
+      label: "Céldátum",
+      type: "date",
+      placeholder: "Válassz egy dátumot",
+      value: goalDate,
+      setValue: setGoalDate,
+    },
   ];
 
   const totalSteps = steps.length;
@@ -111,9 +132,14 @@ const OnBoardingPage: React.FC = () => {
         setErrorMsg("Kérlek, töltsd ki a mezőt!");
         return;
       }
-    } else {
+    } else if (currentData.type === "select") {
       if (currentData.value === "") {
         setErrorMsg("Kérlek, válassz egy értéket!");
+        return;
+      }
+    } else if (currentData.type === "date") {
+      if (currentData.value === "") {
+        setErrorMsg("Kérlek, válassz egy dátumot!");
         return;
       }
     }
@@ -136,7 +162,7 @@ const OnBoardingPage: React.FC = () => {
 
   // Végső adatküldés
   const handleSubmit = async () => {
-    if (!weight || !height || !age || !gender || !activityLevel || !goalWeight) {
+    if (!weight || !height || !age || !gender || !activityLevel || !goalWeight || goalDate === "") {
       setErrorMsg("Kérlek, tölts ki minden mezőt!");
       return;
     }
@@ -164,6 +190,7 @@ const OnBoardingPage: React.FC = () => {
           gender,
           activityLevel,
           goalWeight,
+          goalDate,      // Új mező elküldése
           isProfileComplete: true,
         }),
       });
@@ -215,6 +242,21 @@ const OnBoardingPage: React.FC = () => {
               </option>
             ))}
           </select>
+        </div>
+      );
+    } else if (step.type === "date") {
+      return (
+        <div className="form-group">
+          <label htmlFor={step.field}>{step.label}</label>
+          <input
+            type="date"
+            id={step.field}
+            placeholder={step.placeholder}
+            value={step.value}
+            onChange={(e) =>
+              (step.setValue as React.Dispatch<React.SetStateAction<string>>)(e.target.value)
+            }
+          />
         </div>
       );
     }

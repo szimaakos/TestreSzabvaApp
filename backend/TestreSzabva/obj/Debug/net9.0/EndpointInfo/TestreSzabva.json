@@ -697,6 +697,16 @@
             "format": "float",
             "nullable": true
           },
+          "goalDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "calorieGoal": {
+            "type": "number",
+            "format": "float",
+            "nullable": true
+          },
           "isProfileComplete": {
             "type": "boolean"
           },

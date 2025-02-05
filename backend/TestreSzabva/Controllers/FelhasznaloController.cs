@@ -42,8 +42,8 @@ namespace TestreSzabva.Controllers
             {
                 UserName = dto.UserName,
                 Email = dto.Email,
-                // az egyéb mezők (Gender, ActivityLevel, stb.) üresen maradnak
-                // vagy default (pl. null), amíg onboarding nem történik
+                NormalizedEmail = dto.Email.ToUpperInvariant(),  // <-- Ezt adjuk hozzá
+                                                                 // Az egyéb mezők (Gender, ActivityLevel, stb.) üresen maradnak, amíg onboarding nem történik
             };
 
             // 3. Jelszó beállítása
@@ -56,6 +56,7 @@ namespace TestreSzabva.Controllers
             // Sikeres regisztráció -> 201 Created
             return CreatedAtAction(nameof(GetById), new { id = user.Id }, user);
         }
+
 
 
         // ====== LOGIN (új metódus) ======
@@ -97,7 +98,7 @@ namespace TestreSzabva.Controllers
                 return NotFound();
             }
 
-            // Készíthetsz dto-t is, de a lényeg, hogy isProfileComplete is benne legyen
+            // A dto bővítése az új mezőkkel
             return Ok(new
             {
                 user.Id,
@@ -109,9 +110,12 @@ namespace TestreSzabva.Controllers
                 user.Age,
                 user.Gender,
                 user.ActivityLevel,
-                user.GoalWeight
+                user.GoalWeight,
+                user.GoalDate,     // Új: céldátum
+                user.CalorieGoal   // Új: kiszámított kalória cél
             });
         }
+
 
 
         // ====== UPDATE USER (meglévő metódus) ======
@@ -124,7 +128,7 @@ namespace TestreSzabva.Controllers
                 return NotFound();
             }
 
-            // Csak a plusz mezők:
+            // Frissítjük a meglévő mezőket
             user.Weight = updatedUser.Weight;
             user.Height = updatedUser.Height;
             user.Age = updatedUser.Age;
@@ -132,9 +136,11 @@ namespace TestreSzabva.Controllers
             user.ActivityLevel = updatedUser.ActivityLevel;
             user.GoalWeight = updatedUser.GoalWeight;
 
+            // Új mezők frissítése:
+            user.GoalDate = updatedUser.GoalDate;
+            user.CalorieGoal = updatedUser.CalorieGoal;
+
             user.IsProfileComplete = true;
-            await _userManager.UpdateAsync(user);
-            // Mentés
             var result = await _userManager.UpdateAsync(user);
             if (!result.Succeeded)
             {
@@ -143,6 +149,7 @@ namespace TestreSzabva.Controllers
 
             return NoContent();
         }
+
 
 
         // ====== DELETE USER (meglévő metódus) ======

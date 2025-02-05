@@ -24,6 +24,15 @@ namespace TestreSzabva.Data
             modelBuilder.Entity<Felhasznalo>()
                 .HasKey(f => f.Id);
 
+            // Új mezők konfigurációja (opcionális)
+            modelBuilder.Entity<Felhasznalo>()
+                .Property(f => f.GoalDate)
+                .IsRequired(false);
+
+            modelBuilder.Entity<Felhasznalo>()
+                .Property(f => f.CalorieGoal)
+                .IsRequired(false);
+
             // Etel
             modelBuilder.Entity<Etel>()
                 .HasKey(e => e.FoodId);

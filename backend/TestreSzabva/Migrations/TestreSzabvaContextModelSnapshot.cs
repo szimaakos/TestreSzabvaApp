@@ -203,6 +203,9 @@ namespace TestreSzabva.Migrations
                     b.Property<int?>("Age")
                         .HasColumnType("INTEGER");
 
+                    b.Property<float?>("CalorieGoal")
+                        .HasColumnType("REAL");
+
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .HasColumnType("TEXT");
@@ -215,6 +218,9 @@ namespace TestreSzabva.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Gender")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("GoalDate")
                         .HasColumnType("TEXT");
 
                     b.Property<float?>("GoalWeight")

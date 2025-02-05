@@ -11,8 +11,8 @@ using TestreSzabva.Data;
 namespace TestreSzabva.Migrations
 {
     [DbContext(typeof(TestreSzabvaContext))]
-    [Migration("20250130125005_sqlite.local_migration_918")]
-    partial class sqlitelocal_migration_918
+    [Migration("20250205082816_AddGoalDateAndCalorieGoal")]
+    partial class AddGoalDateAndCalorieGoal
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -206,6 +206,9 @@ namespace TestreSzabva.Migrations
                     b.Property<int?>("Age")
                         .HasColumnType("INTEGER");
 
+                    b.Property<float?>("CalorieGoal")
+                        .HasColumnType("REAL");
+
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .HasColumnType("TEXT");
@@ -218,6 +221,9 @@ namespace TestreSzabva.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Gender")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("GoalDate")
                         .HasColumnType("TEXT");
 
                     b.Property<float?>("GoalWeight")
