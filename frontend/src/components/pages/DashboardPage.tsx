@@ -1,8 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import CalorieCounter from "../CalorieCounter";
+import FoodSelectorPopup from "../FoodSelectorPopup";
+import RemainingCaloriesBox from "../RemainingCaloriesBox";
+import WeeklyMenuTable, { HetiEtrend } from "../WeeklyMenuTable";
 import "./DashboardPage.css";
 
-// Típusdefiníciók a felhasználóhoz és heti menühöz
 interface Felhasznalo {
   id: string;
   userName: string;
@@ -25,21 +28,17 @@ interface Etel {
   fats: number;
 }
 
-interface HetiEtrend {
-  planId: number;
-  dayOfWeek: string;
-  mealTime: string;
-  quantity: number;
-  totalCalories: number;
-  etel: Etel;
-}
-
 const DashboardPage: React.FC = () => {
   const navigate = useNavigate();
   const [user, setUser] = useState<Felhasznalo | null>(null);
   const [weeklyMenus, setWeeklyMenus] = useState<HetiEtrend[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selectedMeal, setSelectedMeal] = useState<HetiEtrend | null>(null);
+
+  // Kalória és popup állapotok
+  const [caloriesConsumed, setCaloriesConsumed] = useState<number>(0);
+  const [foodPopupOpen, setFoodPopupOpen] = useState<boolean>(false);
+  const [currentMealType, setCurrentMealType] = useState<string>("");
+  const [selectedCell, setSelectedCell] = useState<{ day: string; mealType: string } | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -50,7 +49,7 @@ const DashboardPage: React.FC = () => {
         return;
       }
       try {
-        // Felhasználó adatainak lekérése
+        // Felhasználó adatok
         const userResponse = await fetch(`http://localhost:5162/api/Felhasznalo/${userId}`, {
           method: "GET",
           headers: {
@@ -62,16 +61,16 @@ const DashboardPage: React.FC = () => {
           const userData = await userResponse.json();
           setUser(userData);
         }
-        // Heti menü lekérése
+        // Heti menü adatok
         const weeklyResponse = await fetch(`http://localhost:5162/api/HetiEtrend/Felhasznalo/${userId}`, {
           method: "GET",
-          headers: {
-            "Content-Type": "application/json"
-          }
+          headers: { "Content-Type": "application/json" }
         });
         if (weeklyResponse.ok) {
           const weeklyData = await weeklyResponse.json();
           setWeeklyMenus(weeklyData);
+          const total = weeklyData.reduce((acc: number, meal: HetiEtrend) => acc + meal.etel.calories, 0);
+          setCaloriesConsumed(total);
         }
       } catch (err) {
         console.error("Hiba a dashboard adatok lekérésekor:", err);
@@ -88,83 +87,86 @@ const DashboardPage: React.FC = () => {
     navigate("/");
   };
 
-  // Az oszlopok: hét napjai, a sorok: étkezési időpontok
   const days = ["Hétfő", "Kedd", "Szerda", "Csütörtök", "Péntek", "Szombat", "Vasárnap"];
   const mealTypes = ["Reggeli", "Ebéd", "Snack", "Vacsora"];
 
-  // Segédfüggvény: adott nap és étkezési időponthoz visszaadja a heti menü elemet (ha létezik)
-  const getMealForDayAndType = (day: string, mealType: string) => {
-    return weeklyMenus.find(
-      (menu) =>
-        menu.dayOfWeek.toLowerCase() === day.toLowerCase() &&
-        menu.mealTime.toLowerCase() === mealType.toLowerCase()
-    );
+  const handleFoodClick = (day: string, mealType: string) => {
+    setSelectedCell({ day, mealType });
+    setCurrentMealType(mealType);
+    setFoodPopupOpen(true);
   };
 
-  const renderWeeklyMenuTable = () => {
-    return (
-      <table className="weekly-menu-table">
-        <thead>
-          <tr>
-            <th>Étkezés</th>
-            {days.map((day, index) => (
-              <th key={index}>{day}</th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {mealTypes.map((mealType, rowIndex) => (
-            <tr key={rowIndex}>
-              <td>{mealType}</td>
-              {days.map((day, colIndex) => {
-                const meal = getMealForDayAndType(day, mealType);
-                return (
-                  <td key={colIndex} onClick={() => meal && setSelectedMeal(meal)}>
-                    {meal ? (
-                      <>
-                        <div className="meal-name">{meal.etel.name}</div>
-                        <div className="meal-calories">{meal.etel.calories} kcal</div>
-                      </>
-                    ) : (
-                      <span className="no-meal">Nincs étel</span>
-                    )}
-                  </td>
-                );
-              })}
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    );
+  const computeRecommendedCalories = (): number | null => {
+    if (user && user.weight && user.height && user.age && user.gender && user.activityLevel) {
+      let bmr = 0;
+      if (["férfi", "male"].includes(user.gender.toLowerCase())) {
+        bmr = 10 * user.weight + 6.25 * user.height - 5 * user.age + 5;
+      } else if (["nő", "female"].includes(user.gender.toLowerCase())) {
+        bmr = 10 * user.weight + 6.25 * user.height - 5 * user.age - 161;
+      }
+      let multiplier = 1.2;
+      switch (user.activityLevel.toLowerCase()) {
+        case "alacsony":
+          multiplier = 1.2;
+          break;
+        case "mérsékelt":
+          multiplier = 1.55;
+          break;
+        case "magas":
+          multiplier = 1.725;
+          break;
+        default:
+          multiplier = 1.2;
+          break;
+      }
+      return Math.round(bmr * multiplier);
+    }
+    return null;
   };
 
-  // Modal: étel részletes adatok, amely interakcióra jelenik meg
-  const renderMealModal = () => {
-    if (!selectedMeal) return null;
-    return (
-      <div className="modal-overlay" onClick={() => setSelectedMeal(null)}>
-        <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-          <h3>{selectedMeal.etel.name}</h3>
-          <p>Kalória: {selectedMeal.etel.calories} kcal</p>
-          <p>Fehérje: {selectedMeal.etel.protein} g</p>
-          <p>Szénhidrát: {selectedMeal.etel.carbs} g</p>
-          <p>Zsír: {selectedMeal.etel.fats} g</p>
-          <div className="modal-actions">
-            <button onClick={() => {/* Ide jön a törlés logika */}}>Ételt töröl</button>
-            <button onClick={() => {/* Ide jön a módosítás logika */}}>Ételt módosít</button>
-            <button onClick={() => setSelectedMeal(null)}>Bezár</button>
-          </div>
-        </div>
-      </div>
-    );
+  const handleFoodSelected = (food: Etel) => {
+    const recommended = computeRecommendedCalories();
+    if (recommended !== null && selectedCell) {
+      const existingMeal = weeklyMenus.find(
+        meal =>
+          meal.dayOfWeek.toLowerCase() === selectedCell.day.toLowerCase() &&
+          meal.mealTime.toLowerCase() === selectedCell.mealType.toLowerCase()
+      );
+      let newConsumed = caloriesConsumed;
+      if (existingMeal) {
+        newConsumed -= existingMeal.etel.calories;
+      }
+      newConsumed = Math.min(newConsumed + food.calories, recommended);
+      setCaloriesConsumed(newConsumed);
+      setWeeklyMenus(prev => {
+        const otherMeals = prev.filter(
+          meal =>
+            !(
+              meal.dayOfWeek.toLowerCase() === selectedCell.day.toLowerCase() &&
+              meal.mealTime.toLowerCase() === selectedCell.mealType.toLowerCase()
+            )
+        );
+        const newMeal = {
+          planId: Date.now(),
+          dayOfWeek: selectedCell.day,
+          mealTime: selectedCell.mealType,
+          quantity: 1,
+          totalCalories: food.calories,
+          etel: food
+        };
+        return [...otherMeals, newMeal];
+      });
+    }
   };
 
   if (loading) {
     return <div className="dashboard-container">Betöltés...</div>;
   }
 
+  const recommended = computeRecommendedCalories() ?? 0;
+
   return (
-    <div className="dashboard-container">
+    <div className="dashboard-container fade-in">
       {/* Bal oldali menü */}
       <aside className="dashboard-sidebar">
         <div className="sidebar-header">
@@ -178,9 +180,7 @@ const DashboardPage: React.FC = () => {
           <button onClick={() => navigate("/onboarding")}>Beállítások</button>
         </nav>
         <div className="sidebar-footer">
-          <button className="logout-button" onClick={handleLogout}>
-            Kijelentkezés
-          </button>
+          <button className="logout-button" onClick={handleLogout}>Kijelentkezés</button>
         </div>
       </aside>
 
@@ -191,25 +191,65 @@ const DashboardPage: React.FC = () => {
           <p>Itt találod a személyes adataidat és a heti menüdet.</p>
         </header>
 
-        <section className="user-info">
-          <h2>Személyes adatok</h2>
-          <ul>
-            <li>Súly: {user?.weight} kg</li>
-            <li>Magasság: {user?.height} cm</li>
-            <li>Kor: {user?.age} év</li>
-            <li>Nem: {user?.gender}</li>
-            <li>Aktivitási szint: {user?.activityLevel}</li>
-            <li>Cél testsúly: {user?.goalWeight} kg</li>
-          </ul>
-        </section>
+        {/* Felső infó sáv: Személyes adatok, Kalória számláló, Hátralévő kalória */}
+        <div className="top-info-section">
+          <div className="user-info-box">
+            <h2>Személyes adatok</h2>
+            <div className="info-grid">
+              <div className="info-item">
+                <span className="info-label">Súly:</span>
+                <span className="info-value">{user?.weight} kg</span>
+              </div>
+              <div className="info-item">
+                <span className="info-label">Magasság:</span>
+                <span className="info-value">{user?.height} cm</span>
+              </div>
+              <div className="info-item">
+                <span className="info-label">Kor:</span>
+                <span className="info-value">{user?.age} év</span>
+              </div>
+              <div className="info-item">
+                <span className="info-label">Nem:</span>
+                <span className="info-value">{user?.gender}</span>
+              </div>
+              <div className="info-item">
+                <span className="info-label">Aktivitás:</span>
+                <span className="info-value">{user?.activityLevel}</span>
+              </div>
+              <div className="info-item">
+                <span className="info-label">Cél testsúly:</span>
+                <span className="info-value">{user?.goalWeight} kg</span>
+              </div>
+            </div>
+          </div>
+          <div className="calorie-counter-box">
+            <CalorieCounter user={user} caloriesConsumed={caloriesConsumed} />
+          </div>
+          <div className="remaining-calories-box">
+            <RemainingCaloriesBox recommended={recommended} consumed={caloriesConsumed} />
+          </div>
+        </div>
 
+        {/* Heti Menü */}
         <section className="weekly-menu-section">
           <h2>Heti Menü</h2>
-          {renderWeeklyMenuTable()}
+          <WeeklyMenuTable 
+            days={days} 
+            mealTypes={mealTypes} 
+            weeklyMenus={weeklyMenus} 
+            onAddFoodClick={handleFoodClick} 
+          />
         </section>
-
-        {renderMealModal()}
       </div>
+
+      {/* Popup: Étel kiválasztása */}
+      {foodPopupOpen && (
+        <FoodSelectorPopup
+          mealType={currentMealType}
+          onFoodSelect={handleFoodSelected}
+          onClose={() => setFoodPopupOpen(false)}
+        />
+      )}
     </div>
   );
 };

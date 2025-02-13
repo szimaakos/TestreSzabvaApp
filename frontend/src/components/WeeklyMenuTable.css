@@ -1,0 +1,63 @@
+.weekly-menu-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin-top: 20px;
+    animation: fadeIn 0.5s ease-out;
+  }
+  
+  .weekly-menu-table th,
+  .weekly-menu-table td {
+    padding: 16px;
+    text-align: center;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  .weekly-menu-table th {
+    background-color: #fafafa;
+    font-weight: 600;
+    color: #333;
+  }
+  
+  .weekly-menu-table tr:hover {
+    background-color: #f9f9f9;
+  }
+  
+  .meal-name {
+    font-weight: 600;
+    color: #e30b5c;
+    margin-bottom: 4px;
+  }
+  
+  .meal-calories {
+    font-size: 14px;
+    color: #777;
+  }
+  
+  .no-meal {
+    font-size: 14px;
+    color: #999;
+    display: block;
+    margin-bottom: 8px;
+  }
+  
+  .add-food-button {
+    background-color: #e30b5c;
+    color: #fff;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    font-size: 14px;
+  }
+  
+  .add-food-button:hover {
+    background-color: #bf0950;
+  }
+  
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  
