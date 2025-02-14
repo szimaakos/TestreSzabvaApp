@@ -84,7 +84,6 @@ const OnBoardingPage: React.FC = () => {
         { value: "", label: "Válassz..." },
         { value: "Male", label: "Férfi" },
         { value: "Female", label: "Nő" },
-        { value: "Other", label: "Egyéb / nem adom meg" },
       ],
       value: gender,
       setValue: setGender,
