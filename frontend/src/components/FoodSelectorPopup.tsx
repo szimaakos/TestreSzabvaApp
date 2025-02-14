@@ -18,6 +18,7 @@ interface FoodSelectorPopupProps {
 
 const FoodSelectorPopup: React.FC<FoodSelectorPopupProps> = ({ onFoodSelect, onClose, mealType }) => {
   const [foods, setFoods] = useState<Etel[]>([]);
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     fetch("http://localhost:5162/api/Etel")
@@ -26,12 +27,25 @@ const FoodSelectorPopup: React.FC<FoodSelectorPopupProps> = ({ onFoodSelect, onC
       .catch(err => console.error("Hiba az ételek lekérésekor:", err));
   }, []);
 
+  // Szűrés csupán a keresőmező alapján
+  const filteredFoods = foods.filter(food => {
+    if (searchTerm === "") return true;
+    return food.name.toLowerCase().includes(searchTerm.toLowerCase());
+  });
+
   return (
     <div className="popup-overlay" onClick={onClose}>
       <div className="popup-content" onClick={(e) => e.stopPropagation()}>
         <h3>{mealType} Ételek</h3>
+        <input 
+          type="text" 
+          className="search-input" 
+          placeholder="Keresés..." 
+          value={searchTerm} 
+          onChange={(e) => setSearchTerm(e.target.value)} 
+        />
         <ul className="food-list">
-          {foods.map(food => (
+          {filteredFoods.map(food => (
             <li key={food.foodId} onClick={() => { onFoodSelect(food); onClose(); }}>
               <div className="food-item">
                 <span className="food-name">{food.name}</span>
