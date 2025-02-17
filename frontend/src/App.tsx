@@ -7,8 +7,13 @@ import ProgressPage from "./components/pages/ProgressPage";
 import ReceptekPage from "./components/pages/ReceptekPage";
 import DashboardPage from "./components/pages/DashboardPage";
 
+/**
+ * Gyökér App komponens:
+ * - Itt kezelünk néhány alapállapotot (pl. be van-e jelentkezve a felhasználó).
+ * - A különböző útvonalakhoz (Route) rendeljük a megfelelő oldalakat/komponenseket.
+ */
+
 function App() {
-  // Egyszerű példa: a bejelentkezett állapot
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   return (
@@ -43,7 +48,7 @@ function App() {
       {/* Dashboard */}
       <Route path="/dashboard" element={<DashboardPage />} />
 
-      {/* 404 - nem talált */}
+      {/* 404 - Nem talált */}
       {/* <Route path="*" element={<NotFoundPage />} /> */}
     </Routes>
   );

@@ -9,11 +9,14 @@ interface RemainingCaloriesBoxProps {
 const RemainingCaloriesBox: React.FC<RemainingCaloriesBoxProps> = ({ recommended, consumed }) => {
   const remaining = Math.max(recommended - consumed, 0);
   const percentage = (consumed / recommended) * 100;
+
+  // Kördiagram felrajzolásához
   const radius = 50;
   const stroke = 8;
   const normalizedRadius = radius - stroke;
   const circumference = normalizedRadius * 2 * Math.PI;
-  const strokeDashoffset = circumference - (percentage / 100) * circumference;
+  const strokeDashoffset =
+    circumference - (percentage / 100) * circumference;
 
   return (
     <div className="remaining-calories-box">
@@ -36,15 +39,16 @@ const RemainingCaloriesBox: React.FC<RemainingCaloriesBoxProps> = ({ recommended
           fill="transparent"
           strokeWidth={stroke}
           strokeDasharray={circumference}
-          style={{ strokeDashoffset, transition: "stroke-dashoffset 0.5s ease-out" }}
+          style={{
+            strokeDashoffset,
+            transition: "stroke-dashoffset 0.5s ease-out",
+          }}
           r={normalizedRadius}
           cx={radius}
           cy={radius}
         />
       </svg>
-      <div className="remaining-text">
-        {remaining} kcal
-      </div>
+      <div className="remaining-text">{remaining} kcal</div>
     </div>
   );
 };

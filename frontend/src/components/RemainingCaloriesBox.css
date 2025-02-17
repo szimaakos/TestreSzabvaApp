@@ -1,26 +1,43 @@
 .remaining-calories-box {
-    background: #fff;
-    border-radius: 8px;
-    padding: 20px;
-    text-align: center;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    animation: fadeIn 0.8s ease-out;
-  }
-  
+  background: #fff;
+  border-radius: 8px;
+  padding: 20px;
+  text-align: center;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  animation: fadeIn 0.8s ease-out;
+  margin-top: 20px;
+}
+
+.remaining-header {
+  font-size: 24px;
+  color: #e30b5c;
+  margin-bottom: 10px;
+}
+
+.progress-circle {
+  transform: rotate(-90deg);
+  display: block;
+  margin: 0 auto;
+}
+
+.remaining-text {
+  font-size: 28px;
+  font-weight: bold;
+  color: #333;
+  margin-top: 10px;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Mobilbarát */
+@media (max-width: 600px) {
   .remaining-header {
-    font-size: 24px;
-    color: #e30b5c;
-    margin-bottom: 10px;
+    font-size: 20px;
   }
-  
-  .progress-circle {
-    transform: rotate(-90deg);
-  }
-  
   .remaining-text {
-    font-size: 28px;
-    font-weight: bold;
-    color: #333;
-    margin-top: 10px;
+    font-size: 24px;
   }
-  
+}

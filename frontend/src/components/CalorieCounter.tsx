@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from 'react';
 import "./CalorieCounter.css";
 
 interface Felhasznalo {
@@ -24,14 +24,14 @@ const CalorieCounter: React.FC<CalorieCounterProps> = ({ user, caloriesConsumed 
   useEffect(() => {
     if (user && user.weight && user.height && user.age && user.gender && user.activityLevel) {
       let bmr = 0;
-      // Mifflin-St Jeor képlet alapján számoljuk a BMR-t
+      // Mifflin-St Jeor képlet
       if (["férfi", "male"].includes(user.gender.toLowerCase())) {
         bmr = 10 * user.weight + 6.25 * user.height - 5 * user.age + 5;
       } else if (["nő", "female"].includes(user.gender.toLowerCase())) {
         bmr = 10 * user.weight + 6.25 * user.height - 5 * user.age - 161;
       }
       
-      // Aktiválási szintnek megfelelő szorzó az onboarding flow értékei alapján
+      // Aktivitási szorzó
       let activityMultiplier = 1.2;
       switch (user.activityLevel.toLowerCase()) {
         case "sedentary":
@@ -54,18 +54,15 @@ const CalorieCounter: React.FC<CalorieCounterProps> = ({ user, caloriesConsumed 
           break;
       }
       
-      // Karbantartó kalória számítása
       const maintenanceCalories = Math.round(bmr * activityMultiplier);
       
-      // Ha a cél testsúly és céldátum meg van adva, számoljuk ki a napi kalória célt
+      // Ha a cél testsúly és a céldátum be van állítva
       if (user.goalWeight !== undefined && user.goalDate) {
         const currentDate = new Date();
         const targetDate = new Date(user.goalDate);
         const diffTime = targetDate.getTime() - currentDate.getTime();
         const diffDays = Math.ceil(diffTime / (1000 * 3600 * 24));
         if (diffDays > 0) {
-          // Ha súlycsökkenés a cél, akkor a testsúly különbség pozitív
-          // 1 kg testsúly változáshoz ~7700 kcal szükséges változás
           const weightDiff = user.weight - user.goalWeight; 
           const totalCalorieChangeNeeded = weightDiff * 7700; 
           const dailyCalorieAdjustment = totalCalorieChangeNeeded / diffDays;
@@ -76,8 +73,8 @@ const CalorieCounter: React.FC<CalorieCounterProps> = ({ user, caloriesConsumed 
           return;
         }
       }
-      
-      // Ha nincs célnak megfelelő adat, akkor a karbantartó értéket használjuk
+
+      // Ha nincs konkrét cél, marad a karbantartó érték
       setDailyCalories(maintenanceCalories);
       setWeeklyCalories(maintenanceCalories * 7);
     }
@@ -92,10 +89,10 @@ const CalorieCounter: React.FC<CalorieCounterProps> = ({ user, caloriesConsumed 
           <p>Ajánlott heti kalória: <strong>{weeklyCalories} kcal</strong></p>
         </div>
       ) : (
-        <p>Töltse ki a profilját a kalória cél kiszámításához!</p>
+        <p>Töltsd ki a profilodat az ajánlott kalória kiszámításához!</p>
       )}
       <div className="calories-status">
-        <p>Elfogyasztott kalória: {caloriesConsumed} kcal</p>
+        <p>Elfogyasztott kalória ma: <strong>{caloriesConsumed} kcal</strong></p>
       </div>
     </div>
   );

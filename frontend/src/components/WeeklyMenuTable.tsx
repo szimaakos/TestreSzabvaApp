@@ -24,10 +24,18 @@ interface WeeklyMenuTableProps {
   mealTypes: string[];
   weeklyMenus: HetiEtrend[];
   onAddFoodClick: (day: string, mealType: string) => void;
+  currentDayName: string; // Annak a napnak a megnevezése, ami éppen "ma" van
 }
 
-const WeeklyMenuTable: React.FC<WeeklyMenuTableProps> = ({ days, mealTypes, weeklyMenus, onAddFoodClick }) => {
+const WeeklyMenuTable: React.FC<WeeklyMenuTableProps> = ({
+  days,
+  mealTypes,
+  weeklyMenus,
+  onAddFoodClick,
+  currentDayName
+}) => {
   
+  // Megkeresi a weeklyMenus tömbben, hogy van-e már felvett étel az adott nap-mealType kombinációhoz
   const getMealForDayAndType = (day: string, mealType: string) => {
     return weeklyMenus.find(
       (menu) =>
@@ -52,6 +60,10 @@ const WeeklyMenuTable: React.FC<WeeklyMenuTableProps> = ({ days, mealTypes, week
             <td>{mealType}</td>
             {days.map((day, colIndex) => {
               const meal = getMealForDayAndType(day, mealType);
+
+              // A gomb aktív-e? Csak akkor lehessen kattintani, ha day == currentDayName
+              const isToday = day.toLowerCase() === currentDayName.toLowerCase();
+
               return (
                 <td key={colIndex}>
                   {meal ? (
@@ -65,9 +77,15 @@ const WeeklyMenuTable: React.FC<WeeklyMenuTableProps> = ({ days, mealTypes, week
                   <button
                     className="add-food-button"
                     onClick={() => onAddFoodClick(day, mealType)}
+                    disabled={!isToday}
                   >
                     {meal ? "Szerkesztés" : "Étel hozzáadása"}
                   </button>
+                  {!isToday && (
+                    <div className="disabled-text">
+                      Csak a mai naphoz adhatsz hozzá!
+                    </div>
+                  )}
                 </td>
               );
             })}

@@ -17,6 +17,7 @@ interface Felhasznalo {
   gender?: string;
   activityLevel?: string;
   goalWeight?: number;
+  goalDate?: string;
 }
 
 interface Etel {
@@ -38,9 +39,39 @@ const DashboardPage: React.FC = () => {
   const [caloriesConsumed, setCaloriesConsumed] = useState<number>(0);
   const [foodPopupOpen, setFoodPopupOpen] = useState<boolean>(false);
   const [currentMealType, setCurrentMealType] = useState<string>("");
-  const [selectedCell, setSelectedCell] = useState<{ day: string; mealType: string } | null>(null);
+  const [selectedCell, setSelectedCell] = useState<{
+    day: string;
+    mealType: string;
+  } | null>(null);
+
+  // A mai nap kiszámítása (0 = vasárnap, 1 = hétfő stb.)
+  // Mivel a tömb: ["Hétfő", "Kedd", ... "Vasárnap"], kicsit igazítunk a getDay()-hez.
+  const days = ["Hétfő", "Kedd", "Szerda", "Csütörtök", "Péntek", "Szombat", "Vasárnap"];
+  const dayMap: { [key: number]: string } = {
+    1: "Hétfő",
+    2: "Kedd",
+    3: "Szerda",
+    4: "Csütörtök",
+    5: "Péntek",
+    6: "Szombat",
+    0: "Vasárnap",
+  };
+  const todayDayName = dayMap[new Date().getDay()];
+
+  const mealTypes = ["Reggeli", "Ebéd", "Snack", "Vacsora"];
 
   useEffect(() => {
+    // Ha kinyitjuk a dashboardot, ellenőrizzük, hogy új nap van-e:
+    // Ha igen, akkor kinullázzuk a "caloriesConsumed" értéket (a felhasználó "mai" fogyasztását).
+    const currentDateStr = new Date().toDateString();
+    const lastDateStr = localStorage.getItem("lastDate") || "";
+
+    if (lastDateStr !== currentDateStr) {
+      // Új nap van, vágjunk bele tiszta lappal
+      setCaloriesConsumed(0);
+      localStorage.setItem("lastDate", currentDateStr);
+    }
+
     const fetchData = async () => {
       const token = localStorage.getItem("authToken");
       const userId = localStorage.getItem("userId");
@@ -49,27 +80,39 @@ const DashboardPage: React.FC = () => {
         return;
       }
       try {
-        // Felhasználó adatok
+        // Felhasználó adatok lekérése
         const userResponse = await fetch(`http://localhost:5162/api/Felhasznalo/${userId}`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`
-          }
+            Authorization: `Bearer ${token}`,
+          },
         });
         if (userResponse.ok) {
           const userData = await userResponse.json();
           setUser(userData);
         }
-        // Heti menü adatok
-        const weeklyResponse = await fetch(`http://localhost:5162/api/HetiEtrend/Felhasznalo/${userId}`, {
-          method: "GET",
-          headers: { "Content-Type": "application/json" }
-        });
+
+        // Heti menü adatok lekérése
+        const weeklyResponse = await fetch(
+          `http://localhost:5162/api/HetiEtrend/Felhasznalo/${userId}`,
+          {
+            method: "GET",
+            headers: { "Content-Type": "application/json" },
+          }
+        );
         if (weeklyResponse.ok) {
           const weeklyData = await weeklyResponse.json();
           setWeeklyMenus(weeklyData);
-          const total = weeklyData.reduce((acc: number, meal: HetiEtrend) => acc + meal.etel.calories, 0);
+
+          // Korábbi kalória-számlálás folytatása (ha ugyanazon a napon vagyunk)
+          // Összesítjük a "weeklyData"-ban szereplő ételek kalóriáit,
+          // de most feltételezzük, hogy a user "caloriesConsumed" a ma felvitt ételek összessége.
+          // Mivel a feladat szerint mindig nullázunk a nap elején, ezt egyszerűsítjük:
+          const total = weeklyData.reduce(
+            (acc: number, meal: HetiEtrend) => acc + meal.etel.calories,
+            0
+          );
           setCaloriesConsumed(total);
         }
       } catch (err) {
@@ -87,15 +130,13 @@ const DashboardPage: React.FC = () => {
     navigate("/");
   };
 
-  const days = ["Hétfő", "Kedd", "Szerda", "Csütörtök", "Péntek", "Szombat", "Vasárnap"];
-  const mealTypes = ["Reggeli", "Ebéd", "Snack", "Vacsora"];
-
   const handleFoodClick = (day: string, mealType: string) => {
     setSelectedCell({ day, mealType });
     setCurrentMealType(mealType);
     setFoodPopupOpen(true);
   };
 
+  // Kiszámoljuk a becsült napi ajánlott kalóriát
   const computeRecommendedCalories = (): number | null => {
     if (user && user.weight && user.height && user.age && user.gender && user.activityLevel) {
       let bmr = 0;
@@ -124,35 +165,43 @@ const DashboardPage: React.FC = () => {
     return null;
   };
 
+  // Ha kiválasztunk egy ételt a popupból
   const handleFoodSelected = (food: Etel) => {
     const recommended = computeRecommendedCalories();
     if (recommended !== null && selectedCell) {
+      // Ha már volt korábban kitöltött étel ezen a cellán, először annak kalóriáját kivonjuk
       const existingMeal = weeklyMenus.find(
-        meal =>
+        (meal) =>
           meal.dayOfWeek.toLowerCase() === selectedCell.day.toLowerCase() &&
           meal.mealTime.toLowerCase() === selectedCell.mealType.toLowerCase()
       );
+
       let newConsumed = caloriesConsumed;
       if (existingMeal) {
         newConsumed -= existingMeal.etel.calories;
       }
-      newConsumed = Math.min(newConsumed + food.calories, recommended);
+      // Hozzáadjuk az új étel kalóriáját
+      newConsumed += food.calories;
+
+      // Figyeljünk rá, hogy a fogyasztás ne menjen extrém fölé; de ez opcionális
       setCaloriesConsumed(newConsumed);
-      setWeeklyMenus(prev => {
+
+      // Frissítsük a WeeklyMenu state-et
+      setWeeklyMenus((prev) => {
         const otherMeals = prev.filter(
-          meal =>
+          (meal) =>
             !(
               meal.dayOfWeek.toLowerCase() === selectedCell.day.toLowerCase() &&
               meal.mealTime.toLowerCase() === selectedCell.mealType.toLowerCase()
             )
         );
-        const newMeal = {
+        const newMeal: HetiEtrend = {
           planId: Date.now(),
           dayOfWeek: selectedCell.day,
           mealTime: selectedCell.mealType,
           quantity: 1,
           totalCalories: food.calories,
-          etel: food
+          etel: food,
         };
         return [...otherMeals, newMeal];
       });
@@ -180,7 +229,9 @@ const DashboardPage: React.FC = () => {
           <button onClick={() => navigate("/onboarding")}>Beállítások</button>
         </nav>
         <div className="sidebar-footer">
-          <button className="logout-button" onClick={handleLogout}>Kijelentkezés</button>
+          <button className="logout-button" onClick={handleLogout}>
+            Kijelentkezés
+          </button>
         </div>
       </aside>
 
@@ -233,13 +284,15 @@ const DashboardPage: React.FC = () => {
         {/* Heti Menü */}
         <section className="weekly-menu-section">
           <h2>Heti Menü</h2>
-          <WeeklyMenuTable 
-            days={days} 
-            mealTypes={mealTypes} 
-            weeklyMenus={weeklyMenus} 
-            onAddFoodClick={handleFoodClick} 
+          <WeeklyMenuTable
+            days={days}
+            mealTypes={mealTypes}
+            weeklyMenus={weeklyMenus}
+            onAddFoodClick={handleFoodClick}
+            currentDayName={todayDayName} // Csak a mai naphoz engedjük a hozzárendelést
           />
         </section>
+
       </div>
 
       {/* Popup: Étel kiválasztása */}

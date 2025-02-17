@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import "./FoodSelectorPopup.css";
 
 interface Etel {
@@ -16,18 +16,24 @@ interface FoodSelectorPopupProps {
   mealType: string;
 }
 
-const FoodSelectorPopup: React.FC<FoodSelectorPopupProps> = ({ onFoodSelect, onClose, mealType }) => {
+const FoodSelectorPopup: React.FC<FoodSelectorPopupProps> = ({
+  onFoodSelect,
+  onClose,
+  mealType
+}) => {
   const [foods, setFoods] = useState<Etel[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
+    // Példa endpoint: "http://localhost:5162/api/Etel"
+    // Itt az ételek lekérése a backendről
     fetch("http://localhost:5162/api/Etel")
       .then(response => response.json())
       .then(data => setFoods(data))
       .catch(err => console.error("Hiba az ételek lekérésekor:", err));
   }, []);
 
-  // Szűrés csupán a keresőmező alapján
+  // Keresőmező szerinti szűrés
   const filteredFoods = foods.filter(food => {
     if (searchTerm === "") return true;
     return food.name.toLowerCase().includes(searchTerm.toLowerCase());
@@ -37,16 +43,22 @@ const FoodSelectorPopup: React.FC<FoodSelectorPopupProps> = ({ onFoodSelect, onC
     <div className="popup-overlay" onClick={onClose}>
       <div className="popup-content" onClick={(e) => e.stopPropagation()}>
         <h3>{mealType} Ételek</h3>
-        <input 
-          type="text" 
-          className="search-input" 
-          placeholder="Keresés..." 
-          value={searchTerm} 
-          onChange={(e) => setSearchTerm(e.target.value)} 
+        <input
+          type="text"
+          className="search-input"
+          placeholder="Keresés..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
         />
         <ul className="food-list">
           {filteredFoods.map(food => (
-            <li key={food.foodId} onClick={() => { onFoodSelect(food); onClose(); }}>
+            <li
+              key={food.foodId}
+              onClick={() => {
+                onFoodSelect(food);
+                onClose();
+              }}
+            >
               <div className="food-item">
                 <span className="food-name">{food.name}</span>
                 <div className="food-macros">

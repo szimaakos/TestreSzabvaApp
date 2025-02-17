@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./OnBoardingPage.css";
 
-// Létező típusok
 interface NumberStep {
   field: string;
   label: string;
@@ -21,7 +20,6 @@ interface SelectStep {
   setValue: React.Dispatch<React.SetStateAction<string>>;
 }
 
-// Új: DateStep típus a dátum bekéréséhez
 interface DateStep {
   field: string;
   label: string;
@@ -36,21 +34,17 @@ type Step = NumberStep | SelectStep | DateStep;
 const OnBoardingPage: React.FC = () => {
   const navigate = useNavigate();
 
-  // Meglévő mezők állapotai
   const [weight, setWeight] = useState<number | undefined>(undefined);
   const [height, setHeight] = useState<number | undefined>(undefined);
   const [age, setAge] = useState<number | undefined>(undefined);
   const [gender, setGender] = useState<string>("");
   const [activityLevel, setActivityLevel] = useState<string>("");
   const [goalWeight, setGoalWeight] = useState<number | undefined>(undefined);
-  
-  // Új mező: céldátum (input type="date", string formátumú érték pl. "2025-12-31")
   const [goalDate, setGoalDate] = useState<string>("");
 
   const [currentStep, setCurrentStep] = useState(0);
   const [errorMsg, setErrorMsg] = useState("");
 
-  // Lépések definiálása: az új lépés a végén jelenik meg
   const steps: Step[] = [
     {
       field: "weight",
@@ -94,11 +88,11 @@ const OnBoardingPage: React.FC = () => {
       type: "select",
       options: [
         { value: "", label: "Válassz..." },
-        { value: "Sedentary", label: "Ülő (ülő munka, kevés mozgás)" },
-        { value: "Light", label: "Enyhén aktív (heti 1-2 edzés)" },
-        { value: "Moderate", label: "Közepesen aktív (heti 3-4 edzés)" },
-        { value: "Active", label: "Aktív (heti 5+ edzés)" },
-        { value: "VeryActive", label: "Nagyon aktív (napi edzés, fizikai munka)" },
+        { value: "Sedentary", label: "Ülő" },
+        { value: "Light", label: "Enyhén aktív" },
+        { value: "Moderate", label: "Közepesen aktív" },
+        { value: "Active", label: "Aktív" },
+        { value: "VeryActive", label: "Nagyon aktív" },
       ],
       value: activityLevel,
       setValue: setActivityLevel,
@@ -123,7 +117,6 @@ const OnBoardingPage: React.FC = () => {
 
   const totalSteps = steps.length;
 
-  // Következő lépés: validáljuk az aktuális mezőt
   const handleNext = () => {
     const currentData = steps[currentStep];
     if (currentData.type === "number") {
@@ -146,12 +139,10 @@ const OnBoardingPage: React.FC = () => {
     if (currentStep < totalSteps - 1) {
       setCurrentStep(currentStep + 1);
     } else {
-      // Utolsó lépés: adatküldés
       handleSubmit();
     }
   };
 
-  // Visszalépés a korábbi lépésre
   const handleBack = () => {
     if (currentStep > 0) {
       setErrorMsg("");
@@ -159,7 +150,6 @@ const OnBoardingPage: React.FC = () => {
     }
   };
 
-  // Végső adatküldés
   const handleSubmit = async () => {
     if (!weight || !height || !age || !gender || !activityLevel || !goalWeight || goalDate === "") {
       setErrorMsg("Kérlek, tölts ki minden mezőt!");
@@ -167,7 +157,6 @@ const OnBoardingPage: React.FC = () => {
     }
     setErrorMsg("");
 
-    // Token és userId lekérése a localStorage-ból
     const token = localStorage.getItem("authToken");
     const userId = localStorage.getItem("userId");
     if (!userId || !token) {
@@ -189,7 +178,7 @@ const OnBoardingPage: React.FC = () => {
           gender,
           activityLevel,
           goalWeight,
-          goalDate,      // Új mező elküldése
+          goalDate,
           isProfileComplete: true,
         }),
       });
@@ -204,7 +193,6 @@ const OnBoardingPage: React.FC = () => {
     }
   };
 
-  // Az aktuális lépés mezőjének renderelése
   const renderCurrentStep = () => {
     const step = steps[currentStep];
     if (step.type === "number") {
@@ -269,7 +257,6 @@ const OnBoardingPage: React.FC = () => {
           Kérjük, add meg az adataidat lépésről lépésre!
         </p>
 
-        {/* Progress bar */}
         <div className="progress-bar">
           <div
             className="progress"
