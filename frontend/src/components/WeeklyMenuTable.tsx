@@ -24,6 +24,8 @@ interface WeeklyMenuTableProps {
   mealTypes: string[];
   weeklyMenus: HetiEtrend[];
   onAddFoodClick: (day: string, mealType: string) => void;
+  onDeleteMeal: (day: string, mealType: string) => void;
+  onChangeQuantity: (day: string, mealType: string) => void;
   currentDayName: string; // Annak a napnak a megnevezése, ami éppen "ma" van
 }
 
@@ -32,6 +34,8 @@ const WeeklyMenuTable: React.FC<WeeklyMenuTableProps> = ({
   mealTypes,
   weeklyMenus,
   onAddFoodClick,
+  onDeleteMeal,
+  onChangeQuantity,
   currentDayName
 }) => {
   
@@ -60,27 +64,54 @@ const WeeklyMenuTable: React.FC<WeeklyMenuTableProps> = ({
             <td>{mealType}</td>
             {days.map((day, colIndex) => {
               const meal = getMealForDayAndType(day, mealType);
-
-              // A gomb aktív-e? Csak akkor lehessen kattintani, ha day == currentDayName
+              // A gombok aktívak-e? Csak akkor lehessen kattintani, ha day === currentDayName
               const isToday = day.toLowerCase() === currentDayName.toLowerCase();
 
               return (
                 <td key={colIndex}>
                   {meal ? (
                     <>
-                      <div className="meal-name">{meal.etel.name}</div>
-                      <div className="meal-calories">{meal.etel.calories} kcal</div>
+                      <div className="meal-info">
+                        <div className="meal-name">{meal.etel.name}</div>
+                        <div className="meal-calories">{meal.totalCalories} kcal</div>
+                        <div className="meal-quantity">Adag: {meal.quantity}</div>
+                      </div>
+                      <div className="meal-actions">
+                        <button
+                          className="edit-button"
+                          onClick={() => onAddFoodClick(day, mealType)}
+                          disabled={!isToday}
+                        >
+                          Szerkesztés
+                        </button>
+                        <button
+                          className="delete-button"
+                          onClick={() => onDeleteMeal(day, mealType)}
+                          disabled={!isToday}
+                        >
+                          Törlés
+                        </button>
+                        <button
+                          className="quantity-button"
+                          onClick={() => onChangeQuantity(day, mealType)}
+                          disabled={!isToday}
+                        >
+                          Adag beállítása
+                        </button>
+                      </div>
                     </>
                   ) : (
-                    <span className="no-meal">Nincs étel</span>
+                    <>
+                      <span className="no-meal">Nincs étel</span>
+                      <button
+                        className="add-food-button"
+                        onClick={() => onAddFoodClick(day, mealType)}
+                        disabled={!isToday}
+                      >
+                        Étel hozzáadása
+                      </button>
+                    </>
                   )}
-                  <button
-                    className="add-food-button"
-                    onClick={() => onAddFoodClick(day, mealType)}
-                    disabled={!isToday}
-                  >
-                    {meal ? "Szerkesztés" : "Étel hozzáadása"}
-                  </button>
                   {!isToday && (
                     <div className="disabled-text">
                       Csak a mai naphoz adhatsz hozzá!

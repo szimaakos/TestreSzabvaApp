@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import CalorieCounter from "../CalorieCounter";
 import FoodSelectorPopup from "../FoodSelectorPopup";
 import RemainingCaloriesBox from "../RemainingCaloriesBox";
 import WeeklyMenuTable, { HetiEtrend } from "../WeeklyMenuTable";
+import QuantitySelectorModal from "../QuantitySelectorModal";
 import "./DashboardPage.css";
 
 interface Felhasznalo {
@@ -18,6 +18,7 @@ interface Felhasznalo {
   activityLevel?: string;
   goalWeight?: number;
   goalDate?: string;
+  calorieGoal?: number;
 }
 
 interface Etel {
@@ -35,17 +36,17 @@ const DashboardPage: React.FC = () => {
   const [weeklyMenus, setWeeklyMenus] = useState<HetiEtrend[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Kalória és popup állapotok
+  // Napi kalóriabevitel és popup állapotok
   const [caloriesConsumed, setCaloriesConsumed] = useState<number>(0);
   const [foodPopupOpen, setFoodPopupOpen] = useState<boolean>(false);
   const [currentMealType, setCurrentMealType] = useState<string>("");
-  const [selectedCell, setSelectedCell] = useState<{
-    day: string;
-    mealType: string;
-  } | null>(null);
+  const [selectedCell, setSelectedCell] = useState<{ day: string; mealType: string } | null>(null);
 
-  // A mai nap kiszámítása (0 = vasárnap, 1 = hétfő stb.)
-  // Mivel a tömb: ["Hétfő", "Kedd", ... "Vasárnap"], kicsit igazítunk a getDay()-hez.
+  // Állapotok az adag módosító modalhoz
+  const [quantityModalOpen, setQuantityModalOpen] = useState<boolean>(false);
+  const [selectedQuantityCell, setSelectedQuantityCell] = useState<{ day: string; mealType: string } | null>(null);
+
+  // Napok és étkezési típusok
   const days = ["Hétfő", "Kedd", "Szerda", "Csütörtök", "Péntek", "Szombat", "Vasárnap"];
   const dayMap: { [key: number]: string } = {
     1: "Hétfő",
@@ -57,17 +58,13 @@ const DashboardPage: React.FC = () => {
     0: "Vasárnap",
   };
   const todayDayName = dayMap[new Date().getDay()];
-
   const mealTypes = ["Reggeli", "Ebéd", "Snack", "Vacsora"];
 
   useEffect(() => {
-    // Ha kinyitjuk a dashboardot, ellenőrizzük, hogy új nap van-e:
-    // Ha igen, akkor kinullázzuk a "caloriesConsumed" értéket (a felhasználó "mai" fogyasztását).
+    // Napváltás esetén reseteljük a napi kalóriákat
     const currentDateStr = new Date().toDateString();
     const lastDateStr = localStorage.getItem("lastDate") || "";
-
     if (lastDateStr !== currentDateStr) {
-      // Új nap van, vágjunk bele tiszta lappal
       setCaloriesConsumed(0);
       localStorage.setItem("lastDate", currentDateStr);
     }
@@ -80,7 +77,7 @@ const DashboardPage: React.FC = () => {
         return;
       }
       try {
-        // Felhasználó adatok lekérése
+        // Felhasználó adatainak lekérése
         const userResponse = await fetch(`http://localhost:5162/api/Felhasznalo/${userId}`, {
           method: "GET",
           headers: {
@@ -93,26 +90,15 @@ const DashboardPage: React.FC = () => {
           setUser(userData);
         }
 
-        // Heti menü adatok lekérése
-        const weeklyResponse = await fetch(
-          `http://localhost:5162/api/HetiEtrend/Felhasznalo/${userId}`,
-          {
-            method: "GET",
-            headers: { "Content-Type": "application/json" },
-          }
-        );
+        // Heti menü lekérése
+        const weeklyResponse = await fetch(`http://localhost:5162/api/HetiEtrend/Felhasznalo/${userId}`, {
+          method: "GET",
+          headers: { "Content-Type": "application/json" },
+        });
         if (weeklyResponse.ok) {
           const weeklyData = await weeklyResponse.json();
           setWeeklyMenus(weeklyData);
-
-          // Korábbi kalória-számlálás folytatása (ha ugyanazon a napon vagyunk)
-          // Összesítjük a "weeklyData"-ban szereplő ételek kalóriáit,
-          // de most feltételezzük, hogy a user "caloriesConsumed" a ma felvitt ételek összessége.
-          // Mivel a feladat szerint mindig nullázunk a nap elején, ezt egyszerűsítjük:
-          const total = weeklyData.reduce(
-            (acc: number, meal: HetiEtrend) => acc + meal.etel.calories,
-            0
-          );
+          const total = weeklyData.reduce((acc: number, meal: HetiEtrend) => acc + meal.etel.calories, 0);
           setCaloriesConsumed(total);
         }
       } catch (err) {
@@ -130,63 +116,29 @@ const DashboardPage: React.FC = () => {
     navigate("/");
   };
 
+  // Étel kiválasztása esetén (szerkesztés vagy hozzáadás)
   const handleFoodClick = (day: string, mealType: string) => {
     setSelectedCell({ day, mealType });
     setCurrentMealType(mealType);
     setFoodPopupOpen(true);
   };
 
-  // Kiszámoljuk a becsült napi ajánlott kalóriát
-  const computeRecommendedCalories = (): number | null => {
-    if (user && user.weight && user.height && user.age && user.gender && user.activityLevel) {
-      let bmr = 0;
-      if (["férfi", "male"].includes(user.gender.toLowerCase())) {
-        bmr = 10 * user.weight + 6.25 * user.height - 5 * user.age + 5;
-      } else if (["nő", "female"].includes(user.gender.toLowerCase())) {
-        bmr = 10 * user.weight + 6.25 * user.height - 5 * user.age - 161;
-      }
-      let multiplier = 1.2;
-      switch (user.activityLevel.toLowerCase()) {
-        case "alacsony":
-          multiplier = 1.2;
-          break;
-        case "mérsékelt":
-          multiplier = 1.55;
-          break;
-        case "magas":
-          multiplier = 1.725;
-          break;
-        default:
-          multiplier = 1.2;
-          break;
-      }
-      return Math.round(bmr * multiplier);
-    }
-    return null;
-  };
-
-  // Ha kiválasztunk egy ételt a popupból
+  // Új étel beállítása – lecseréli a meglévő ételt vagy adja hozzá, ha még nincs
   const handleFoodSelected = (food: Etel) => {
     const recommended = computeRecommendedCalories();
     if (recommended !== null && selectedCell) {
-      // Ha már volt korábban kitöltött étel ezen a cellán, először annak kalóriáját kivonjuk
       const existingMeal = weeklyMenus.find(
         (meal) =>
           meal.dayOfWeek.toLowerCase() === selectedCell.day.toLowerCase() &&
           meal.mealTime.toLowerCase() === selectedCell.mealType.toLowerCase()
       );
-
       let newConsumed = caloriesConsumed;
       if (existingMeal) {
-        newConsumed -= existingMeal.etel.calories;
+        newConsumed -= existingMeal.totalCalories;
       }
-      // Hozzáadjuk az új étel kalóriáját
+      // Alapértelmezett mennyiség: 1 adag
       newConsumed += food.calories;
-
-      // Figyeljünk rá, hogy a fogyasztás ne menjen extrém fölé; de ez opcionális
       setCaloriesConsumed(newConsumed);
-
-      // Frissítsük a WeeklyMenu state-et
       setWeeklyMenus((prev) => {
         const otherMeals = prev.filter(
           (meal) =>
@@ -208,6 +160,114 @@ const DashboardPage: React.FC = () => {
     }
   };
 
+  // Étkezés törlése – csak a mai nap esetén
+  const handleDeleteMeal = (day: string, mealType: string) => {
+    if (day.toLowerCase() !== todayDayName.toLowerCase()) return;
+    const mealToDelete = weeklyMenus.find(
+      (meal) =>
+        meal.dayOfWeek.toLowerCase() === day.toLowerCase() &&
+        meal.mealTime.toLowerCase() === mealType.toLowerCase()
+    );
+    if (mealToDelete) {
+      setWeeklyMenus((prev) => prev.filter((meal) => meal.planId !== mealToDelete.planId));
+      setCaloriesConsumed((prev) => prev - mealToDelete.totalCalories);
+    }
+  };
+
+  // Adag módosítása – itt a modális ablakot nyitjuk meg
+  const handleChangeQuantity = (day: string, mealType: string) => {
+    if (day.toLowerCase() !== todayDayName.toLowerCase()) return;
+    setSelectedQuantityCell({ day, mealType });
+    setQuantityModalOpen(true);
+  };
+
+  // Az új adag mentése a modális ablakból
+  const handleQuantityConfirm = (newQuantity: number) => {
+    if (selectedQuantityCell) {
+      const mealToUpdate = weeklyMenus.find(
+        (meal) =>
+          meal.dayOfWeek.toLowerCase() === selectedQuantityCell.day.toLowerCase() &&
+          meal.mealTime.toLowerCase() === selectedQuantityCell.mealType.toLowerCase()
+      );
+      if (mealToUpdate) {
+        const oldTotalCalories = mealToUpdate.totalCalories;
+        const newTotalCalories = mealToUpdate.etel.calories * newQuantity;
+        setCaloriesConsumed((prev) => prev - oldTotalCalories + newTotalCalories);
+        setWeeklyMenus((prev) =>
+          prev.map((meal) =>
+            meal.planId === mealToUpdate.planId
+              ? { ...meal, quantity: newQuantity, totalCalories: newTotalCalories }
+              : meal
+          )
+        );
+      }
+      setSelectedQuantityCell(null);
+      setQuantityModalOpen(false);
+    }
+  };
+
+  // Napi ajánlott kalória számítása
+  const computeRecommendedCalories = (): number | null => {
+    if (user && user.weight && user.height && user.age && user.gender && user.activityLevel) {
+      if (user.calorieGoal) {
+        return Math.round(user.calorieGoal);
+      }
+      let bmr = 0;
+      if (["férfi", "male"].includes(user.gender.toLowerCase())) {
+        bmr = 10 * user.weight + 6.25 * user.height - 5 * user.age + 5;
+      } else if (["nő", "female"].includes(user.gender.toLowerCase())) {
+        bmr = 10 * user.weight + 6.25 * user.height - 5 * user.age - 161;
+      }
+      let multiplier = 1.2;
+      switch (user.activityLevel.toLowerCase()) {
+        case "alacsony":
+        case "sedentary":
+          multiplier = 1.2;
+          break;
+        case "mérsékelt":
+        case "light":
+          multiplier = 1.55;
+          break;
+        case "magas":
+        case "moderate":
+          multiplier = 1.725;
+          break;
+        case "active":
+        case "veryactive":
+          multiplier = 1.9;
+          break;
+        default:
+          multiplier = 1.2;
+          break;
+      }
+      const maintenanceCalories = Math.round(bmr * multiplier);
+      if (user.goalWeight && user.goalDate && user.weight) {
+        const currentDate = new Date();
+        const targetDate = new Date(user.goalDate);
+        const daysRemaining = Math.ceil(
+          (targetDate.getTime() - currentDate.getTime()) / (1000 * 3600 * 24)
+        );
+        if (daysRemaining > 0) {
+          const weightDifference = user.weight - user.goalWeight;
+          const totalCalorieDifference = weightDifference * 7700;
+          const dailyCalorieAdjustment = totalCalorieDifference / daysRemaining;
+          let recommended = Math.round(maintenanceCalories - dailyCalorieAdjustment);
+          const minCalories = user.gender.toLowerCase().includes("férfi") ? 1500 : 1200;
+          const maxCalories = maintenanceCalories + 1000;
+          if (recommended < minCalories) {
+            recommended = minCalories;
+          }
+          if (recommended > maxCalories) {
+            recommended = maxCalories;
+          }
+          return recommended;
+        }
+      }
+      return maintenanceCalories;
+    }
+    return null;
+  };
+
   if (loading) {
     return <div className="dashboard-container">Betöltés...</div>;
   }
@@ -216,7 +276,6 @@ const DashboardPage: React.FC = () => {
 
   return (
     <div className="dashboard-container fade-in">
-      {/* Bal oldali menü */}
       <aside className="dashboard-sidebar">
         <div className="sidebar-header">
           <h2>TestreSzabva</h2>
@@ -235,14 +294,12 @@ const DashboardPage: React.FC = () => {
         </div>
       </aside>
 
-      {/* Fő tartalom */}
       <div className="dashboard-content">
         <header className="content-header">
           <h1>Üdv, {user?.userName}!</h1>
-          <p>Itt találod a személyes adataidat és a heti menüdet.</p>
+          <p>Itt találod a személyes adataidat, a napi kalória célodat és a heti menüdet.</p>
         </header>
 
-        {/* Felső infó sáv: Személyes adatok, Kalória számláló, Hátralévő kalória */}
         <div className="top-info-section">
           <div className="user-info-box">
             <h2>Személyes adatok</h2>
@@ -271,17 +328,20 @@ const DashboardPage: React.FC = () => {
                 <span className="info-label">Cél testsúly:</span>
                 <span className="info-value">{user?.goalWeight} kg</span>
               </div>
+              <div className="info-item">
+                <span className="info-label">Céldátum:</span>
+                <span className="info-value">
+                  {user?.goalDate ? new Date(user.goalDate).toLocaleDateString() : "Nincs megadva"}
+                </span>
+              </div>
             </div>
           </div>
-          <div className="calorie-counter-box">
-            <CalorieCounter user={user} caloriesConsumed={caloriesConsumed} />
-          </div>
+
           <div className="remaining-calories-box">
             <RemainingCaloriesBox recommended={recommended} consumed={caloriesConsumed} />
           </div>
         </div>
 
-        {/* Heti Menü */}
         <section className="weekly-menu-section">
           <h2>Heti Menü</h2>
           <WeeklyMenuTable
@@ -289,18 +349,35 @@ const DashboardPage: React.FC = () => {
             mealTypes={mealTypes}
             weeklyMenus={weeklyMenus}
             onAddFoodClick={handleFoodClick}
-            currentDayName={todayDayName} // Csak a mai naphoz engedjük a hozzárendelést
+            onDeleteMeal={handleDeleteMeal}
+            onChangeQuantity={handleChangeQuantity}
+            currentDayName={todayDayName}
           />
         </section>
-
       </div>
 
-      {/* Popup: Étel kiválasztása */}
       {foodPopupOpen && (
         <FoodSelectorPopup
           mealType={currentMealType}
           onFoodSelect={handleFoodSelected}
           onClose={() => setFoodPopupOpen(false)}
+        />
+      )}
+
+      {quantityModalOpen && selectedQuantityCell && (
+        <QuantitySelectorModal
+          initialQuantity={
+            (() => {
+              const meal = weeklyMenus.find(
+                (m) =>
+                  m.dayOfWeek.toLowerCase() === selectedQuantityCell.day.toLowerCase() &&
+                  m.mealTime.toLowerCase() === selectedQuantityCell.mealType.toLowerCase()
+              );
+              return meal ? meal.quantity : 1;
+            })()
+          }
+          onConfirm={handleQuantityConfirm}
+          onClose={() => setQuantityModalOpen(false)}
         />
       )}
     </div>
