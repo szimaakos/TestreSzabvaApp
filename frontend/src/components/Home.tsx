@@ -7,8 +7,6 @@ import weeklyschedule from "./schedule.jpeg";
 import ingredientbook from "./egg.jpeg";
 import communityhealth from "./community.jpeg";
 
-// A CSS-ben NINCS max-width, 
-// és figyelünk, hogy ne lógjunk túl horizontálisan.
 import "./Home.css";
 
 type HomeProps = {
@@ -53,16 +51,15 @@ const Home: React.FC<HomeProps> = ({ isLoggedIn, setIsLoggedIn }) => {
         <div className="header-inner">
           {/* Animált logó */}
           <div className="logo animated-logo">TestreSzabva</div>
-
           <nav className={`header-links ${isMobileMenuOpen ? "open" : ""}`}>
             <a href="#heti-etrend" onClick={() => setIsMobileMenuOpen(false)}>
-              Heti Étrend
+              Hogyan?
             </a>
             <a href="#receptek" onClick={() => setIsMobileMenuOpen(false)}>
-              Receptek
+              Funkciók
             </a>
             <a href="#kapcsolat" onClick={() => setIsMobileMenuOpen(false)}>
-              Kapcsolat
+              Vélemények
             </a>
             <button
               className="header-button outline"
