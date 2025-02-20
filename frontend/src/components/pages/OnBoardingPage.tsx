@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./OnBoardingPage.css";
 
@@ -44,6 +44,42 @@ const OnBoardingPage: React.FC = () => {
 
   const [currentStep, setCurrentStep] = useState(0);
   const [errorMsg, setErrorMsg] = useState("");
+
+  // Új: Betöltjük a felhasználói adatokat, ha elérhetők
+  useEffect(() => {
+    const token = localStorage.getItem("authToken");
+    const userId = localStorage.getItem("userId");
+    if (!token || !userId) return;
+
+    const fetchUserData = async () => {
+      try {
+        const response = await fetch(`http://localhost:5162/api/Felhasznalo/${userId}`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        if (response.ok) {
+          const data = await response.json();
+          setWeight(data.weight ?? undefined);
+          setHeight(data.height ?? undefined);
+          setAge(data.age ?? undefined);
+          setGender(data.gender ?? "");
+          setActivityLevel(data.activityLevel ?? "");
+          setGoalWeight(data.goalWeight ?? undefined);
+          // Ha a dátum ISO formátumú (YYYY-MM-DDT...), akkor substring segítségével kinyerjük a dátumot
+          setGoalDate(data.goalDate ? data.goalDate.substring(0, 10) : "");
+        } else {
+          console.error("Hiba a felhasználói adatok lekérésekor:", response.status);
+        }
+      } catch (error) {
+        console.error("Hiba a felhasználói adatok betöltésekor:", error);
+      }
+    };
+
+    fetchUserData();
+  }, []);
 
   const steps: Step[] = [
     {
