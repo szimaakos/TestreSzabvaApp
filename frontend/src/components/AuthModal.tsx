@@ -26,10 +26,11 @@ const AuthModal: React.FC<AuthModalProps> = ({
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
 
+
   // Visszajelzés (siker/hiba)
   const [statusMessage, setStatusMessage] = useState("");
 
-  // Számoljuk ki a jelszóban teljesített követelményeket
+  // Jelszókövetelmények – kis/nagy betű, szám, speciális, min. 6 hossz
   const hasUppercase = /[A-Z]/.test(registerPassword);
   const hasNumber = /\d/.test(registerPassword);
   const hasSpecial = /[!@#$%^&*]/.test(registerPassword);
@@ -56,14 +57,13 @@ const AuthModal: React.FC<AuthModalProps> = ({
       case "INVALID_EMAIL":
         return "Érvénytelen e-mail cím.";
       case "WEAK_PASSWORD":
-        return "A jelszó túl gyenge. A jelszónak legalább egy nagy betűt, egy számot és egy speciális karaktert (pl.: #) kell tartalmaznia.";
+        return "A jelszó túl gyenge. Legalább 6 karakter, és tartalmazzon nagy betűt, számot, speciális karaktert.";
       default:
         return code;
     }
   };
 
-  // Segédfüggvény az e-mail validációjához:
-  // Elfogadja azokat az e-mail címeket, amelyek tartalmazzák az "@" és a "." karaktereket.
+  // E-mail validáció
   const validateEmail = (email: string): boolean => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
@@ -73,7 +73,21 @@ const AuthModal: React.FC<AuthModalProps> = ({
   const handleRegister = async () => {
     setStatusMessage("");
 
-    // E-mail validáció: Az e-mail címnek tartalmaznia kell "@" és "." karaktereket.
+    // Ellenőrizni, hogy minden mező ki van-e töltve
+    if (!registerUserName.trim()) {
+      setStatusMessage("Add meg a felhasználónevedet.");
+      return;
+    }
+    if (!registerEmail.trim()) {
+      setStatusMessage("Add meg az e-mail címedet.");
+      return;
+    }
+    if (!registerPassword.trim()) {
+      setStatusMessage("Add meg a jelszót.");
+      return;
+    }
+
+    // E-mail validáció
     if (!validateEmail(registerEmail)) {
       setStatusMessage(
         "Érvénytelen e-mail cím. Az e-mail címnek tartalmaznia kell @-t és .-ot."
@@ -81,10 +95,18 @@ const AuthModal: React.FC<AuthModalProps> = ({
       return;
     }
 
+    // Jelszó hossza min. 6 karakter
+    if (registerPassword.length < 6) {
+      setStatusMessage(
+        "A jelszónak legalább 6 karakter hosszúnak kell lennie."
+      );
+      return;
+    }
+
     // Jelszó validáció: legalább 1 nagybetű, 1 szám, 1 speciális karakter
     if (!hasUppercase || !hasNumber || !hasSpecial) {
       setStatusMessage(
-        "A jelszónak legalább egy nagy betűt, egy számot és egy speciális karaktert (pl.: #) kell tartalmaznia."
+        "A jelszónak tartalmaznia kell legalább egy nagy betűt, egy számot és egy speciális karaktert (pl.: #)."
       );
       return;
     }
@@ -122,7 +144,17 @@ const AuthModal: React.FC<AuthModalProps> = ({
   const handleLogin = async () => {
     setStatusMessage("");
 
-    // E-mail validáció a bejelentkezésnél is
+    // Alapmezők kitöltöttsége
+    if (!loginEmail.trim()) {
+      setStatusMessage("Kérlek add meg az e-mail címet.");
+      return;
+    }
+    if (!loginPassword.trim()) {
+      setStatusMessage("Kérlek add meg a jelszót.");
+      return;
+    }
+
+    // E-mail formátum
     if (!validateEmail(loginEmail)) {
       setStatusMessage(
         "Érvénytelen e-mail cím. Az e-mail címnek tartalmaznia kell @-t és .-ot."
@@ -159,10 +191,7 @@ const AuthModal: React.FC<AuthModalProps> = ({
       if (!token) {
         setStatusMessage("Nem kaptunk tokent a szervertől.");
         return;
-      }
-
-      localStorage.setItem("authToken", token);
-      localStorage.setItem("userId", userId || "");
+      }      
 
       onLoginSuccess && onLoginSuccess();
 
@@ -173,6 +202,7 @@ const AuthModal: React.FC<AuthModalProps> = ({
         return;
       }
 
+      // Felhasználói adatok lekérése
       const userResponse = await fetch(
         `http://localhost:5162/api/Felhasznalo/${userId}`,
         {
@@ -203,7 +233,13 @@ const AuthModal: React.FC<AuthModalProps> = ({
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-        {/* Fejléc: Regisztráció/Bejelentkezés fülek */}
+        {/* Brand-rész */}
+        <div className="brand-header">
+          <h1 className="brand-title">TestreSzabva</h1>
+          <p className="brand-subtitle">Örülünk, hogy itt vagy!</p>
+        </div>
+
+        {/* Tabok: Regisztráció / Bejelentkezés */}
         <div className="modal-header">
           <button
             className={activeTab === "register" ? "active" : ""}
@@ -218,34 +254,44 @@ const AuthModal: React.FC<AuthModalProps> = ({
             Bejelentkezés
           </button>
         </div>
+
         <span className="close-button" onClick={onClose}>
           &times;
         </span>
 
+        <hr className="header-separator" />
+
         <div className="modal-body">
+          {/* Regisztrációs panel */}
           {activeTab === "register" && (
             <div className="tab-content tab-register">
               <h2>Regisztráció</h2>
+
               <label>Felhasználónév</label>
               <input
                 type="text"
+                placeholder="Pl. KovacsPeter123"
                 value={registerUserName}
                 onChange={(e) => setRegisterUserName(e.target.value)}
               />
+
               <label>E-mail cím</label>
               <input
                 type="email"
+                placeholder="pl: pelda@gmail.hu"
                 value={registerEmail}
                 onChange={(e) => setRegisterEmail(e.target.value)}
               />
+
               <label>Jelszó</label>
               <input
                 type="password"
+                placeholder="minimum 6 karakter"
                 value={registerPassword}
                 onChange={(e) => setRegisterPassword(e.target.value)}
               />
 
-              {/* Jelszó progress bar és követelmény lista */}
+              {/* Jelszó progress bar és követelmények */}
               {registerPassword && (
                 <>
                   <div className="password-progress">
@@ -253,8 +299,9 @@ const AuthModal: React.FC<AuthModalProps> = ({
                       className="progress-bar"
                       style={{
                         width: `${getPasswordProgress(registerPassword)}%`,
+                        backgroundColor: "#4caf50",
                       }}
-                    ></div>
+                    />
                   </div>
                   <p className="progress-info">
                     Követelmények teljesítve:{" "}
@@ -262,21 +309,18 @@ const AuthModal: React.FC<AuthModalProps> = ({
                   </p>
                   <ul className="password-requirements">
                     <li className={hasUppercase ? "met" : ""}>
-                      <input type="checkbox" checked={hasUppercase} readOnly disabled />{" "}
-                      Legalább egy nagy betű
+                      
                     </li>
                     <li className={hasNumber ? "met" : ""}>
-                      <input type="checkbox" checked={hasNumber} readOnly disabled />{" "}
-                      Legalább egy szám
+                      
                     </li>
                     <li className={hasSpecial ? "met" : ""}>
-                      <input type="checkbox" checked={hasSpecial} readOnly disabled />{" "}
-                      Legalább egy speciális karakter (pl.: #)
+                      
                     </li>
                   </ul>
                 </>
               )}
-              
+
               <button className="submit-button" onClick={handleRegister}>
                 Regisztráció
               </button>
@@ -286,21 +330,28 @@ const AuthModal: React.FC<AuthModalProps> = ({
             </div>
           )}
 
+          {/* Bejelentkezési panel */}
           {activeTab === "login" && (
             <div className="tab-content tab-login">
               <h2>Bejelentkezés</h2>
+
               <label>E-mail cím</label>
               <input
                 type="email"
+                placeholder="valami@email.hu"
                 value={loginEmail}
                 onChange={(e) => setLoginEmail(e.target.value)}
               />
+
               <label>Jelszó</label>
               <input
                 type="password"
+                placeholder="******"
                 value={loginPassword}
                 onChange={(e) => setLoginPassword(e.target.value)}
               />
+
+
               <button className="submit-button" onClick={handleLogin}>
                 Bejelentkezés
               </button>
