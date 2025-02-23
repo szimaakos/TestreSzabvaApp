@@ -143,7 +143,7 @@ const AuthModal: React.FC<AuthModalProps> = ({
   // ====== BEJELENTKEZÉS ======
   const handleLogin = async () => {
     setStatusMessage("");
-
+  
     // Alapmezők kitöltöttsége
     if (!loginEmail.trim()) {
       setStatusMessage("Kérlek add meg az e-mail címet.");
@@ -153,15 +153,13 @@ const AuthModal: React.FC<AuthModalProps> = ({
       setStatusMessage("Kérlek add meg a jelszót.");
       return;
     }
-
-    // E-mail formátum
+  
+    // E-mail formátum ellenőrzés
     if (!validateEmail(loginEmail)) {
-      setStatusMessage(
-        "Érvénytelen e-mail cím. Az e-mail címnek tartalmaznia kell @-t és .-ot."
-      );
+      setStatusMessage("Érvénytelen e-mail cím. Az e-mail címnek tartalmaznia kell @-t és .-ot.");
       return;
     }
-
+  
     try {
       const response = await fetch(
         "http://localhost:5162/api/Felhasznalo/Login",
@@ -176,32 +174,35 @@ const AuthModal: React.FC<AuthModalProps> = ({
           }),
         }
       );
-
+  
       if (!response.ok) {
         const errorText = await response.text();
         const friendlyError = mapErrorCodeToMessage(errorText);
         setStatusMessage("Hibás belépési adatok: " + friendlyError);
         return;
       }
-
+  
       const data = await response.json();
       const token = data.token;
       const userId = data.userId;
-
+  
       if (!token) {
         setStatusMessage("Nem kaptunk tokent a szervertől.");
         return;
-      }      
-
+      }
+  
+  +   // Tárold el a token-t és a userId-t a localStorage-ben
+  +   localStorage.setItem("authToken", token);
+  +   localStorage.setItem("userId", userId);
+  
       onLoginSuccess && onLoginSuccess();
-
       setStatusMessage("Sikeres bejelentkezés!");
-
+  
       if (!userId) {
         setStatusMessage("Bejelentkezés rendben, de userId nem érkezett.");
         return;
       }
-
+  
       // Felhasználói adatok lekérése
       const userResponse = await fetch(
         `http://localhost:5162/api/Felhasznalo/${userId}`,
@@ -213,12 +214,12 @@ const AuthModal: React.FC<AuthModalProps> = ({
           },
         }
       );
-
+  
       if (!userResponse.ok) {
         setStatusMessage("Hiba a felhasználói adatok lekérésénél.");
         return;
       }
-
+  
       const userData = await userResponse.json();
       if (userData.isProfileComplete) {
         navigate("/dashboard");
@@ -229,6 +230,7 @@ const AuthModal: React.FC<AuthModalProps> = ({
       setStatusMessage("Hiba bejelentkezéskor: " + err.message);
     }
   };
+  
 
   return (
     <div className="modal-overlay" onClick={onClose}>
