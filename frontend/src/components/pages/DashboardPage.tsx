@@ -2,8 +2,9 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import FoodSelectorPopup from "../FoodSelectorPopup";
 import RemainingCaloriesBox from "../RemainingCaloriesBox";
-import WeeklyMenuTable, { HetiEtrend } from "../WeeklyMenuTable";
+import { HetiEtrend } from "../../types/MealSlotTypes";
 import QuantitySelectorModal from "../QuantitySelectorModal";
+import WeeklyMenuTable from "../WeeklyMenuTable";
 import "./DashboardPage.css";
 
 interface Felhasznalo {
@@ -30,6 +31,15 @@ interface Etel {
   fats: number;
 }
 
+interface SelectedCell {
+  day: string;
+  mealType: string;
+}
+
+interface SelectedQuantityCell extends SelectedCell {
+  foodIndex: number;
+}
+
 const DashboardPage: React.FC = () => {
   const navigate = useNavigate();
   const [user, setUser] = useState<Felhasznalo | null>(null);
@@ -40,11 +50,11 @@ const DashboardPage: React.FC = () => {
   const [caloriesConsumed, setCaloriesConsumed] = useState<number>(0);
   const [foodPopupOpen, setFoodPopupOpen] = useState<boolean>(false);
   const [currentMealType, setCurrentMealType] = useState<string>("");
-  const [selectedCell, setSelectedCell] = useState<{ day: string; mealType: string } | null>(null);
+  const [selectedCell, setSelectedCell] = useState<SelectedCell | null>(null);
 
-  // Állapotok az adag módosító modalhoz
+  // Állapot a QuantitySelectorModalhoz – tartalmazza a foodIndex-et is
   const [quantityModalOpen, setQuantityModalOpen] = useState<boolean>(false);
-  const [selectedQuantityCell, setSelectedQuantityCell] = useState<{ day: string; mealType: string } | null>(null);
+  const [selectedQuantityCell, setSelectedQuantityCell] = useState<SelectedQuantityCell | null>(null);
 
   // Napok és étkezési típusok
   const days = ["Hétfő", "Kedd", "Szerda", "Csütörtök", "Péntek", "Szombat", "Vasárnap"];
@@ -77,7 +87,7 @@ const DashboardPage: React.FC = () => {
         return;
       }
       try {
-        // Felhasználó adatainak lekérése
+        // Felhasználó lekérése
         const userResponse = await fetch(`http://localhost:5162/api/Felhasznalo/${userId}`, {
           method: "GET",
           headers: {
@@ -90,7 +100,7 @@ const DashboardPage: React.FC = () => {
           setUser(userData);
         }
 
-        // Heti menü lekérése
+        // Heti menük lekérése
         const weeklyResponse = await fetch(`http://localhost:5162/api/HetiEtrend/Felhasznalo/${userId}`, {
           method: "GET",
           headers: { "Content-Type": "application/json" },
@@ -98,9 +108,11 @@ const DashboardPage: React.FC = () => {
         if (weeklyResponse.ok) {
           const weeklyData = await weeklyResponse.json();
           setWeeklyMenus(weeklyData);
-          const total = weeklyData.reduce((acc: number, meal: HetiEtrend) => acc + meal.totalCalories, 0);
-
-          
+          // Kalóriák összegzése: minden slotban összeadjuk a mealFoods totalCalories értékeit
+          const total = weeklyData.reduce((acc: number, slot: HetiEtrend) => {
+            const slotTotal = slot.mealFoods?.reduce((sum, mf) => sum + mf.totalCalories, 0) || 0;
+            return acc + slotTotal;
+          }, 0);
           setCaloriesConsumed(total);
         }
       } catch (err) {
@@ -118,199 +130,199 @@ const DashboardPage: React.FC = () => {
     navigate("/");
   };
 
-  // Étel kiválasztása esetén (szerkesztés vagy hozzáadás)
+  // Étel kiválasztása (új étel hozzáadása)
   const handleFoodClick = (day: string, mealType: string) => {
     setSelectedCell({ day, mealType });
     setCurrentMealType(mealType);
     setFoodPopupOpen(true);
   };
 
-  // Új étel beállítása – lecseréli a meglévő ételt vagy adja hozzá, ha még nincs
+  // Új étel hozzáadása a slothoz
   const handleFoodSelected = async (food: Etel) => {
     const token = localStorage.getItem("authToken");
     const userId = localStorage.getItem("userId");
     if (!token || !userId || !selectedCell) return;
-  
+
     const newQuantity = 1;
     const newTotalCalories = food.calories * newQuantity;
-  
-    // Ellenőrizzük, hogy van-e már rekord az adott nap/étkezési típus kombinációjára
-    const existingMeal = weeklyMenus.find(
-      (meal) =>
-        meal.dayOfWeek.toLowerCase() === selectedCell.day.toLowerCase() &&
-        meal.mealTime.toLowerCase() === selectedCell.mealType.toLowerCase()
+    const newMealFood = {
+      foodId: food.foodId,
+      quantity: newQuantity,
+      totalCalories: newTotalCalories,
+    };
+
+    const existingSlot = weeklyMenus.find(
+      (slot) =>
+        slot.dayOfWeek.toLowerCase() === selectedCell.day.toLowerCase() &&
+        slot.mealTime.toLowerCase() === selectedCell.mealType.toLowerCase()
     );
-  
-    if (existingMeal) {
-      // Tároljuk el a régi kalóriaértéket
-      const oldMealCalories = existingMeal.totalCalories;
-      
-      const updatedMealData = {
-        PlanId: existingMeal.planId,
-        UserId: userId,
-        DayOfWeek: selectedCell.day,
-        MealTime: selectedCell.mealType,
-        FoodId: food.foodId,
-        Quantity: newQuantity,
-        TotalCalories: newTotalCalories,
+
+    if (existingSlot) {
+      const updatedMealFoods = [...existingSlot.mealFoods, newMealFood];
+      const updatedSlotData = {
+        PlanId: existingSlot.planId,
+        UserId: existingSlot.userId,
+        DayOfWeek: existingSlot.dayOfWeek,
+        MealTime: existingSlot.mealTime,
+        MealFoods: updatedMealFoods,
       };
-  
-      const response = await fetch(`http://localhost:5162/api/HetiEtrend/${existingMeal.planId}`, {
+
+      const response = await fetch(`http://localhost:5162/api/HetiEtrend/mealSlot/${existingSlot.planId}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(updatedMealData),
+        body: JSON.stringify(updatedSlotData),
       });
-  
+
       if (response.ok) {
-        // Frissítjük a helyi state-et
-        setWeeklyMenus((prev) =>
-          prev.map((meal) =>
-            meal.planId === existingMeal.planId
-              ? { ...meal, etel: food, quantity: newQuantity, totalCalories: newTotalCalories }
-              : meal
+        setWeeklyMenus(prev =>
+          prev.map(slot =>
+            slot.planId === existingSlot.planId ? { ...slot, mealFoods: updatedMealFoods } : slot
           )
         );
-        // Levonjuk a régi kalóriát és hozzáadjuk az újat
-        setCaloriesConsumed((prev) => prev - oldMealCalories + newTotalCalories);
+        setCaloriesConsumed(prev => prev + newTotalCalories);
       } else {
-        console.error("Hiba a meglévő étel frissítésekor:", response.status);
+        console.error("Hiba a slot frissítésekor:", response.status);
       }
     } else {
-      // Ha nincs rekord, létrehozunk egy újat (POST kérés)
-      const newMealData = {
+      const newSlotData = {
         UserId: userId,
         DayOfWeek: selectedCell.day,
         MealTime: selectedCell.mealType,
-        FoodId: food.foodId,
-        Quantity: newQuantity,
-        TotalCalories: newTotalCalories,
+        MealFoods: [newMealFood],
       };
-  
-      const response = await fetch("http://localhost:5162/api/HetiEtrend", {
+
+      const response = await fetch("http://localhost:5162/api/HetiEtrend/mealSlot", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(newMealData),
+        body: JSON.stringify(newSlotData),
       });
-  
+
       if (response.ok) {
-        const createdMeal = await response.json();
-        const mealWithFood = { ...createdMeal, etel: food };
-        setWeeklyMenus((prev) => [...prev, mealWithFood]);
-        setCaloriesConsumed((prev) => prev + newTotalCalories);
+        const createdSlot = await response.json();
+        setWeeklyMenus(prev => [...prev, createdSlot]);
+        setCaloriesConsumed(prev => prev + newTotalCalories);
       } else {
-        console.error("Hiba az étel hozzáadásakor:", response.status);
+        console.error("Hiba az új slot létrehozásakor:", response.status);
       }
     }
     setFoodPopupOpen(false);
   };
-  
-  
-  
 
-  // Étkezés törlése – csak a mai nap esetén
-  const handleDeleteMeal = async (day: string, mealType: string) => {
-    if (day.toLowerCase() !== todayDayName.toLowerCase()) return;
-    const mealToDelete = weeklyMenus.find(
-      (meal) =>
-        meal.dayOfWeek.toLowerCase() === day.toLowerCase() &&
-        meal.mealTime.toLowerCase() === mealType.toLowerCase()
+  // Törlés: egy MealFood törlése a slotból
+  const handleDeleteFood = async (day: string, mealType: string, foodIndex: number) => {
+    const slot = weeklyMenus.find(
+      (m) =>
+        m.dayOfWeek.toLowerCase() === day.toLowerCase() &&
+        m.mealTime.toLowerCase() === mealType.toLowerCase()
     );
-    if (mealToDelete) {
-      const token = localStorage.getItem("authToken");
-      if (!token) return;
-      const response = await fetch(`http://localhost:5162/api/HetiEtrend/${mealToDelete.planId}`, {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      if (response.ok) {
-        // Frissítjük a frontend state-et is
-        setWeeklyMenus((prev) => prev.filter((meal) => meal.planId !== mealToDelete.planId));
-        setCaloriesConsumed((prev) => prev - mealToDelete.totalCalories);
-      } else {
-        console.error("Hiba az étel törlésekor:", response.status);
-      }
-    }
-  };
-  
+    if (!slot) return;
 
-  // Adag módosítása – itt a modális ablakot nyitjuk meg
-  const handleChangeQuantity = (day: string, mealType: string) => {
-    if (day.toLowerCase() !== todayDayName.toLowerCase()) return;
-    setSelectedQuantityCell({ day, mealType });
-    setQuantityModalOpen(true);
-  };
+    const updatedMealFoods = slot.mealFoods.filter((_, idx) => idx !== foodIndex);
 
-  // Az új adag mentése a modális ablakból
-  const handleQuantityConfirm = async (newQuantity: number) => {
-    if (!selectedQuantityCell) return;
     const token = localStorage.getItem("authToken");
     if (!token) return;
-  
-    const mealToUpdate = weeklyMenus.find(
-      (meal) =>
-        meal.dayOfWeek.toLowerCase() === selectedQuantityCell.day.toLowerCase() &&
-        meal.mealTime.toLowerCase() === selectedQuantityCell.mealType.toLowerCase()
-    );
-    if (!mealToUpdate) return;
-  
-    const oldTotalCalories = mealToUpdate.totalCalories;
-    const perUnitCalories = mealToUpdate.etel 
-      ? mealToUpdate.etel.calories 
-      : (mealToUpdate.quantity > 0 ? mealToUpdate.totalCalories / mealToUpdate.quantity : 0);
-    const newTotalCalories = perUnitCalories * newQuantity;
-  
-    // Készítsük el az update objektumot a backend számára
-    const updatedMealData = {
-      PlanId: mealToUpdate.planId,
-      UserId: mealToUpdate.userId || localStorage.getItem("userId") || "", // Biztosítjuk, hogy legyen érték
-      DayOfWeek: mealToUpdate.dayOfWeek,
-      MealTime: mealToUpdate.mealTime,
-      FoodId: mealToUpdate.foodId,
-      Quantity: newQuantity,
-      TotalCalories: newTotalCalories,
+    const updatedSlotData = {
+      PlanId: slot.planId,
+      UserId: slot.userId,
+      DayOfWeek: slot.dayOfWeek,
+      MealTime: slot.mealTime,
+      MealFoods: updatedMealFoods,
     };
-    
-    const response = await fetch(`http://localhost:5162/api/HetiEtrend/${mealToUpdate.planId}`, {
+
+    const response = await fetch(`http://localhost:5162/api/HetiEtrend/mealSlot/${slot.planId}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify(updatedMealData),
+      body: JSON.stringify(updatedSlotData),
     });
-  
+    if (response.ok) {
+      setWeeklyMenus(prev =>
+        prev.map(m => m.planId === slot.planId ? { ...m, mealFoods: updatedMealFoods } : m)
+      );
+      // Újraszámolás: csökkentjük a kalóriát a törölt étel értékével
+      const removedCalories = slot.mealFoods[foodIndex]?.totalCalories || 0;
+      setCaloriesConsumed(prev => prev - removedCalories);
+    } else {
+      console.error("Hiba az étel törlésekor:", response.status);
+    }
+  };
+
+  // Adag módosítása: a handleChangeQuantity most a foodIndex-et is átadja
+  const handleChangeQuantity = (day: string, mealType: string, foodIndex: number) => {
+    if (day.toLowerCase() !== todayDayName.toLowerCase()) return;
+    setSelectedQuantityCell({ day, mealType, foodIndex });
+    setQuantityModalOpen(true);
+  };
+
+  // Az új adag mentése: most egy paramétert vár, a foodIndex a selectedQuantityCell-ben van eltárolva
+  const handleQuantityConfirm = async (newQuantity: number) => {
+    if (!selectedQuantityCell) return;
+    const token = localStorage.getItem("authToken");
+    if (!token) return;
+
+    const slot = weeklyMenus.find(
+      (slot) =>
+        slot.dayOfWeek.toLowerCase() === selectedQuantityCell.day.toLowerCase() &&
+        slot.mealTime.toLowerCase() === selectedQuantityCell.mealType.toLowerCase()
+    );
+    if (!slot) return;
+
+    const foodIndex = selectedQuantityCell.foodIndex;
+    const mealFoodToUpdate = slot.mealFoods[foodIndex];
+    if (!mealFoodToUpdate) return;
+
+    const oldMealFoodCalories = mealFoodToUpdate.totalCalories;
+    const perUnitCalories = mealFoodToUpdate.etel
+      ? mealFoodToUpdate.etel.calories
+      : (mealFoodToUpdate.quantity > 0 ? mealFoodToUpdate.totalCalories / mealFoodToUpdate.quantity : 0);
+    const newMealFoodCalories = perUnitCalories * newQuantity;
+
+    const updatedMealFoods = slot.mealFoods.map((mf, idx) =>
+      idx === foodIndex ? { ...mf, quantity: newQuantity, totalCalories: newMealFoodCalories } : mf
+    );
+
+    const updatedSlotData = {
+      PlanId: slot.planId,
+      UserId: slot.userId,
+      DayOfWeek: slot.dayOfWeek,
+      MealTime: slot.mealTime,
+      MealFoods: updatedMealFoods,
+    };
+
+    const response = await fetch(`http://localhost:5162/api/HetiEtrend/mealSlot/${slot.planId}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(updatedSlotData),
+    });
+
     if (!response.ok) {
       const errorBody = await response.text();
       console.error("Failed to update quantity:", response.status, errorBody);
       return;
     }
-  
-    // Frissítjük a frontend state-et is
-    setCaloriesConsumed((prev) => prev - oldTotalCalories + newTotalCalories);
-    setWeeklyMenus((prev) =>
-      prev.map((meal) =>
-        meal.planId === mealToUpdate.planId
-          ? { ...meal, quantity: newQuantity, totalCalories: newTotalCalories }
-          : meal
+
+    setCaloriesConsumed(prev => prev - oldMealFoodCalories + newMealFoodCalories);
+    setWeeklyMenus(prev =>
+      prev.map(s =>
+        s.planId === slot.planId ? { ...s, mealFoods: updatedMealFoods } : s
       )
     );
-  
+
     setSelectedQuantityCell(null);
     setQuantityModalOpen(false);
   };
-  
-  
 
-  // Napi ajánlott kalória számítása
   const computeRecommendedCalories = (): number | null => {
     if (user && user.weight && user.height && user.age && user.gender && user.activityLevel) {
       if (user.calorieGoal) {
@@ -453,7 +465,7 @@ const DashboardPage: React.FC = () => {
             mealTypes={mealTypes}
             weeklyMenus={weeklyMenus}
             onAddFoodClick={handleFoodClick}
-            onDeleteMeal={handleDeleteMeal}
+            onDeleteFood={handleDeleteFood}
             onChangeQuantity={handleChangeQuantity}
             currentDayName={todayDayName}
           />
@@ -472,12 +484,15 @@ const DashboardPage: React.FC = () => {
         <QuantitySelectorModal
           initialQuantity={
             (() => {
-              const meal = weeklyMenus.find(
+              // Keresünk egy slotot, majd az első MealFood mennyiségét használjuk
+              const slot = weeklyMenus.find(
                 (m) =>
                   m.dayOfWeek.toLowerCase() === selectedQuantityCell.day.toLowerCase() &&
                   m.mealTime.toLowerCase() === selectedQuantityCell.mealType.toLowerCase()
               );
-              return meal ? meal.quantity : 1;
+              // Ha van ilyen slot, és tartalmaz mealFoods-t, akkor az első étel mennyiségét adja vissza,
+              // vagy alapértelmezetten 1
+              return slot && slot.mealFoods && slot.mealFoods.length > 0 ? slot.mealFoods[0].quantity : 1;
             })()
           }
           onConfirm={handleQuantityConfirm}
