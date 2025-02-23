@@ -20,6 +20,11 @@ namespace TestreSzabva.Data
         {
             base.OnModelCreating(modelBuilder);
 
+            modelBuilder.Entity<HetiEtrend>()
+                .Property(he => he.PlanId)
+                .ValueGeneratedOnAdd();
+
+
             // Felhasznalo (IdentityUser alap)
             modelBuilder.Entity<Felhasznalo>()
                 .HasKey(f => f.Id);

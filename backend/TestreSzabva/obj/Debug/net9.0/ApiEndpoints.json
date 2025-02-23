@@ -172,8 +172,8 @@
     "Order": 0,
     "Parameters": [
       {
-        "Name": "etrend",
-        "Type": "TestreSzabva.Models.HetiEtrend",
+        "Name": "dto",
+        "Type": "CreateHetiEtrendDto",
         "IsRequired": true
       }
     ],
@@ -209,8 +209,8 @@
         "IsRequired": true
       },
       {
-        "Name": "updatedEtrend",
-        "Type": "TestreSzabva.Models.HetiEtrend",
+        "Name": "dto",
+        "Type": "UpdateHetiEtrendDto",
         "IsRequired": true
       }
     ],

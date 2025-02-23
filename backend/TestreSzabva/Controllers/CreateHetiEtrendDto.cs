@@ -1,19 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
-using System.Text.Json.Serialization;
-using TestreSzabva.Models;
 
-public class HetiEtrend
+public class CreateHetiEtrendDto
 {
-    [Key]
-    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public int PlanId { get; set; }
-
     [Required]
     public string UserId { get; set; }
-
-    [JsonIgnore]
-    public Felhasznalo Felhasznalo { get; set; }
 
     [Required]
     public string DayOfWeek { get; set; }
@@ -23,9 +13,6 @@ public class HetiEtrend
 
     [Required]
     public int FoodId { get; set; }
-
-    [JsonIgnore]
-    public Etel Etel { get; set; }
 
     [Required]
     [Range(1, 500)]

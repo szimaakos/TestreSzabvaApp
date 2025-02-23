@@ -17,6 +17,42 @@ namespace TestreSzabva.Migrations
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.1");
 
+            modelBuilder.Entity("HetiEtrend", b =>
+                {
+                    b.Property<int>("PlanId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("DayOfWeek")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("FoodId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("MealTime")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<float>("Quantity")
+                        .HasColumnType("REAL");
+
+                    b.Property<float>("TotalCalories")
+                        .HasColumnType("REAL");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("PlanId");
+
+                    b.HasIndex("FoodId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("HetiEtrendek");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
                     b.Property<string>("Id")
@@ -280,42 +316,6 @@ namespace TestreSzabva.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
-            modelBuilder.Entity("TestreSzabva.Models.HetiEtrend", b =>
-                {
-                    b.Property<int>("PlanId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("DayOfWeek")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("FoodId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("MealTime")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<float>("Quantity")
-                        .HasColumnType("REAL");
-
-                    b.Property<float>("TotalCalories")
-                        .HasColumnType("REAL");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("PlanId");
-
-                    b.HasIndex("FoodId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("HetiEtrendek");
-                });
-
             modelBuilder.Entity("TestreSzabva.Models.Kategoria", b =>
                 {
                     b.Property<int>("CategoryId")
@@ -329,6 +329,25 @@ namespace TestreSzabva.Migrations
                     b.HasKey("CategoryId");
 
                     b.ToTable("Kategoriak");
+                });
+
+            modelBuilder.Entity("HetiEtrend", b =>
+                {
+                    b.HasOne("TestreSzabva.Models.Etel", "Etel")
+                        .WithMany("HetiEtrendek")
+                        .HasForeignKey("FoodId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("TestreSzabva.Models.Felhasznalo", "Felhasznalo")
+                        .WithMany("HetiEtrendek")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Etel");
+
+                    b.Navigation("Felhasznalo");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -399,25 +418,6 @@ namespace TestreSzabva.Migrations
                     b.Navigation("Etel");
 
                     b.Navigation("Kategoria");
-                });
-
-            modelBuilder.Entity("TestreSzabva.Models.HetiEtrend", b =>
-                {
-                    b.HasOne("TestreSzabva.Models.Etel", "Etel")
-                        .WithMany("HetiEtrendek")
-                        .HasForeignKey("FoodId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("TestreSzabva.Models.Felhasznalo", "Felhasznalo")
-                        .WithMany("HetiEtrendek")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Etel");
-
-                    b.Navigation("Felhasznalo");
                 });
 
             modelBuilder.Entity("TestreSzabva.Models.Etel", b =>

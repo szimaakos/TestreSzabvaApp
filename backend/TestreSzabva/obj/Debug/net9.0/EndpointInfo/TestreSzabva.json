@@ -314,17 +314,17 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/HetiEtrend"
+                "$ref": "#/components/schemas/UpdateHetiEtrendDto"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/HetiEtrend"
+                "$ref": "#/components/schemas/UpdateHetiEtrendDto"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/HetiEtrend"
+                "$ref": "#/components/schemas/UpdateHetiEtrendDto"
               }
             }
           }
@@ -388,17 +388,17 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/HetiEtrend"
+                "$ref": "#/components/schemas/CreateHetiEtrendDto"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/HetiEtrend"
+                "$ref": "#/components/schemas/CreateHetiEtrendDto"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/HetiEtrend"
+                "$ref": "#/components/schemas/CreateHetiEtrendDto"
               }
             }
           }
@@ -538,6 +538,46 @@
   },
   "components": {
     "schemas": {
+      "CreateHetiEtrendDto": {
+        "required": [
+          "dayOfWeek",
+          "foodId",
+          "mealTime",
+          "quantity",
+          "totalCalories",
+          "userId"
+        ],
+        "type": "object",
+        "properties": {
+          "userId": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "dayOfWeek": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "mealTime": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "foodId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "quantity": {
+            "maximum": 500,
+            "minimum": 1,
+            "type": "number",
+            "format": "float"
+          },
+          "totalCalories": {
+            "type": "number",
+            "format": "float"
+          }
+        },
+        "additionalProperties": false
+      },
       "Etel": {
         "required": [
           "calories",
@@ -739,9 +779,6 @@
             "minLength": 1,
             "type": "string"
           },
-          "felhasznalo": {
-            "$ref": "#/components/schemas/Felhasznalo"
-          },
           "dayOfWeek": {
             "minLength": 1,
             "type": "string"
@@ -753,9 +790,6 @@
           "foodId": {
             "type": "integer",
             "format": "int32"
-          },
-          "etel": {
-            "$ref": "#/components/schemas/Etel"
           },
           "quantity": {
             "maximum": 500,
@@ -822,6 +856,51 @@
           "password": {
             "type": "string",
             "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "UpdateHetiEtrendDto": {
+        "required": [
+          "dayOfWeek",
+          "foodId",
+          "mealTime",
+          "planId",
+          "quantity",
+          "totalCalories",
+          "userId"
+        ],
+        "type": "object",
+        "properties": {
+          "planId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "userId": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "dayOfWeek": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "mealTime": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "foodId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "quantity": {
+            "maximum": 500,
+            "minimum": 1,
+            "type": "number",
+            "format": "float"
+          },
+          "totalCalories": {
+            "type": "number",
+            "format": "float"
           }
         },
         "additionalProperties": false
