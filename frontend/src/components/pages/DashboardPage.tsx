@@ -134,43 +134,87 @@ const DashboardPage: React.FC = () => {
     const newQuantity = 1;
     const newTotalCalories = food.calories * newQuantity;
   
-    const newMealData = {
-      UserId: userId,
-      DayOfWeek: selectedCell.day,
-      MealTime: selectedCell.mealType,
-      FoodId: food.foodId,
-      Quantity: newQuantity,
-      TotalCalories: newTotalCalories,
-    };
+    // Ellenőrizzük, hogy van-e már rekord az adott nap/étkezési típus kombinációjára
+    const existingMeal = weeklyMenus.find(
+      (meal) =>
+        meal.dayOfWeek.toLowerCase() === selectedCell.day.toLowerCase() &&
+        meal.mealTime.toLowerCase() === selectedCell.mealType.toLowerCase()
+    );
   
-    console.log("newMealData:", newMealData); // Debug
+    if (existingMeal) {
+      // Tároljuk el a régi kalóriaértéket
+      const oldMealCalories = existingMeal.totalCalories;
+      
+      const updatedMealData = {
+        PlanId: existingMeal.planId,
+        UserId: userId,
+        DayOfWeek: selectedCell.day,
+        MealTime: selectedCell.mealType,
+        FoodId: food.foodId,
+        Quantity: newQuantity,
+        TotalCalories: newTotalCalories,
+      };
   
-    const response = await fetch("http://localhost:5162/api/HetiEtrend", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(newMealData),
-    });
+      const response = await fetch(`http://localhost:5162/api/HetiEtrend/${existingMeal.planId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(updatedMealData),
+      });
   
-    if (response.ok) {
-      const createdMeal = await response.json();
-      const mealWithFood = { ...createdMeal, etel: food };
-      setWeeklyMenus((prev) => [...prev, mealWithFood]);
-      setCaloriesConsumed((prev) => prev + newTotalCalories);
+      if (response.ok) {
+        // Frissítjük a helyi state-et
+        setWeeklyMenus((prev) =>
+          prev.map((meal) =>
+            meal.planId === existingMeal.planId
+              ? { ...meal, etel: food, quantity: newQuantity, totalCalories: newTotalCalories }
+              : meal
+          )
+        );
+        // Levonjuk a régi kalóriát és hozzáadjuk az újat
+        setCaloriesConsumed((prev) => prev - oldMealCalories + newTotalCalories);
+      } else {
+        console.error("Hiba a meglévő étel frissítésekor:", response.status);
+      }
     } else {
-      const errorBody = await response.text();
-      console.error("Hiba az étel hozzáadásakor:", response.status, errorBody);
-    }
+      // Ha nincs rekord, létrehozunk egy újat (POST kérés)
+      const newMealData = {
+        UserId: userId,
+        DayOfWeek: selectedCell.day,
+        MealTime: selectedCell.mealType,
+        FoodId: food.foodId,
+        Quantity: newQuantity,
+        TotalCalories: newTotalCalories,
+      };
   
+      const response = await fetch("http://localhost:5162/api/HetiEtrend", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(newMealData),
+      });
+  
+      if (response.ok) {
+        const createdMeal = await response.json();
+        const mealWithFood = { ...createdMeal, etel: food };
+        setWeeklyMenus((prev) => [...prev, mealWithFood]);
+        setCaloriesConsumed((prev) => prev + newTotalCalories);
+      } else {
+        console.error("Hiba az étel hozzáadásakor:", response.status);
+      }
+    }
     setFoodPopupOpen(false);
   };
   
   
+  
 
   // Étkezés törlése – csak a mai nap esetén
-  const handleDeleteMeal = (day: string, mealType: string) => {
+  const handleDeleteMeal = async (day: string, mealType: string) => {
     if (day.toLowerCase() !== todayDayName.toLowerCase()) return;
     const mealToDelete = weeklyMenus.find(
       (meal) =>
@@ -178,10 +222,25 @@ const DashboardPage: React.FC = () => {
         meal.mealTime.toLowerCase() === mealType.toLowerCase()
     );
     if (mealToDelete) {
-      setWeeklyMenus((prev) => prev.filter((meal) => meal.planId !== mealToDelete.planId));
-      setCaloriesConsumed((prev) => prev - mealToDelete.totalCalories);
+      const token = localStorage.getItem("authToken");
+      if (!token) return;
+      const response = await fetch(`http://localhost:5162/api/HetiEtrend/${mealToDelete.planId}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (response.ok) {
+        // Frissítjük a frontend state-et is
+        setWeeklyMenus((prev) => prev.filter((meal) => meal.planId !== mealToDelete.planId));
+        setCaloriesConsumed((prev) => prev - mealToDelete.totalCalories);
+      } else {
+        console.error("Hiba az étel törlésekor:", response.status);
+      }
     }
   };
+  
 
   // Adag módosítása – itt a modális ablakot nyitjuk meg
   const handleChangeQuantity = (day: string, mealType: string) => {
@@ -191,29 +250,65 @@ const DashboardPage: React.FC = () => {
   };
 
   // Az új adag mentése a modális ablakból
-  const handleQuantityConfirm = (newQuantity: number) => {
-    if (selectedQuantityCell) {
-      const mealToUpdate = weeklyMenus.find(
-        (meal) =>
-          meal.dayOfWeek.toLowerCase() === selectedQuantityCell.day.toLowerCase() &&
-          meal.mealTime.toLowerCase() === selectedQuantityCell.mealType.toLowerCase()
-      );
-      if (mealToUpdate) {
-        const oldTotalCalories = mealToUpdate.totalCalories;
-        const newTotalCalories = mealToUpdate.etel.calories * newQuantity;
-        setCaloriesConsumed((prev) => prev - oldTotalCalories + newTotalCalories);
-        setWeeklyMenus((prev) =>
-          prev.map((meal) =>
-            meal.planId === mealToUpdate.planId
-              ? { ...meal, quantity: newQuantity, totalCalories: newTotalCalories }
-              : meal
-          )
-        );
-      }
-      setSelectedQuantityCell(null);
-      setQuantityModalOpen(false);
+  const handleQuantityConfirm = async (newQuantity: number) => {
+    if (!selectedQuantityCell) return;
+    const token = localStorage.getItem("authToken");
+    if (!token) return;
+  
+    const mealToUpdate = weeklyMenus.find(
+      (meal) =>
+        meal.dayOfWeek.toLowerCase() === selectedQuantityCell.day.toLowerCase() &&
+        meal.mealTime.toLowerCase() === selectedQuantityCell.mealType.toLowerCase()
+    );
+    if (!mealToUpdate) return;
+  
+    const oldTotalCalories = mealToUpdate.totalCalories;
+    const perUnitCalories = mealToUpdate.etel 
+      ? mealToUpdate.etel.calories 
+      : (mealToUpdate.quantity > 0 ? mealToUpdate.totalCalories / mealToUpdate.quantity : 0);
+    const newTotalCalories = perUnitCalories * newQuantity;
+  
+    // Készítsük el az update objektumot a backend számára
+    const updatedMealData = {
+      PlanId: mealToUpdate.planId,
+      UserId: mealToUpdate.userId || localStorage.getItem("userId") || "", // Biztosítjuk, hogy legyen érték
+      DayOfWeek: mealToUpdate.dayOfWeek,
+      MealTime: mealToUpdate.mealTime,
+      FoodId: mealToUpdate.foodId,
+      Quantity: newQuantity,
+      TotalCalories: newTotalCalories,
+    };
+    
+    const response = await fetch(`http://localhost:5162/api/HetiEtrend/${mealToUpdate.planId}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(updatedMealData),
+    });
+  
+    if (!response.ok) {
+      const errorBody = await response.text();
+      console.error("Failed to update quantity:", response.status, errorBody);
+      return;
     }
+  
+    // Frissítjük a frontend state-et is
+    setCaloriesConsumed((prev) => prev - oldTotalCalories + newTotalCalories);
+    setWeeklyMenus((prev) =>
+      prev.map((meal) =>
+        meal.planId === mealToUpdate.planId
+          ? { ...meal, quantity: newQuantity, totalCalories: newTotalCalories }
+          : meal
+      )
+    );
+  
+    setSelectedQuantityCell(null);
+    setQuantityModalOpen(false);
   };
+  
+  
 
   // Napi ajánlott kalória számítása
   const computeRecommendedCalories = (): number | null => {

@@ -17,7 +17,10 @@ export interface HetiEtrend {
   quantity: number;
   totalCalories: number;
   etel: Etel;
+  userId: string;   // hozzáadva
+  foodId: number;   // hozzáadva
 }
+
 
 interface WeeklyMenuTableProps {
   days: string[];
