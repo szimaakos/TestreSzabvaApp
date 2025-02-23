@@ -45,18 +45,13 @@ const DashboardPage: React.FC = () => {
   const [user, setUser] = useState<Felhasznalo | null>(null);
   const [weeklyMenus, setWeeklyMenus] = useState<HetiEtrend[]>([]);
   const [loading, setLoading] = useState(true);
-
-  // Napi kalóriabevitel és popup állapotok
   const [caloriesConsumed, setCaloriesConsumed] = useState<number>(0);
   const [foodPopupOpen, setFoodPopupOpen] = useState<boolean>(false);
   const [currentMealType, setCurrentMealType] = useState<string>("");
   const [selectedCell, setSelectedCell] = useState<SelectedCell | null>(null);
-
-  // Állapot a QuantitySelectorModalhoz – tartalmazza a foodIndex-et is
   const [quantityModalOpen, setQuantityModalOpen] = useState<boolean>(false);
   const [selectedQuantityCell, setSelectedQuantityCell] = useState<SelectedQuantityCell | null>(null);
 
-  // Napok és étkezési típusok
   const days = ["Hétfő", "Kedd", "Szerda", "Csütörtök", "Péntek", "Szombat", "Vasárnap"];
   const dayMap: { [key: number]: string } = {
     1: "Hétfő",
@@ -71,7 +66,6 @@ const DashboardPage: React.FC = () => {
   const mealTypes = ["Reggeli", "Ebéd", "Snack", "Vacsora"];
 
   useEffect(() => {
-    // Napváltás esetén reseteljük a napi kalóriákat
     const currentDateStr = new Date().toDateString();
     const lastDateStr = localStorage.getItem("lastDate") || "";
     if (lastDateStr !== currentDateStr) {
@@ -87,7 +81,6 @@ const DashboardPage: React.FC = () => {
         return;
       }
       try {
-        // Felhasználó lekérése
         const userResponse = await fetch(`http://localhost:5162/api/Felhasznalo/${userId}`, {
           method: "GET",
           headers: {
@@ -100,7 +93,6 @@ const DashboardPage: React.FC = () => {
           setUser(userData);
         }
 
-        // Heti menük lekérése
         const weeklyResponse = await fetch(`http://localhost:5162/api/HetiEtrend/Felhasznalo/${userId}`, {
           method: "GET",
           headers: { "Content-Type": "application/json" },
@@ -108,7 +100,6 @@ const DashboardPage: React.FC = () => {
         if (weeklyResponse.ok) {
           const weeklyData = await weeklyResponse.json();
           setWeeklyMenus(weeklyData);
-          // Kalóriák összegzése: minden slotban összeadjuk a mealFoods totalCalories értékeit
           const total = weeklyData.reduce((acc: number, slot: HetiEtrend) => {
             const slotTotal = slot.mealFoods?.reduce((sum, mf) => sum + mf.totalCalories, 0) || 0;
             return acc + slotTotal;
@@ -130,14 +121,12 @@ const DashboardPage: React.FC = () => {
     navigate("/");
   };
 
-  // Étel kiválasztása (új étel hozzáadása)
   const handleFoodClick = (day: string, mealType: string) => {
     setSelectedCell({ day, mealType });
     setCurrentMealType(mealType);
     setFoodPopupOpen(true);
   };
 
-  // Új étel hozzáadása a slothoz
   const handleFoodSelected = async (food: Etel) => {
     const token = localStorage.getItem("authToken");
     const userId = localStorage.getItem("userId");
@@ -149,7 +138,9 @@ const DashboardPage: React.FC = () => {
       foodId: food.foodId,
       quantity: newQuantity,
       totalCalories: newTotalCalories,
+      etel: food, // Ezzel átadjuk a teljes étel objektumot
     };
+    
 
     const existingSlot = weeklyMenus.find(
       (slot) =>
@@ -214,7 +205,6 @@ const DashboardPage: React.FC = () => {
     setFoodPopupOpen(false);
   };
 
-  // Törlés: egy MealFood törlése a slotból
   const handleDeleteFood = async (day: string, mealType: string, foodIndex: number) => {
     const slot = weeklyMenus.find(
       (m) =>
@@ -247,7 +237,6 @@ const DashboardPage: React.FC = () => {
       setWeeklyMenus(prev =>
         prev.map(m => m.planId === slot.planId ? { ...m, mealFoods: updatedMealFoods } : m)
       );
-      // Újraszámolás: csökkentjük a kalóriát a törölt étel értékével
       const removedCalories = slot.mealFoods[foodIndex]?.totalCalories || 0;
       setCaloriesConsumed(prev => prev - removedCalories);
     } else {
@@ -255,14 +244,12 @@ const DashboardPage: React.FC = () => {
     }
   };
 
-  // Adag módosítása: a handleChangeQuantity most a foodIndex-et is átadja
   const handleChangeQuantity = (day: string, mealType: string, foodIndex: number) => {
     if (day.toLowerCase() !== todayDayName.toLowerCase()) return;
     setSelectedQuantityCell({ day, mealType, foodIndex });
     setQuantityModalOpen(true);
   };
 
-  // Az új adag mentése: most egy paramétert vár, a foodIndex a selectedQuantityCell-ben van eltárolva
   const handleQuantityConfirm = async (newQuantity: number) => {
     if (!selectedQuantityCell) return;
     const token = localStorage.getItem("authToken");
@@ -360,9 +347,7 @@ const DashboardPage: React.FC = () => {
       if (user.goalWeight && user.goalDate && user.weight) {
         const currentDate = new Date();
         const targetDate = new Date(user.goalDate);
-        const daysRemaining = Math.ceil(
-          (targetDate.getTime() - currentDate.getTime()) / (1000 * 3600 * 24)
-        );
+        const daysRemaining = Math.ceil((targetDate.getTime() - currentDate.getTime()) / (1000 * 3600 * 24));
         if (daysRemaining > 0) {
           const weightDifference = user.weight - user.goalWeight;
           const totalCalorieDifference = weightDifference * 7700;
@@ -404,9 +389,7 @@ const DashboardPage: React.FC = () => {
           <button onClick={() => navigate("/onboarding")}>Beállítások</button>
         </nav>
         <div className="sidebar-footer">
-          <button className="logout-button" onClick={handleLogout}>
-            Kijelentkezés
-          </button>
+          <button className="logout-button" onClick={handleLogout}>Kijelentkezés</button>
         </div>
       </aside>
 
@@ -459,7 +442,8 @@ const DashboardPage: React.FC = () => {
         </div>
 
         <section className="weekly-menu-section">
-          <h2>Heti Menü</h2>
+        <h2>Heti Menü</h2>
+        <div className="weekly-menu-wrapper">
           <WeeklyMenuTable
             days={days}
             mealTypes={mealTypes}
@@ -469,7 +453,9 @@ const DashboardPage: React.FC = () => {
             onChangeQuantity={handleChangeQuantity}
             currentDayName={todayDayName}
           />
-        </section>
+        </div>
+      </section>
+
       </div>
 
       {foodPopupOpen && (
@@ -484,15 +470,15 @@ const DashboardPage: React.FC = () => {
         <QuantitySelectorModal
           initialQuantity={
             (() => {
-              // Keresünk egy slotot, majd az első MealFood mennyiségét használjuk
               const slot = weeklyMenus.find(
                 (m) =>
                   m.dayOfWeek.toLowerCase() === selectedQuantityCell.day.toLowerCase() &&
                   m.mealTime.toLowerCase() === selectedQuantityCell.mealType.toLowerCase()
               );
-              // Ha van ilyen slot, és tartalmaz mealFoods-t, akkor az első étel mennyiségét adja vissza,
-              // vagy alapértelmezetten 1
-              return slot && slot.mealFoods && slot.mealFoods.length > 0 ? slot.mealFoods[0].quantity : 1;
+              // Használjuk a selectedQuantityCell-ben tárolt foodIndex-hez tartozó mennyiséget, ha elérhető
+              return slot && slot.mealFoods && slot.mealFoods[selectedQuantityCell.foodIndex]
+                ? slot.mealFoods[selectedQuantityCell.foodIndex].quantity
+                : 1;
             })()
           }
           onConfirm={handleQuantityConfirm}

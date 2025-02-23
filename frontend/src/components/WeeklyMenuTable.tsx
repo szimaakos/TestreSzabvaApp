@@ -2,7 +2,6 @@ import React from "react";
 import "./WeeklyMenuTable.css";
 import { HetiEtrend } from "../types/MealSlotTypes";
 
-// A WeeklyMenuTableProps típusát így kell definiálni:
 interface WeeklyMenuTableProps {
   days: string[];
   mealTypes: string[];
@@ -13,7 +12,6 @@ interface WeeklyMenuTableProps {
   currentDayName: string;
 }
 
-
 const WeeklyMenuTable: React.FC<WeeklyMenuTableProps> = ({
   days,
   mealTypes,
@@ -21,10 +19,8 @@ const WeeklyMenuTable: React.FC<WeeklyMenuTableProps> = ({
   onAddFoodClick,
   onDeleteFood,
   onChangeQuantity,
-  currentDayName
+  currentDayName,
 }) => {
-  
-  // Keressük meg az adott nap és étkezési típus slotot
   const getMealSlotForDayAndType = (day: string, mealType: string) => {
     return weeklyMenus.find(
       (slot) =>
@@ -55,23 +51,22 @@ const WeeklyMenuTable: React.FC<WeeklyMenuTableProps> = ({
                   {slot && slot.mealFoods && slot.mealFoods.length > 0 ? (
                     <>
                       {slot.mealFoods.map((mf, i) => (
-                      <div key={mf.id ?? `${mf.foodId}-${i}`} className="meal-item">
-                        <div className="meal-info">
-                          <span className="meal-name">{mf.etel?.name || "Ismeretlen étel"}</span>
-                          <span className="meal-calories">{mf.totalCalories} kcal</span>
-                          <span className="meal-quantity">Adag: {mf.quantity}</span>
+                        <div key={mf.id ?? `${mf.foodId}-${i}`} className="meal-item">
+                          <div className="meal-info">
+                            <span className="meal-name">{mf.etel?.name || "Ismeretlen étel"}</span>
+                            <span className="meal-calories">{mf.totalCalories} kcal</span>
+                            <span className="meal-quantity">Adag: {mf.quantity}</span>
+                          </div>
+                          <div className="meal-actions">
+                            <button onClick={() => onChangeQuantity(day, mealType, i)} disabled={!isToday}>
+                              Adag beállítása
+                            </button>
+                            <button onClick={() => onDeleteFood(day, mealType, i)} disabled={!isToday}>
+                              Törlés
+                            </button>
+                          </div>
                         </div>
-                        <div className="meal-actions">
-                          <button onClick={() => onChangeQuantity(day, mealType, i)} disabled={!isToday}>
-                            Adag beállítása
-                          </button>
-                          <button onClick={() => onDeleteFood(day, mealType, i)} disabled={!isToday}>
-                            Törlés
-                          </button>
-                        </div>
-                      </div>
-                    ))}
-
+                      ))}
                       <button className="add-food-button" onClick={() => onAddFoodClick(day, mealType)} disabled={!isToday}>
                         Új étel hozzáadása
                       </button>

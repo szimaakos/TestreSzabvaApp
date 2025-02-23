@@ -20,6 +20,11 @@
   color: #333;
 }
 
+.weekly-menu-wrapper {
+  overflow-x: auto;
+}
+
+
 .weekly-menu-table tr:hover {
   background-color: #f9f9f9;
 }
