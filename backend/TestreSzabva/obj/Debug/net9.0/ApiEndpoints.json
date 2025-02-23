@@ -165,23 +165,7 @@
   },
   {
     "ContainingType": "TestreSzabva.Controllers.HetiEtrendController",
-    "Method": "CreateEtrend",
-    "RelativePath": "api/HetiEtrend",
-    "HttpMethod": "POST",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "dto",
-        "Type": "CreateHetiEtrendDto",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "TestreSzabva.Controllers.HetiEtrendController",
-    "Method": "GetEtrend",
+    "Method": "GetMealSlot",
     "RelativePath": "api/HetiEtrend/{id}",
     "HttpMethod": "GET",
     "IsController": true,
@@ -197,8 +181,40 @@
   },
   {
     "ContainingType": "TestreSzabva.Controllers.HetiEtrendController",
-    "Method": "UpdateEtrend",
-    "RelativePath": "api/HetiEtrend/{id}",
+    "Method": "GetMealSlotsByUser",
+    "RelativePath": "api/HetiEtrend/Felhasznalo/{userId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "userId",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "TestreSzabva.Controllers.HetiEtrendController",
+    "Method": "CreateMealSlot",
+    "RelativePath": "api/HetiEtrend/mealSlot",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "CreateMealSlotDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "TestreSzabva.Controllers.HetiEtrendController",
+    "Method": "UpdateMealSlot",
+    "RelativePath": "api/HetiEtrend/mealSlot/{id}",
     "HttpMethod": "PUT",
     "IsController": true,
     "Order": 0,
@@ -210,7 +226,7 @@
       },
       {
         "Name": "dto",
-        "Type": "UpdateHetiEtrendDto",
+        "Type": "UpdateMealSlotDto",
         "IsRequired": true
       }
     ],
@@ -218,8 +234,8 @@
   },
   {
     "ContainingType": "TestreSzabva.Controllers.HetiEtrendController",
-    "Method": "DeleteEtrend",
-    "RelativePath": "api/HetiEtrend/{id}",
+    "Method": "DeleteMealSlot",
+    "RelativePath": "api/HetiEtrend/mealSlot/{id}",
     "HttpMethod": "DELETE",
     "IsController": true,
     "Order": 0,
@@ -227,22 +243,6 @@
       {
         "Name": "id",
         "Type": "System.Int32",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "TestreSzabva.Controllers.HetiEtrendController",
-    "Method": "GetEtrendByUser",
-    "RelativePath": "api/HetiEtrend/Felhasznalo/{userId}",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "userId",
-        "Type": "System.String",
         "IsRequired": true
       }
     ],

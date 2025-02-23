@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace TestreSzabva.Migrations
 {
     /// <inheritdoc />
-    public partial class sqlitelocal_migration_339 : Migration
+    public partial class sqlitelocal_migration_711 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -204,9 +204,7 @@ namespace TestreSzabva.Migrations
                     UserId = table.Column<string>(type: "TEXT", nullable: false),
                     DayOfWeek = table.Column<string>(type: "TEXT", nullable: false),
                     MealTime = table.Column<string>(type: "TEXT", nullable: false),
-                    FoodId = table.Column<int>(type: "INTEGER", nullable: false),
-                    Quantity = table.Column<float>(type: "REAL", nullable: false),
-                    TotalCalories = table.Column<float>(type: "REAL", nullable: false)
+                    EtelFoodId = table.Column<int>(type: "INTEGER", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -218,11 +216,10 @@ namespace TestreSzabva.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_HetiEtrendek_Etelek_FoodId",
-                        column: x => x.FoodId,
+                        name: "FK_HetiEtrendek_Etelek_EtelFoodId",
+                        column: x => x.EtelFoodId,
                         principalTable: "Etelek",
-                        principalColumn: "FoodId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "FoodId");
                 });
 
             migrationBuilder.CreateTable(
@@ -246,6 +243,34 @@ namespace TestreSzabva.Migrations
                         column: x => x.CategoryId,
                         principalTable: "Kategoriak",
                         principalColumn: "CategoryId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "MealFoods",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    FoodId = table.Column<int>(type: "INTEGER", nullable: false),
+                    Quantity = table.Column<float>(type: "REAL", nullable: false),
+                    TotalCalories = table.Column<float>(type: "REAL", nullable: false),
+                    MealSlotId = table.Column<int>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MealFoods", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_MealFoods_Etelek_FoodId",
+                        column: x => x.FoodId,
+                        principalTable: "Etelek",
+                        principalColumn: "FoodId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_MealFoods_HetiEtrendek_MealSlotId",
+                        column: x => x.MealSlotId,
+                        principalTable: "HetiEtrendek",
+                        principalColumn: "PlanId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -292,14 +317,24 @@ namespace TestreSzabva.Migrations
                 column: "CategoryId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_HetiEtrendek_FoodId",
+                name: "IX_HetiEtrendek_EtelFoodId",
                 table: "HetiEtrendek",
-                column: "FoodId");
+                column: "EtelFoodId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_HetiEtrendek_UserId",
                 table: "HetiEtrendek",
                 column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MealFoods_FoodId",
+                table: "MealFoods",
+                column: "FoodId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MealFoods_MealSlotId",
+                table: "MealFoods",
+                column: "MealSlotId");
         }
 
         /// <inheritdoc />
@@ -324,13 +359,16 @@ namespace TestreSzabva.Migrations
                 name: "EtelKategoriak");
 
             migrationBuilder.DropTable(
-                name: "HetiEtrendek");
+                name: "MealFoods");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
                 name: "Kategoriak");
+
+            migrationBuilder.DropTable(
+                name: "HetiEtrendek");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");

@@ -294,7 +294,62 @@
             "description": "OK"
           }
         }
-      },
+      }
+    },
+    "/api/HetiEtrend/Felhasznalo/{userId}": {
+      "get": {
+        "tags": [
+          "HetiEtrend"
+        ],
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/HetiEtrend/mealSlot": {
+      "post": {
+        "tags": [
+          "HetiEtrend"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateMealSlotDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateMealSlotDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateMealSlotDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/HetiEtrend/mealSlot/{id}": {
       "put": {
         "tags": [
           "HetiEtrend"
@@ -314,17 +369,17 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/UpdateHetiEtrendDto"
+                "$ref": "#/components/schemas/UpdateMealSlotDto"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/UpdateHetiEtrendDto"
+                "$ref": "#/components/schemas/UpdateMealSlotDto"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/UpdateHetiEtrendDto"
+                "$ref": "#/components/schemas/UpdateMealSlotDto"
               }
             }
           }
@@ -350,59 +405,6 @@
             }
           }
         ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
-    "/api/HetiEtrend/Felhasznalo/{userId}": {
-      "get": {
-        "tags": [
-          "HetiEtrend"
-        ],
-        "parameters": [
-          {
-            "name": "userId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
-    "/api/HetiEtrend": {
-      "post": {
-        "tags": [
-          "HetiEtrend"
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateHetiEtrendDto"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateHetiEtrendDto"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateHetiEtrendDto"
-              }
-            }
-          }
-        },
         "responses": {
           "200": {
             "description": "OK"
@@ -538,13 +540,35 @@
   },
   "components": {
     "schemas": {
-      "CreateHetiEtrendDto": {
+      "CreateMealFoodDto": {
+        "required": [
+          "foodId",
+          "quantity",
+          "totalCalories"
+        ],
+        "type": "object",
+        "properties": {
+          "foodId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "quantity": {
+            "maximum": 500,
+            "minimum": 1,
+            "type": "number",
+            "format": "float"
+          },
+          "totalCalories": {
+            "type": "number",
+            "format": "float"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CreateMealSlotDto": {
         "required": [
           "dayOfWeek",
-          "foodId",
           "mealTime",
-          "quantity",
-          "totalCalories",
           "userId"
         ],
         "type": "object",
@@ -561,19 +585,12 @@
             "minLength": 1,
             "type": "string"
           },
-          "foodId": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "quantity": {
-            "maximum": 500,
-            "minimum": 1,
-            "type": "number",
-            "format": "float"
-          },
-          "totalCalories": {
-            "type": "number",
-            "format": "float"
+          "mealFoods": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CreateMealFoodDto"
+            },
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -763,10 +780,7 @@
       "HetiEtrend": {
         "required": [
           "dayOfWeek",
-          "foodId",
           "mealTime",
-          "quantity",
-          "totalCalories",
           "userId"
         ],
         "type": "object",
@@ -787,19 +801,12 @@
             "minLength": 1,
             "type": "string"
           },
-          "foodId": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "quantity": {
-            "maximum": 500,
-            "minimum": 1,
-            "type": "number",
-            "format": "float"
-          },
-          "totalCalories": {
-            "type": "number",
-            "format": "float"
+          "mealFoods": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MealFood"
+            },
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -842,6 +849,46 @@
         },
         "additionalProperties": false
       },
+      "MealFood": {
+        "required": [
+          "foodId",
+          "mealSlotId",
+          "quantity",
+          "totalCalories"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "foodId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "etel": {
+            "$ref": "#/components/schemas/Etel"
+          },
+          "quantity": {
+            "maximum": 500,
+            "minimum": 1,
+            "type": "number",
+            "format": "float"
+          },
+          "totalCalories": {
+            "type": "number",
+            "format": "float"
+          },
+          "mealSlotId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "mealSlot": {
+            "$ref": "#/components/schemas/HetiEtrend"
+          }
+        },
+        "additionalProperties": false
+      },
       "RegisterDto": {
         "type": "object",
         "properties": {
@@ -860,14 +907,41 @@
         },
         "additionalProperties": false
       },
-      "UpdateHetiEtrendDto": {
+      "UpdateMealFoodDto": {
+        "required": [
+          "foodId",
+          "quantity",
+          "totalCalories"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "foodId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "quantity": {
+            "maximum": 500,
+            "minimum": 1,
+            "type": "number",
+            "format": "float"
+          },
+          "totalCalories": {
+            "type": "number",
+            "format": "float"
+          }
+        },
+        "additionalProperties": false
+      },
+      "UpdateMealSlotDto": {
         "required": [
           "dayOfWeek",
-          "foodId",
           "mealTime",
           "planId",
-          "quantity",
-          "totalCalories",
           "userId"
         ],
         "type": "object",
@@ -888,19 +962,12 @@
             "minLength": 1,
             "type": "string"
           },
-          "foodId": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "quantity": {
-            "maximum": 500,
-            "minimum": 1,
-            "type": "number",
-            "format": "float"
-          },
-          "totalCalories": {
-            "type": "number",
-            "format": "float"
+          "mealFoods": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UpdateMealFoodDto"
+            },
+            "nullable": true
           }
         },
         "additionalProperties": false

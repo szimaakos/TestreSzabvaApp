@@ -15,21 +15,22 @@ namespace TestreSzabva.Data
         public DbSet<Kategoria> Kategoriak { get; set; }
         public DbSet<HetiEtrend> HetiEtrendek { get; set; }
         public DbSet<EtelKategoria> EtelKategoriak { get; set; }
+        public DbSet<MealFood> MealFoods { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
+            // HetiEtrend: a PlanId automatikus generálása
             modelBuilder.Entity<HetiEtrend>()
                 .Property(he => he.PlanId)
                 .ValueGeneratedOnAdd();
 
-
-            // Felhasznalo (IdentityUser alap)
+            // Felhasznalo konfigurációja
             modelBuilder.Entity<Felhasznalo>()
                 .HasKey(f => f.Id);
 
-            // Új mezők konfigurációja (opcionális)
             modelBuilder.Entity<Felhasznalo>()
                 .Property(f => f.GoalDate)
                 .IsRequired(false);
@@ -38,15 +39,14 @@ namespace TestreSzabva.Data
                 .Property(f => f.CalorieGoal)
                 .IsRequired(false);
 
-            // Etel
+            // Etel konfigurációja
             modelBuilder.Entity<Etel>()
                 .HasKey(e => e.FoodId);
 
-            // Kategoria
+            // Kategoria konfigurációja
             modelBuilder.Entity<Kategoria>()
                 .HasKey(k => k.CategoryId);
 
-            // EtelKategoria (kapcsoló tábla)
             modelBuilder.Entity<EtelKategoria>()
                 .HasKey(ek => new { ek.FoodId, ek.CategoryId });
 
@@ -60,22 +60,22 @@ namespace TestreSzabva.Data
                 .WithMany(k => k.EtelKategoriak)
                 .HasForeignKey(ek => ek.CategoryId);
 
-            // HetiEtrend
+            // HetiEtrend és Felhasznalo kapcsolata:
+            // Mivel a HetiEtrend nem tartalmaz közvetlen navigációs property-t a Felhasználóra,
+            // használjuk az overload-t, hogy a foreign key (UserId) alapján kapcsolódjon.
             modelBuilder.Entity<HetiEtrend>()
-                .HasKey(he => he.PlanId);
-
-            modelBuilder.Entity<HetiEtrend>()
-                .HasOne(he => he.Felhasznalo)
+                .HasOne<Felhasznalo>()
                 .WithMany(f => f.HetiEtrendek)
                 .HasForeignKey(he => he.UserId)
                 .HasPrincipalKey(f => f.Id);
 
-            modelBuilder.Entity<HetiEtrend>()
-                .HasOne(he => he.Etel)
-                .WithMany(e => e.HetiEtrendek)
-                .HasForeignKey(he => he.FoodId);
+            // MealFood és HetiEtrend kapcsolata:
+            modelBuilder.Entity<MealFood>()
+                .HasOne(mf => mf.MealSlot)
+                .WithMany(m => m.MealFoods)
+                .HasForeignKey(mf => mf.MealSlotId);
 
-            // Enum-jellegű string mezők
+            // Enum-string konverziók
             modelBuilder.Entity<Felhasznalo>()
                 .Property(f => f.Gender)
                 .HasConversion<string>();
@@ -92,5 +92,6 @@ namespace TestreSzabva.Data
                 .Property(he => he.MealTime)
                 .HasConversion<string>();
         }
+
     }
 }
