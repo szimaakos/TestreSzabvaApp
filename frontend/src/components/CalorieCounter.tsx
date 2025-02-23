@@ -1,3 +1,4 @@
+// CalorieCounter.tsx
 import React, { useState, useEffect } from 'react';
 import "./CalorieCounter.css";
 
@@ -93,6 +94,9 @@ const CalorieCounter: React.FC<CalorieCounterProps> = ({ user, caloriesConsumed 
       )}
       <div className="calories-status">
         <p>Elfogyasztott kalória ma: <strong>{caloriesConsumed} kcal</strong></p>
+        {dailyCalories !== null && caloriesConsumed > dailyCalories && (
+          <p className="warning-text">Túllépted az ajánlott napi kalóriát!</p>
+        )}
       </div>
     </div>
   );

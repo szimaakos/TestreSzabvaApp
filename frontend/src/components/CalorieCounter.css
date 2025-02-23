@@ -19,6 +19,13 @@
   color: #555;
 }
 
+.warning-text {
+  color: red;
+  font-weight: bold;
+  margin-top: 10px;
+}
+
+
 .calories-status {
   text-align: center;
   font-size: 16px;
