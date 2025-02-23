@@ -98,7 +98,9 @@ const DashboardPage: React.FC = () => {
         if (weeklyResponse.ok) {
           const weeklyData = await weeklyResponse.json();
           setWeeklyMenus(weeklyData);
-          const total = weeklyData.reduce((acc: number, meal: HetiEtrend) => acc + meal.etel.calories, 0);
+          const total = weeklyData.reduce((acc: number, meal: HetiEtrend) => acc + meal.totalCalories, 0);
+
+          
           setCaloriesConsumed(total);
         }
       } catch (err) {
@@ -124,41 +126,48 @@ const DashboardPage: React.FC = () => {
   };
 
   // Új étel beállítása – lecseréli a meglévő ételt vagy adja hozzá, ha még nincs
-  const handleFoodSelected = (food: Etel) => {
-    const recommended = computeRecommendedCalories();
-    if (recommended !== null && selectedCell) {
-      const existingMeal = weeklyMenus.find(
-        (meal) =>
-          meal.dayOfWeek.toLowerCase() === selectedCell.day.toLowerCase() &&
-          meal.mealTime.toLowerCase() === selectedCell.mealType.toLowerCase()
-      );
-      let newConsumed = caloriesConsumed;
-      if (existingMeal) {
-        newConsumed -= existingMeal.totalCalories;
-      }
-      // Alapértelmezett mennyiség: 1 adag
-      newConsumed += food.calories;
-      setCaloriesConsumed(newConsumed);
-      setWeeklyMenus((prev) => {
-        const otherMeals = prev.filter(
-          (meal) =>
-            !(
-              meal.dayOfWeek.toLowerCase() === selectedCell.day.toLowerCase() &&
-              meal.mealTime.toLowerCase() === selectedCell.mealType.toLowerCase()
-            )
-        );
-        const newMeal: HetiEtrend = {
-          planId: Date.now(),
-          dayOfWeek: selectedCell.day,
-          mealTime: selectedCell.mealType,
-          quantity: 1,
-          totalCalories: food.calories,
-          etel: food,
-        };
-        return [...otherMeals, newMeal];
-      });
+  const handleFoodSelected = async (food: Etel) => {
+    const token = localStorage.getItem("authToken");
+    const userId = localStorage.getItem("userId");
+    if (!token || !userId || !selectedCell) return;
+  
+    const newQuantity = 1;
+    const newTotalCalories = food.calories * newQuantity;
+  
+    const newMealData = {
+      UserId: userId,
+      DayOfWeek: selectedCell.day,
+      MealTime: selectedCell.mealType,
+      FoodId: food.foodId,
+      Quantity: newQuantity,
+      TotalCalories: newTotalCalories,
+    };
+  
+    console.log("newMealData:", newMealData); // Debug
+  
+    const response = await fetch("http://localhost:5162/api/HetiEtrend", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(newMealData),
+    });
+  
+    if (response.ok) {
+      const createdMeal = await response.json();
+      const mealWithFood = { ...createdMeal, etel: food };
+      setWeeklyMenus((prev) => [...prev, mealWithFood]);
+      setCaloriesConsumed((prev) => prev + newTotalCalories);
+    } else {
+      const errorBody = await response.text();
+      console.error("Hiba az étel hozzáadásakor:", response.status, errorBody);
     }
+  
+    setFoodPopupOpen(false);
   };
+  
+  
 
   // Étkezés törlése – csak a mai nap esetén
   const handleDeleteMeal = (day: string, mealType: string) => {

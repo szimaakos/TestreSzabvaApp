@@ -72,7 +72,7 @@ const WeeklyMenuTable: React.FC<WeeklyMenuTableProps> = ({
                   {meal ? (
                     <>
                       <div className="meal-info">
-                        <div className="meal-name">{meal.etel.name}</div>
+                      <div className="meal-name">{meal.etel?.name || "Ismeretlen étel"}</div>
                         <div className="meal-calories">{meal.totalCalories} kcal</div>
                         <div className="meal-quantity">Adag: {meal.quantity}</div>
                       </div>
