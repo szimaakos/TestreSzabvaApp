@@ -308,7 +308,9 @@ const OnBoardingPage: React.FC = () => {
         {errorMsg && <p className="error-message">{errorMsg}</p>}
 
         <div className="button-group">
+          <button onClick={() => navigate("/")} className="onboarding-back">Vissza a kezdőlapra</button>
           {currentStep > 0 && (
+            
             <button className="onboarding-submit" onClick={handleBack}>
               Vissza
             </button>

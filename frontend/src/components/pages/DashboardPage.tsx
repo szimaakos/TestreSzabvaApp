@@ -379,7 +379,7 @@ const DashboardPage: React.FC = () => {
     <div className="dashboard-container fade-in">
       <aside className="dashboard-sidebar">
         <div className="sidebar-header">
-          <h2>TestreSzabva</h2>
+          <h2 onClick={() => navigate("/")} className="logo animated-logo">TestreSzabva</h2>
         </div>
         <nav className="sidebar-nav">
           <button onClick={() => navigate("/dashboard")}>Áttekintés</button>

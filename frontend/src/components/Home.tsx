@@ -141,7 +141,7 @@ const Home: React.FC<HomeProps> = ({ isLoggedIn, setIsLoggedIn }) => {
             </p>
             <button
               className="step-button"
-              onClick={() => checkLoginOrRegister(() => navigate("/weekly-menu"))}
+              onClick={() => checkLoginOrRegister(() => navigate("/dashboard"))}
             >
               Menü összeállítás
             </button>
