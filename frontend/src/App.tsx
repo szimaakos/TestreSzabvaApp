@@ -4,7 +4,7 @@ import Home from "./components/Home";
 import OnboardingPage from "./components/pages/OnBoardingPage";
 import WeeklyMenuPage from "./components/pages/WeeklyMenuPage";
 import ProgressPage from "./components/pages/ProgressPage";
-import ReceptekPage from "./components/pages/ReceptekPage";
+import ReceptekPage from "./components/ReceptekPage";
 import DashboardPage from "./components/pages/DashboardPage";
 
 /**
