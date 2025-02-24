@@ -1,11 +1,11 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./ReceptekPage.css";
 import avokadoPiritos from "./images/avokadoPiritos.jpeg";
 import avokadosCsicseriSalata from "./images/avokadosCsicseriSalata.jpeg";
 import bananosProteinMuffin from "./images/bananosProteinMuffin.jpeg";
 import bananosSmoothie from "./images/bananosSmoothie.jpg";
-import bananosZabkasa from "./images/bananosSmoothie.jpg";
+import bananosZabkasa from "./images/bananosZabkasa.jpeg";
 import bogyosGyumiSmoothie from "./images/bogyosGyumiSmoothie.jpeg";
 import csicseriBorsoCurry from "./images/csicseriborsoCurry.jpeg";
 import csirkeCeaserSalataEgeszseges from "./images/csirkeCaesarSalataEgeszseges.jpeg";
@@ -42,11 +42,6 @@ import zoldsegesTofuStirfry from "./images/zoldsegesTofuStirfry.jpeg";
 import zoldsegSpaghetti from "./images/zoldsegSpaghetti.jpeg";
 import zoldturmix from "./images/zoldturmix.jpeg";
 
-
-
-
-
-
 interface Recipe {
   id: number;
   title: string;
@@ -73,7 +68,7 @@ const recipesData: Recipe[] = [
     ],
     instructions: [
       "Grillezd meg a csirkemellet, majd szeleteld fel.",
-      "Főzd meg a quinoát a csomagoláson lévő utasítás szerint.",
+      "Főzd meg a quinoát a csomagolás utasítása szerint.",
       "Vágd apróra a zöldségeket és keverd össze az olívaolajjal, citromlével, sóval és borssal.",
       "Tálald a csirkét a quinoa és a saláta tetején."
     ]
@@ -178,7 +173,6 @@ const recipesData: Recipe[] = [
       "Azonnal tálald."
     ]
   },
-  // Új receptek
   {
     id: 7,
     title: "Protein Zabkása",
@@ -211,9 +205,9 @@ const recipesData: Recipe[] = [
       "Gyömbér és fokhagyma ízlés szerint"
     ],
     instructions: [
-      "Pirítsd a tofu kockákat egy serpenyőben szezámolajon, amíg enyhén megpirulnak.",
-      "Add hozzá a felaprított zöldségeket, fokhagymát és gyömbért, majd párold pár percig.",
-      "Öntsd rá a szójaszószt, és kevergetve főzd további 2-3 percig."
+      "Pirítsd a tofu kockákat szezámolajon.",
+      "Add hozzá a felaprított zöldségeket, fokhagymát és gyömbért, párold pár percig.",
+      "Öntsd rá a szójaszószt, keverd össze."
     ]
   },
   {
@@ -229,9 +223,8 @@ const recipesData: Recipe[] = [
       "Egy kis olívaolaj"
     ],
     instructions: [
-      "Verd fel a tojásokat, sózd, borsozd ízlés szerint.",
-      "Adj hozzá spenótot és morzsolt feta sajtot.",
-      "Önts egy serpenyőbe, és süsd mindkét oldalát aranybarnára."
+      "Verd fel a tojásokat, majd add hozzá a spenótot és fetát.",
+      "Önts egy serpenyőbe és süsd aranybarnára."
     ]
   },
   {
@@ -247,36 +240,34 @@ const recipesData: Recipe[] = [
       "Só, bors"
     ],
     instructions: [
-      "Grillezd vagy süsd meg a marhahúst, majd szeleteld vékonyra.",
-      "Keverd össze a zöldségeket egy tálban.",
-      "Locsold meg olívaolajjal és balzsamecettel, majd tálald a marhahússal."
+      "Grillezd vagy süsd meg a húst, szeleteld fel.",
+      "Keverd össze a zöldségeket, locsold meg és tálald."
     ]
   },
   {
     id: 11,
     title: "Csicseriborsó Curry",
     image: csicseriBorsoCurry,
-    description: "Fűszeres és tápláló csicseriborsó curry, ami feltölti a szervezetedet.",
+    description: "Fűszeres csicseriborsó curry, feltölt energiával.",
     ingredients: [
-      "400g csicseriborsó (konzerv vagy főzött)",
-      "1 hagyma, apróra vágva",
+      "400g csicseriborsó",
+      "1 hagyma",
       "2 gerezd fokhagyma",
       "1 doboz kókusztej",
       "Curry fűszerkeverék",
-      "Friss koriander, só, bors"
+      "Koriander, só, bors"
     ],
     instructions: [
-      "Pirítsd meg az apróra vágott hagymát és fokhagymát egy serpenyőben.",
-      "Add hozzá a csicseriborsót és a curry fűszert, majd keverd össze.",
-      "Öntsd rá a kókusztejet, és főzd alacsony lángon 10-15 percig.",
-      "Tálald friss korianderrel."
+      "Pirítsd meg a hagymát és fokhagymát.",
+      "Add hozzá a csicseriborsót és curry-t.",
+      "Öntsd rá a kókusztejet, főzd 10-15 percig."
     ]
   },
   {
     id: 12,
     title: "Quinoa Bowl Zöldségekkel",
     image: bowlZoldseg,
-    description: "Egy tápláló tál, melyben a quinoa és a friss zöldségek dominálnak.",
+    description: "Tápláló tál quinoa és friss zöldségekkel.",
     ingredients: [
       "100g quinoa",
       "Vegyes zöldségek (spenót, paradicsom, avokádó)",
@@ -284,531 +275,441 @@ const recipesData: Recipe[] = [
       "Só, bors"
     ],
     instructions: [
-      "Főzd meg a quinoát a csomagolás utasítása szerint.",
-      "Keverd össze a friss zöldségeket apróra vágva.",
-      "Locsold meg olívaolajjal és citromlével, majd ízesítsd sóval és borssal."
+      "Főzd meg a quinoát.",
+      "Keverd össze a zöldségeket, locsold meg."
     ]
   },
   {
     id: 13,
     title: "Avokádós Csicseriborsó Saláta",
     image: avokadosCsicseriSalata,
-    description: "Könnyű és ízletes saláta avokádóval és csicseriborsóval.",
+    description: "Könnyű saláta avokádóval és csicseriborsóval.",
     ingredients: [
       "1 érett avokádó",
       "400g csicseriborsó",
-      "Friss paradicsom, uborka",
-      "Olívaolaj, citromlé",
-      "Só, bors"
+      "Paradicsom, uborka",
+      "Olívaolaj, citromlé, só, bors"
     ],
     instructions: [
-      "Vágd kockára az avokádót és a zöldségeket.",
-      "Keverd össze a csicseriborsóval.",
-      "Locsold meg olívaolajjal és citromlével, majd ízesítsd sóval és borssal."
+      "Vágd kockára az avokádót és zöldségeket.",
+      "Keverd össze a csicseriborsóval, locsold meg."
     ]
   },
   {
     id: 14,
     title: "Édesburgonya Saláta",
     image: edesburgonyaSalata,
-    description: "Tápláló saláta sült édesburgonyával és friss zöldségekkel.",
+    description: "Saláta sült édesburgonyával és friss zöldségekkel.",
     ingredients: [
-      "2 közepes édesburgonya",
+      "2 édesburgonya",
       "Kelj fodor vagy spenót",
       "Piros hagyma, paprika",
-      "Olívaolaj, balzsamecet",
-      "Fűszerek, só, bors"
+      "Olívaolaj, balzsamecet, só, bors"
     ],
     instructions: [
-      "Süsd meg az édesburgonyát sütőben 200°C-on, amíg puhává válik.",
-      "Vágd fel a zöldségeket, és keverd össze egy tálban.",
-      "Locsold meg olívaolajjal és balzsamecettel, majd keverd össze a sült édesburgonyát."
+      "Süsd meg a burgonyát 200°C-on.",
+      "Keverd össze a hozzávalókat, locsold meg."
     ]
   },
   {
     id: 15,
     title: "Tonhal Saláta",
     image: tonhalSalata,
-    description: "Fehérjében gazdag saláta tonhallal és friss zöldségekkel.",
+    description: "Saláta tonhallal és friss zöldségekkel.",
     ingredients: [
-      "1 doboz tonhal (vízben)",
-      "Vegyes salátalevelek",
-      "Paradicsom, uborka, olívabogyó",
-      "Olívaolaj, citromlé",
-      "Só, bors"
+      "1 doboz tonhal",
+      "Salátalevelek, paradicsom, uborka, olívabogyó",
+      "Olívaolaj, citromlé, só, bors"
     ],
     instructions: [
-      "Öblítsd le a tonhalat, ha szükséges.",
-      "Keverd össze a salátaleveleket és a zöldségeket.",
-      "Tálald a tonhalat a tetején, locsold meg olívaolajjal és citromlével."
+      "Öblítsd le a tonhalat, keverd össze a salátát, locsold meg."
     ]
   },
   {
     id: 16,
     title: "Protein Palacsinta",
     image: proteinPalacsinta,
-    description: "Egészséges palacsinta magas fehérjetartalommal, ideális edzés után.",
+    description: "Palacsinta magas fehérjetartalommal, ideális edzés után.",
     ingredients: [
       "2 tojás",
       "30g zabpehely",
       "1 banán",
       "1 kanál proteinpor",
-      "Egy kevés fahéj"
+      "Fahéj"
     ],
     instructions: [
-      "Turmixold össze a hozzávalókat simára tésztává.",
-      "Süsd kis serpenyőben mindkét oldalát aranybarnára.",
-      "Tálald friss gyümölcsökkel vagy joghurttal."
+      "Turmixold össze a hozzávalókat, süsd aranybarnára, tálald."
     ]
   },
   {
     id: 17,
     title: "Banános Zabkása",
     image: bananosZabkasa,
-    description: "Egyszerű, tápláló zabkása banánnal és chia maggal.",
+    description: "Egyszerű zabkása banánnal és chia maggal.",
     ingredients: [
       "50g zabpehely",
       "200ml víz vagy mandulatej",
-      "1 érett banán",
+      "1 banán",
       "1 evőkanál chia mag",
-      "Méz ízlés szerint"
+      "Méz"
     ],
     instructions: [
-      "Főzd meg a zabpelyhet a választott folyadékkal.",
-      "Vágd fel a banánt, majd keverd össze a zabkásával és a chia maggal.",
-      "Édesítsd mézzel, és tálald melegen."
+      "Főzd meg a zabpelyhet, keverd össze a banánnal és chia-val, édesítsd."
     ]
   },
   {
     id: 18,
     title: "Görög Joghurt Parfait",
     image: gorogJoghurtParafait,
-    description: "Rétegezett, tápláló desszert vagy reggeli, tele fehérjével és rostokkal.",
+    description: "Rétegezett desszert vagy reggeli, tele fehérjével és rostokkal.",
     ingredients: [
       "200g görög joghurt",
       "50g granola",
       "Vegyes bogyós gyümölcsök",
-      "Méz a tetejére"
+      "Méz"
     ],
     instructions: [
-      "Rétegezd a joghurtot, granolát és gyümölcsöket egy pohárban.",
-      "Locsold meg egy kevés mézzel, majd azonnal fogyaszd."
+      "Rétegezd a hozzávalókat egy pohárban, locsold meg."
     ]
   },
   {
     id: 19,
     title: "Csirke Wrap Teljes Kiőrlésű Tortillával",
     image: csirkeWrap,
-    description: "Egészséges, fehérjedús wrap csirkével és friss zöldségekkel.",
+    description: "Wrap csirkével és friss zöldségekkel.",
     ingredients: [
-      "150g grillezett csirkemell",
+      "150g csirkemell",
       "Teljes kiőrlésű tortilla",
-      "Vegyes salátalevelek",
-      "Paradicsom, avokádó",
-      "Joghurtszósz (alacsony zsírtartalmú)"
+      "Saláta, paradicsom, avokádó",
+      "Joghurtszósz"
     ],
     instructions: [
-      "Szeleteld fel a csirkemellet.",
-      "Helyezd a tortilla közepére a salátaleveleket, paradicsomot és avokádót.",
-      "Tedd rá a csirkét és locsold meg joghurtszósszal, majd tekerd fel."
+      "Szeleteld fel a csirkét, töltsd meg a tortillát, tekerd fel."
     ]
   },
   {
     id: 20,
     title: "Mandulavaj Banános Smoothie",
     image: bananosSmoothie,
-    description: "Energia és fehérje egy pohárban, ideális edzés előtt vagy után.",
+    description: "Smoothie mandulavajjal és spenóttal, edzés előtt vagy után.",
     ingredients: [
       "1 banán",
       "1 evőkanál mandulavaj",
       "200ml mandulatej",
-      "Egy marék spenót",
-      "Jégkockák"
+      "Spenót, jég"
     ],
     instructions: [
-      "Tedd a hozzávalókat egy turmixgépbe.",
-      "Turmixold simára, majd öntsd pohárba és azonnal fogyaszd."
+      "Turmixold össze a hozzávalókat, öntsd pohárba."
     ]
   },
   {
     id: 21,
     title: "Töltött Paprika",
     image: toltottPapper,
-    description: "Egészséges, fehérjében gazdag étel, töltött paprikával és sovány pulykával.",
+    description: "Paprika pulykahússal és barna rizzsel töltve.",
     ingredients: [
-      "4 nagy paprika",
-      "200g darált pulykahús",
+      "4 paprika",
+      "200g darált pulyka",
       "50g barna rizs",
-      "1 paradicsom, apróra vágva",
-      "Fűszerek (óregano, bazsalikom)",
-      "Só, bors"
+      "1 paradicsom",
+      "Fűszerek"
     ],
     instructions: [
-      "Főzd meg a barna rizst előre.",
-      "Keverd össze a darált húst, rizst, apróra vágott paradicsomot és fűszereket.",
-      "Töltsd meg a paprikákat, és süsd 180°C-on 25-30 percig."
+      "Főzd meg a rizst, keverd össze a húst, töltsd meg a paprikákat, süsd."
     ]
   },
   {
     id: 22,
     title: "Sült Pulyka és Zöldség Mix",
     image: sultPulykaZoldsegMix,
-    description: "Fehérjében gazdag, könnyű étel pulykahússal és szezonális zöldségekkel.",
+    description: "Pulyka és zöldségek egy könnyű ételben.",
     ingredients: [
-      "200g pulykamell",
+      "200g pulyka",
       "Brokkoli, sárgarépa, cukkini",
-      "Olívaolaj",
-      "Fűszerek (rozmaring, kakukkfű)",
-      "Só, bors"
+      "Olívaolaj, fűszerek"
     ],
     instructions: [
-      "Süsd meg a pulykamellet, majd szeleteld fel.",
-      "Párold meg a zöldségeket egy serpenyőben olívaolajjal és fűszerekkel.",
-      "Tálald a pulykát a zöldségkeverékkel."
+      "Süsd meg a pulykát, párold meg a zöldségeket, tálald."
     ]
   },
   {
     id: 23,
     title: "Görög Saláta Csirke Hozzáadásával",
     image: gorogSalataCsirke,
-    description: "Friss görög saláta, melyet grillezett csirkehússal egészítünk ki.",
+    description: "Grillezett csirkével dúsított görög saláta.",
     ingredients: [
-      "Vegyes salátalevelek",
-      "Paradicsom, uborka, feta sajt",
+      "Saláta, paradicsom, uborka, feta",
       "Olívabogyó, vörös hagyma",
-      "150g grillezett csirkemell",
-      "Olívaolaj, citromlé, oregánó"
+      "150g csirke"
     ],
     instructions: [
-      "Keverd össze a salátaleveleket és a zöldségeket.",
-      "Tálald a szeletelt csirkét a tetején, locsold meg olívaolajjal, citromlével és oregánóval."
+      "Keverd össze a hozzávalókat, tálald a csirkét a tetején."
     ]
   },
   {
     id: 24,
     title: "Mediterrán Csicseriborsó Saláta",
     image: mediterranCsicseriSalata,
-    description: "Ízletes saláta csicseriborsóval, friss zöldségekkel és mediterrán fűszerekkel.",
+    description: "Saláta csicseriborsóval, zöldségekkel és mediterrán fűszerekkel.",
     ingredients: [
       "400g csicseriborsó",
       "Paradicsom, uborka, vörös hagyma",
-      "Feta sajt, olívabogyó",
-      "Olívaolaj, citromlé",
-      "Oregánó, só, bors"
+      "Feta, olívaolaj, citromlé",
+      "Só, bors, oregánó"
     ],
     instructions: [
-      "Keverd össze a csicseriborsót a felaprított zöldségekkel.",
-      "Morzsold rá a feta sajtot, majd locsold meg olívaolajjal és citromlével.",
-      "Ízesítsd oregánóval, sóval és borssal."
+      "Keverd össze a hozzávalókat, morzsold rá a fetát, locsold meg."
     ]
   },
   {
     id: 25,
     title: "Édesburgonya Buddha Bowl",
     image: edesburgonyBuddhaBowl,
-    description: "Tápláló tál sült édesburgonyával, babbal, avokádóval és zöld salátával.",
+    description: "Buddha bowl sült édesburgonyával, babbal és avokádóval.",
     ingredients: [
       "2 édesburgonya",
       "1 avokádó",
       "400g fekete bab",
-      "Vegyes saláta",
-      "Olívaolaj, lime lé",
-      "Só, bors"
+      "Saláta, olívaolaj, lime lé"
     ],
     instructions: [
-      "Süsd meg az édesburgonyát kockára vágva 200°C-on 25 percig.",
-      "Keverd össze a salátát a babbal és az avokádó szeletekkel.",
-      "Tálald a sült édesburgonyával, locsold meg olívaolajjal és lime lével."
+      "Süsd meg a burgonyát, keverd össze a hozzávalókat, locsold meg."
     ]
   },
   {
     id: 26,
     title: "Spenótos Feta Csirke Wrap",
     image: spenotosTortilla,
-    description: "Egészséges wrap, melyben grillezett csirke, spenót és feta sajt található.",
+    description: "Wrap grillezett csirkével, spenóttal és fetával.",
     ingredients: [
-      "150g grillezett csirkemell",
+      "150g csirke",
       "Teljes kiőrlésű tortilla",
-      "Friss spenót",
-      "50g feta sajt",
-      "Joghurtszósz, só, bors"
+      "Spenót, feta"
     ],
     instructions: [
-      "Szeleteld fel a csirkemellet.",
-      "Töltsd meg a tortilla spenóttal, feta sajttal és joghurtszósszal.",
-      "Tekerd fel, és fogyaszd azonnal."
+      "Szeleteld fel a csirkét, töltsd meg a tortillát, tekerd fel."
     ]
   },
   {
     id: 27,
     title: "Quinoa és Zöldség Burger",
     image: ZoldsegBurger,
-    description: "Vegetáriánus burger quinoa és zöldségek felhasználásával, magas rost- és fehérjetartalommal.",
+    description: "Burger quinoa és zöldségekkel, magas rost- és fehérjetartalommal.",
     ingredients: [
-      "100g főtt quinoa",
-      "Reszelt cukkini és sárgarépa",
-      "1 tojás",
-      "Teljes kiőrlésű zsemle",
-      "Só, bors, fűszerek"
+      "100g quinoa",
+      "Reszelt zöldségek, 1 tojás",
+      "Teljes kiőrlésű zsemle, fűszerek"
     ],
     instructions: [
-      "Keverd össze a quinoát, reszelt zöldségeket és a tojást, ízesítsd fűszerekkel.",
-      "Formázz belőle pogácsákat, majd süsd meg egy serpenyőben kevés olívaolajon.",
-      "Tálald a burger zsemlében kedvenc salátával és szósszal."
+      "Keverd össze a hozzávalókat, formázz burgert, süsd, tálald."
     ]
   },
   {
     id: 28,
     title: "Lencseleves",
     image: lencseLeves,
-    description: "Tápláló és fehérjedús leves lencsével és zöldségekkel.",
+    description: "Fehérjedús leves lencsével és zöldségekkel.",
     ingredients: [
       "200g vöröslencse",
-      "1 hagyma, apróra vágva",
-      "2 gerezd fokhagyma",
-      "2 sárgarépa, felkarikázva",
-      "1 paradicsom, kockára vágva",
-      "Zöldségalaplé",
-      "Só, bors, kömény"
+      "1 hagyma, 2 fokhagyma",
+      "2 sárgarépa, 1 paradicsom",
+      "Alaplé, fűszerek"
     ],
     instructions: [
-      "Pirítsd meg a hagymát és fokhagymát egy nagy fazékban.",
-      "Add hozzá a többi zöldséget és a lencsét.",
-      "Öntsd fel zöldségalaplével, majd főzd 25-30 percig, amíg a lencse megpuhul.",
-      "Ízesítsd sóval, borssal és köménnyel."
+      "Pirítsd meg a hagymát és fokhagymát, add hozzá a lencsét és zöldségeket, főzd."
     ]
   },
   {
     id: 29,
     title: "Tofu Rántotta",
     image: tofuRantotta,
-    description: "Vegan alternatíva a rántottához, tofuval és zöldségekkel.",
+    description: "Vegan rántotta tofuval és zöldségekkel.",
     ingredients: [
       "200g tofu",
-      "1 kis vöröshagyma",
-      "Paprika, spenót",
-      "Kurkumapor",
-      "Só, bors",
-      "Olívaolaj"
+      "Vöröshagyma, paprika, spenót",
+      "Kurkumapor, só, bors, olívaolaj"
     ],
     instructions: [
-      "Morzsold össze a tofut egy villával.",
-      "Pirítsd meg a vöröshagymát olívaolajon, add hozzá a tofut és a zöldségeket.",
-      "Szórd meg kurkumával, sóval és borssal, majd süsd néhány percig."
+      "Morzsold össze a tofut, süsd meg a hagymát, add hozzá a tofu és zöldségeket, fűszerezd."
     ]
   },
   {
     id: 30,
     title: "Vegán Zöldséges Tál",
     image: veganZoldTal,
-    description: "Tápanyagokban gazdag vegán étel quinoa, avokádó és friss zöldségek kombinációjával.",
+    description: "Vegán étel quinoa és zöldségekkel.",
     ingredients: [
       "100g quinoa",
       "1 avokádó",
-      "Vegyes zöldségek (paradicsom, uborka, paprika)",
-      "Olívaolaj, citromlé",
-      "Só, bors"
+      "Vegyes zöldségek, olívaolaj, citromlé"
     ],
     instructions: [
-      "Főzd meg a quinoát a csomagolás utasítása szerint.",
-      "Vágd fel az avokádót és a zöldségeket.",
-      "Keverd össze, majd locsold meg olívaolajjal és citromlével, ízesítsd sóval és borssal."
+      "Főzd meg a quinoát, keverd össze az avokádóval és zöldségekkel."
     ]
   },
   {
     id: 31,
     title: "Protein Energy Bar",
     image: haziProtein,
-    description: "Házi készítésű, energiadús rágcsálnivaló edzés előtt vagy után.",
+    description: "Házi készítésű, energiadús rágcsálnivaló.",
     ingredients: [
       "100g zabpehely",
       "50g mandula",
       "1 kanál méz",
       "1 evőkanál proteinpor",
-      "Egy kevés kókuszreszelék"
+      "Kókuszreszelék"
     ],
     instructions: [
-      "Keverd össze az összetevőket egy tálban.",
-      "Nyomkodd egy tepsibe, és süsd 180°C-on 15-20 percig.",
-      "Hagyd kihűlni, majd szeleteld fel."
+      "Keverd össze a hozzávalókat, süsd 180°C-on, szeleteld fel."
     ]
   },
   {
     id: 32,
     title: "Sült Csirke és Brokkoli Stir-Fry",
-    image:sultCsirkeBrokoliStirfry,
-    description: "Gyors és egészséges stir-fry sült csirkével és brokkolival.",
+    image: sultCsirkeBrokoliStirfry,
+    description: "Stir-fry csirkével és brokkolival.",
     ingredients: [
-      "150g csirkemell",
-      "Brokkoli",
-      "Paprika, sárgarépa",
-      "Szójaszósz, olívaolaj",
-      "Fokhagyma, gyömbér"
+      "150g csirke",
+      "Brokkoli, paprika, sárgarépa",
+      "Szójaszósz, olívaolaj, fokhagyma, gyömbér"
     ],
     instructions: [
-      "Szeleteld fel a csirkét és süsd meg serpenyőben olívaolajjal.",
-      "Add hozzá a felaprított zöldségeket, fokhagymát és gyömbért.",
-      "Öntsd rá a szójaszószt, és keverd össze, majd süsd további 5 percig."
+      "Szeleteld fel a csirkét, süsd meg a zöldségekkel, szójaszósz hozzáadásával."
     ]
   },
   {
     id: 33,
     title: "Sült Tonhal és Avokádó Saláta",
     image: sultTonhalAvokadoSalata,
-    description: "Fehérjedús saláta sült tonhallal és friss avokádóval.",
+    description: "Saláta sült tonhallal és avokádóval.",
     ingredients: [
-      "200g tonhalfilé",
+      "200g tonhal",
       "Avokádó",
-      "Vegyes salátalevelek",
-      "Olívaolaj, citromlé",
-      "Só, bors"
+      "Saláta, olívaolaj, citromlé, só, bors"
     ],
     instructions: [
-      "Süsd meg a tonhalat, majd szeleteld fel.",
-      "Keverd össze a salátaleveleket és az avokádót.",
-      "Tálald a tonhalszeleteket, locsold meg olívaolajjal és citromlével."
+      "Süsd meg a tonhalat, szeleteld, keverd össze a salátával, locsold meg."
     ]
   },
   {
     id: 34,
     title: "Zöldség Spaghetti",
     image: zoldsegSpaghetti,
-    description: "Egészséges alternatíva a hagyományos tésztához, cukkini spagettivel és paradicsomszósszal.",
+    description: "Cukkini spagetti paradicsomszósszal.",
     ingredients: [
-      "2 közepes cukkini (spiralizált)",
-      "Friss paradicsomszósz",
-      "Fokhagyma, bazsalikom",
-      "Olívaolaj",
-      "Só, bors"
+      "2 cukkini (spiralizált)",
+      "Paradicsomszósz, fokhagyma, bazsalikom, olívaolaj, só, bors"
     ],
     instructions: [
-      "Készítsd el a cukkini spagettit spiralizátorral.",
-      "Melegítsd fel a paradicsomszószt egy serpenyőben, adj hozzá fokhagymát és bazsalikomot.",
-      "Keverd össze a spagettivel, majd tálald melegen."
+      "Készítsd el a spiralizált cukkinit, keverd össze a szósszal, tálald."
     ]
   },
   {
     id: 35,
     title: "Banános Protein Muffin",
     image: bananosProteinMuffin,
-    description: "Egészséges, fehérjében gazdag muffin, ideális reggeli vagy uzsonna.",
+    description: "Proteinben gazdag muffin reggelire vagy uzsonnára.",
     ingredients: [
-      "2 érett banán",
+      "2 banán",
       "2 tojás",
       "50g zabpehely",
       "1 kanál proteinpor",
-      "Egy kevés fahéj"
+      "Fahéj"
     ],
     instructions: [
-      "Pürésítsd a banánt, keverd össze a tojással és a zabpelyhekkel.",
-      "Add hozzá a proteinport és fahéjat, majd keverd simára a masszát.",
-      "Oszlasd el muffin formákba, és süsd 180°C-on 20-25 percig."
+      "Pürésítsd a banánt, keverd össze a hozzávalókat, süsd 180°C-on."
     ]
   },
   {
     id: 36,
     title: "Mandula és Gyümölcs Saláta",
     image: mandulaGyumolcs,
-    description: "Friss és ropogós saláta, mely mandulával és szezonális gyümölcsökkel készül.",
+    description: "Saláta mandulával és szezonális gyümölcsökkel.",
     ingredients: [
       "Vegyes zöldsaláta",
-      "Szezonális gyümölcsök (alma, körte, narancs)",
-      "Egy marék mandula",
-      "Olívaolaj, balzsamecet",
-      "Só, bors"
+      "Alma, körte, narancs",
+      "Mandula, olívaolaj, balzsamecet, só, bors"
     ],
     instructions: [
-      "Vágd fel a gyümölcsöket és keverd össze a salátával.",
-      "Szórd rá a mandulát, locsold meg olívaolajjal és balzsamecettel, majd ízesítsd sóval és borssal."
+      "Vágd fel a gyümölcsöket, keverd össze a salátával, locsold meg."
     ]
   },
   {
     id: 37,
     title: "Rákos Avokádó Saláta",
     image: rakosAvokadoSalata,
-    description: "Friss és tápláló saláta rák, avokádó és zöldségek kombinációjával.",
+    description: "Saláta főtt rák, avokádó és zöldségek kombinációjával.",
     ingredients: [
       "200g főtt rák",
-      "1 érett avokádó",
-      "Vegyes saláta",
-      "Citromlé, olívaolaj",
-      "Só, bors"
+      "1 avokádó",
+      "Saláta, citromlé, olívaolaj, só, bors"
     ],
     instructions: [
-      "Vágd fel az avokádót és keverd össze a salátával.",
-      "Add hozzá a főtt rákot, majd locsold meg citromlével és olívaolajjal.",
-      "Ízesítsd sóval és borssal, majd tálald."
+      "Vágd fel az avokádót, keverd össze a salátával, add hozzá a rákot, locsold meg."
     ]
   },
   {
     id: 38,
     title: "Csirke Caesar Saláta Egészséges Változat",
     image: csirkeCeaserSalataEgeszseges,
-    description: "Friss saláta grillezett csirkével és könnyített Caesar öntettel.",
+    description: "Caesar saláta könnyített öntettel, grillezett csirkével.",
     ingredients: [
-      "150g grillezett csirkemell",
-      "Vegyes saláta",
-      "Parmezán sajt (mérsékelt mennyiség)",
-      "Teljes kiőrlésű krutonnal",
-      "Caesar öntet (joghurt alapú)"
+      "150g csirke",
+      "Saláta, parmezán, kruton, joghurt alapú öntet"
     ],
     instructions: [
-      "Keverd össze a salátaleveleket a joghurt alapú Caesar öntettel.",
-      "Tedd rá a szeletelt grillezett csirkét és szórd meg parmezán sajttal.",
-      "Add hozzá a krutont a ropogós textúráért."
+      "Keverd össze a salátát az öntettel, tálald a csirkét és krutonnal."
     ]
   },
   {
     id: 39,
     title: "Quinoa és Bab Saláta",
     image: quionaBabSalata,
-    description: "Fehérjében gazdag saláta quinoával és vegyes babokkal.",
+    description: "Saláta quinoával és vegyes babokkal.",
     ingredients: [
       "100g quinoa",
-      "200g vegyes bab (fekete, vörös, fehér)",
-      "Paradicsom, uborka",
-      "Olívaolaj, citromlé",
-      "Só, bors, petrezselyem"
+      "200g vegyes bab",
+      "Paradicsom, uborka, olívaolaj, citromlé, só, bors, petrezselyem"
     ],
     instructions: [
-      "Főzd meg a quinoát, majd hűtsd le.",
-      "Keverd össze a babokat és a felaprított zöldségeket.",
-      "Locsold meg olívaolajjal és citromlével, ízesítsd petrezselyemmel, sóval és borssal."
+      "Főzd meg a quinoát, hűtsd le, keverd össze a hozzávalókat."
     ]
   },
   {
     id: 40,
     title: "Mediterrán Tofu Bowl",
     image: mediterranTofuBowl,
-    description: "Egészséges tál tofuval, olívabogyóval, paradicsommal és quinoával.",
+    description: "Tál tofuval, olívabogyóval, paradicsommal és quinoával.",
     ingredients: [
-      "200g tofu, kockára vágva",
+      "200g tofu",
       "100g quinoa",
-      "Olívabogyó, paradicsom",
-      "Friss bazsalikom",
-      "Olívaolaj, citromlé, só, bors"
+      "Olívabogyó, paradicsom, bazsalikom, olívaolaj, citromlé, só, bors"
     ],
     instructions: [
-      "Süsd meg a tofut egy serpenyőben enyhén megpirulva.",
-      "Főzd meg a quinoát a csomagolás szerint.",
-      "Keverd össze a tofut, quinoát, és a felaprított paradicsomot, olívabogyót.",
-      "Locsold meg olívaolajjal és citromlével, majd szórd meg friss bazsalikommal."
+      "Süsd meg a tofut, főzd meg a quinoát, keverd össze, locsold meg."
     ]
   }
 ];
 
-
 const ReceptekPage: React.FC = () => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
-
+  const sliderRef = useRef<HTMLDivElement>(null);
   const filteredRecipes = recipesData.filter((recipe) =>
     recipe.title.toLowerCase().includes(searchTerm.toLowerCase())
   );
-
+  const scrollLeft = () => {
+    if (sliderRef.current) {
+      sliderRef.current.scrollBy({ left: -300, behavior: "smooth" });
+    }
+  };
+  const scrollRight = () => {
+    if (sliderRef.current) {
+      sliderRef.current.scrollBy({ left: 300, behavior: "smooth" });
+    }
+  };
   return (
     <div className="dashboard-container">
-      {/* Oldalsó menü – a dashboardból ismert navigáció */}
       <aside className="dashboard-sidebar">
         <div className="sidebar-header">
           <h2>TestreSzabva</h2>
@@ -828,8 +729,6 @@ const ReceptekPage: React.FC = () => {
           </button>
         </div>
       </aside>
-
-      {/* Fő tartalom */}
       <div className="dashboard-content receptek-content">
         <header className="content-header">
           <h1>Receptek</h1>
@@ -838,8 +737,6 @@ const ReceptekPage: React.FC = () => {
             támogatják, de inspirációt adnak a változatos étrendhez!
           </p>
         </header>
-
-        {/* Kereső sáv */}
         <div className="search-bar">
           <input
             type="text"
@@ -848,26 +745,32 @@ const ReceptekPage: React.FC = () => {
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
-
-        {/* Kiemelt Receptek Slider */}
-        <section className="featured-recipes">
-          <h2>Kiemelt Receptek</h2>
-          <div className="featured-recipes-slider">
-            {filteredRecipes.slice(3, 6).map((recipe) => (
-              <div key={recipe.id} className="featured-recipe-card">
-                <img src={recipe.image} alt={recipe.title} />
-                <div className="featured-recipe-info">
-                  <h3>{recipe.title}</h3>
-                  <p>{recipe.description}</p>
-                </div>
+        {searchTerm.trim() === "" && (
+          <section className="featured-recipes">
+            <h2>Ezeket az ételeket fogyasztják legszívesebben felhasználóink!</h2>
+            <div className="slider-wrapper">
+              <button className="slider-button prev" onClick={scrollLeft}>
+                ‹
+              </button>
+              <div className="featured-recipes-slider" ref={sliderRef}>
+                {filteredRecipes.slice(34, 40).map((recipe) => (
+                  <div key={recipe.id} className="featured-recipe-card">
+                    <img src={recipe.image} alt={recipe.title} />
+                    <div className="featured-recipe-info">
+                      <h3>{recipe.title}</h3>
+                      <p>{recipe.description}</p>
+                    </div>
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
-        </section>
-
-        {/* Összes Recept rács */}
+              <button className="slider-button next" onClick={scrollRight}>
+                ›
+              </button>
+            </div>
+          </section>
+        )}
         <section className="all-recipes">
-          <h2>Minden Recept</h2>
+          <h2>Receptjeink</h2>
           <div className="recipes-grid">
             {filteredRecipes.map((recipe) => (
               <div key={recipe.id} className="recipe-card">
@@ -904,15 +807,3 @@ const ReceptekPage: React.FC = () => {
 };
 
 export default ReceptekPage;
-
-
-
-  
-
-
-
-
-
-
-
-  
