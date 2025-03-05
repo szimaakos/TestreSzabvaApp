@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./AuthModal.css";
 
@@ -17,25 +17,61 @@ const AuthModal: React.FC<AuthModalProps> = ({
 }) => {
   const navigate = useNavigate();
 
-  // ====== Regisztrációs mezők ======
-  const [registerUserName, setRegisterUserName] = useState("");
-  const [registerEmail, setRegisterEmail] = useState("");
-  const [registerPassword, setRegisterPassword] = useState("");
+  const [registerUserName, setRegisterUserName] = useState(() => 
+    localStorage.getItem('registerUserName') || ""
+  );
+  const [registerEmail, setRegisterEmail] = useState(() => 
+    localStorage.getItem('registerEmail') || ""
+  );
+  const [registerPassword, setRegisterPassword] = useState(() => 
+    localStorage.getItem('registerPassword') || ""
+  );
 
-  // ====== Bejelentkezési mezők ======
-  const [loginEmail, setLoginEmail] = useState("");
-  const [loginPassword, setLoginPassword] = useState("");
+  const [loginEmail, setLoginEmail] = useState(() => 
+    localStorage.getItem('loginEmail') || ""
+  );
+  const [loginPassword, setLoginPassword] = useState(() => 
+    localStorage.getItem('loginPassword') || ""
+  );
 
-
-  // Visszajelzés (siker/hiba)
   const [statusMessage, setStatusMessage] = useState("");
 
-  // Jelszókövetelmények – kis/nagy betű, szám, speciális, min. 6 hossz
+  useEffect(() => {
+    localStorage.setItem('registerUserName', registerUserName);
+  }, [registerUserName]);
+
+  useEffect(() => {
+    localStorage.setItem('registerEmail', registerEmail);
+  }, [registerEmail]);
+
+  useEffect(() => {
+    localStorage.setItem('registerPassword', registerPassword);
+  }, [registerPassword]);
+
+  useEffect(() => {
+    localStorage.setItem('loginEmail', loginEmail);
+  }, [loginEmail]);
+
+  useEffect(() => {
+    localStorage.setItem('loginPassword', loginPassword);
+  }, [loginPassword]);
+
+  useEffect(() => {
+    if (activeTab === "login") {
+      if (registerEmail) {
+        setLoginEmail(registerEmail);
+      }
+      
+      if (registerPassword) {
+        setLoginPassword(registerPassword);
+      }
+    }
+  }, [activeTab, registerEmail, registerPassword]);
+
   const hasUppercase = /[A-Z]/.test(registerPassword);
   const hasNumber = /\d/.test(registerPassword);
   const hasSpecial = /[!@#$%^&*]/.test(registerPassword);
 
-  // Százalékos arány, maximum 100%
   const getPasswordProgress = (password: string): number => {
     let count = 0;
     if (hasUppercase) count++;
@@ -44,7 +80,6 @@ const AuthModal: React.FC<AuthModalProps> = ({
     return (count / 3) * 100;
   };
 
-  // Segédfüggvény az error kódok emberbarát üzenetre alakításához
   const mapErrorCodeToMessage = (errorCode: string): string => {
     const code = errorCode.trim();
     switch (code) {
@@ -63,17 +98,14 @@ const AuthModal: React.FC<AuthModalProps> = ({
     }
   };
 
-  // E-mail validáció
   const validateEmail = (email: string): boolean => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
   };
 
-  // ====== REGISZTRÁCIÓ ======
   const handleRegister = async () => {
     setStatusMessage("");
 
-    // Ellenőrizni, hogy minden mező ki van-e töltve
     if (!registerUserName.trim()) {
       setStatusMessage("Add meg a felhasználónevedet.");
       return;
@@ -87,7 +119,6 @@ const AuthModal: React.FC<AuthModalProps> = ({
       return;
     }
 
-    // E-mail validáció
     if (!validateEmail(registerEmail)) {
       setStatusMessage(
         "Érvénytelen e-mail cím. Az e-mail címnek tartalmaznia kell @-t és .-ot."
@@ -95,7 +126,6 @@ const AuthModal: React.FC<AuthModalProps> = ({
       return;
     }
 
-    // Jelszó hossza min. 6 karakter
     if (registerPassword.length < 6) {
       setStatusMessage(
         "A jelszónak legalább 6 karakter hosszúnak kell lennie."
@@ -103,7 +133,6 @@ const AuthModal: React.FC<AuthModalProps> = ({
       return;
     }
 
-    // Jelszó validáció: legalább 1 nagybetű, 1 szám, 1 speciális karakter
     if (!hasUppercase || !hasNumber || !hasSpecial) {
       setStatusMessage(
         "A jelszónak tartalmaznia kell legalább egy nagy betűt, egy számot és egy speciális karaktert (pl.: #)."
@@ -129,6 +158,9 @@ const AuthModal: React.FC<AuthModalProps> = ({
 
       if (response.ok) {
         setStatusMessage("Sikeres regisztráció!");
+        localStorage.removeItem('registerUserName');
+        
+        
         onTabChange("login");
       } else {
         const errorText = await response.text();
@@ -140,11 +172,9 @@ const AuthModal: React.FC<AuthModalProps> = ({
     }
   };
 
-  // ====== BEJELENTKEZÉS ======
   const handleLogin = async () => {
     setStatusMessage("");
   
-    // Alapmezők kitöltöttsége
     if (!loginEmail.trim()) {
       setStatusMessage("Kérlek add meg az e-mail címet.");
       return;
@@ -191,10 +221,14 @@ const AuthModal: React.FC<AuthModalProps> = ({
         return;
       }
   
-  +   // Tárold el a token-t és a userId-t a localStorage-ben
-  +   localStorage.setItem("authToken", token);
-  +   localStorage.setItem("userId", userId);
-  
+      // Tárold el a token-t és a userId-t a localStorage-ben
+      localStorage.setItem("authToken", token);
+      localStorage.setItem("userId", userId);
+      
+      // Töröljük a login mezőket a localStorage-ból
+      localStorage.removeItem('loginEmail');
+      localStorage.removeItem('loginPassword');
+
       onLoginSuccess && onLoginSuccess();
       setStatusMessage("Sikeres bejelentkezés!");
   
@@ -230,7 +264,6 @@ const AuthModal: React.FC<AuthModalProps> = ({
       setStatusMessage("Hiba bejelentkezéskor: " + err.message);
     }
   };
-  
 
   return (
     <div className="modal-overlay" onClick={onClose}>
@@ -311,13 +344,13 @@ const AuthModal: React.FC<AuthModalProps> = ({
                   </p>
                   <ul className="password-requirements">
                     <li className={hasUppercase ? "met" : ""}>
-                      
+                      Legalább egy nagybetű
                     </li>
                     <li className={hasNumber ? "met" : ""}>
-                      
+                      Legalább egy szám
                     </li>
                     <li className={hasSpecial ? "met" : ""}>
-                      
+                      Legalább egy speciális karakter
                     </li>
                   </ul>
                 </>
@@ -352,7 +385,6 @@ const AuthModal: React.FC<AuthModalProps> = ({
                 value={loginPassword}
                 onChange={(e) => setLoginPassword(e.target.value)}
               />
-
 
               <button className="submit-button" onClick={handleLogin}>
                 Bejelentkezés
