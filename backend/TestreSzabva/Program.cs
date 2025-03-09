@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using TestreSzabva.Data;
 using TestreSzabva.Models;
 
@@ -59,7 +61,21 @@ builder.Services.AddAuthentication(options =>
 });
 
 // 5. MVC/Web API szolgáltatások
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddJsonOptions(options =>
+{
+    // Ezzel biztosítod, hogy a JSON kimenet a camelCase konvenciót használja
+    options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+    // Ha nincs szükség a cikluskezelésre, vagy a MealSlot navigációs property már [JsonIgnore]-al van ellátva,
+    // használhatod az IgnoreCycles opciót, hogy elkerüld a ciklusokat.
+    options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+});
+builder.Services.AddControllers().AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+    options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+});
+
+
 
 // 6. Swagger (Csak fejlesztési környezetben)
 builder.Services.AddEndpointsApiExplorer();

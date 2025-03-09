@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace TestreSzabva.Migrations
 {
     /// <inheritdoc />
-    public partial class sqlitelocal_migration_711 : Migration
+    public partial class sqlitelocal_migration_242 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

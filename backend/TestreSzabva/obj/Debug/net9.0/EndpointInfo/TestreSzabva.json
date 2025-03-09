@@ -882,9 +882,6 @@
           "mealSlotId": {
             "type": "integer",
             "format": "int32"
-          },
-          "mealSlot": {
-            "$ref": "#/components/schemas/HetiEtrend"
           }
         },
         "additionalProperties": false

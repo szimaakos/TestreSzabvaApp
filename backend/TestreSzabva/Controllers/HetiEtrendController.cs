@@ -67,6 +67,7 @@ namespace TestreSzabva.Controllers
                 .ToListAsync();
 
             return Ok(mealSlots);
+
         }
 
 
@@ -79,23 +80,27 @@ namespace TestreSzabva.Controllers
                 return BadRequest(ModelState);
             }
 
+            // Először hozzuk létre a szülő entitást
             var mealSlot = new HetiEtrend
             {
                 UserId = dto.UserId,
                 DayOfWeek = dto.DayOfWeek,
-                MealTime = dto.MealTime,
-                MealFoods = dto.MealFoods.Select(mf => new MealFood
-                {
-                    FoodId = mf.FoodId,
-                    Quantity = mf.Quantity,
-                    TotalCalories = mf.TotalCalories
-                }).ToList()
+                MealTime = dto.MealTime
             };
+
+            // Ezután hozzuk létre a gyermek entitásokat úgy, hogy a szülőre is hivatkoznak
+            mealSlot.MealFoods = dto.MealFoods.Select(mf => new MealFood
+            {
+                FoodId = mf.FoodId,
+                Quantity = mf.Quantity,
+                TotalCalories = mf.TotalCalories,
+                MealSlot = mealSlot  // Itt adod meg a kapcsolatot!
+            }).ToList();
 
             _context.HetiEtrendek.Add(mealSlot);
             await _context.SaveChangesAsync();
 
-            // Betöltjük a navigációs tulajdonságot
+            // Betöltjük a navigációs tulajdonságot (opcionális, ha szükséges a visszaküldéshez)
             await _context.Entry(mealSlot)
                           .Collection(m => m.MealFoods)
                           .Query()
@@ -104,6 +109,8 @@ namespace TestreSzabva.Controllers
 
             return CreatedAtAction(nameof(GetMealSlot), new { id = mealSlot.PlanId }, mealSlot);
         }
+
+
 
         // PUT: api/HetiEtrend/mealSlot/{id}
         [HttpPut("mealSlot/{id}")]
@@ -127,18 +134,22 @@ namespace TestreSzabva.Controllers
             mealSlot.DayOfWeek = dto.DayOfWeek;
             mealSlot.MealTime = dto.MealTime;
 
-            // Egyszerű megoldás: töröljük a korábbi MealFoods rekordokat, majd újakra cseréljük
+            // Töröljük a korábbi MealFoods rekordokat
             _context.MealFoods.RemoveRange(mealSlot.MealFoods);
+
+            // Új MealFoods létrehozása a szülő kapcsolattal
             mealSlot.MealFoods = dto.MealFoods.Select(mf => new MealFood
             {
                 FoodId = mf.FoodId,
                 Quantity = mf.Quantity,
-                TotalCalories = mf.TotalCalories
+                TotalCalories = mf.TotalCalories,
+                MealSlot = mealSlot  // Itt is beállítjuk a kapcsolatot
             }).ToList();
 
             await _context.SaveChangesAsync();
             return NoContent();
         }
+
 
         // DELETE: api/HetiEtrend/mealSlot/{id}
         [HttpDelete("mealSlot/{id}")]

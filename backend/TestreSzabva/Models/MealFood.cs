@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 using TestreSzabva.Models;
 
 public class MealFood
@@ -25,5 +26,6 @@ public class MealFood
     public int MealSlotId { get; set; }
 
     [ForeignKey("MealSlotId")]
+    [JsonIgnore] // Ezzel nem kerül bele a JSON válaszba, így megszakad a ciklus.
     public HetiEtrend MealSlot { get; set; }
 }
