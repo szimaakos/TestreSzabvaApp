@@ -21,13 +21,12 @@ const WeeklyMenuTable: React.FC<WeeklyMenuTableProps> = ({
   onChangeQuantity,
   currentDayName,
 }) => {
-  const getMealSlotForDayAndType = (day: string, mealType: string) => {
-    return weeklyMenus.find(
+  const getMealSlotForDayAndType = (day: string, mealType: string) =>
+    weeklyMenus.find(
       (slot) =>
         slot.dayOfWeek.toLowerCase() === day.toLowerCase() &&
         slot.mealTime.toLowerCase() === mealType.toLowerCase()
     );
-  };
 
   return (
     <table className="weekly-menu-table">
@@ -79,11 +78,7 @@ const WeeklyMenuTable: React.FC<WeeklyMenuTableProps> = ({
                       </button>
                     </>
                   )}
-                  {!isToday && (
-                    <div className="disabled-text">
-                      Csak a mai naphoz adhatsz hozzá!
-                    </div>
-                  )}
+                  {!isToday && <div className="disabled-text">Csak a mai naphoz adhatsz hozzá!</div>}
                 </td>
               );
             })}

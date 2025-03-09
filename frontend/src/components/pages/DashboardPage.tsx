@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import FoodSelectorPopup from "../FoodSelectorPopup";
 import RemainingCaloriesBox from "../RemainingCaloriesBox";
-import { HetiEtrend } from "../../types/MealSlotTypes";
+import { HetiEtrend, Etel } from "../../types/MealSlotTypes"; // 'MealFood' eltávolítva
 import QuantitySelectorModal from "../QuantitySelectorModal";
 import WeeklyMenuTable from "../WeeklyMenuTable";
 import "./DashboardPage.css";
@@ -22,15 +22,6 @@ interface Felhasznalo {
   calorieGoal?: number;
 }
 
-interface Etel {
-  foodId: number;
-  name: string;
-  calories: number;
-  protein: number;
-  carbs: number;
-  fats: number;
-}
-
 interface SelectedCell {
   day: string;
   mealType: string;
@@ -47,23 +38,15 @@ const DashboardPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [caloriesConsumed, setCaloriesConsumed] = useState<number>(0);
   const [foodPopupOpen, setFoodPopupOpen] = useState<boolean>(false);
-  const [currentMealType, setCurrentMealType] = useState<string>("");
   const [selectedCell, setSelectedCell] = useState<SelectedCell | null>(null);
   const [quantityModalOpen, setQuantityModalOpen] = useState<boolean>(false);
   const [selectedQuantityCell, setSelectedQuantityCell] = useState<SelectedQuantityCell | null>(null);
 
   const days = ["Hétfő", "Kedd", "Szerda", "Csütörtök", "Péntek", "Szombat", "Vasárnap"];
-  const dayMap: { [key: number]: string } = {
-    1: "Hétfő",
-    2: "Kedd",
-    3: "Szerda",
-    4: "Csütörtök",
-    5: "Péntek",
-    6: "Szombat",
-    0: "Vasárnap",
-  };
+  const dayMap: { [key: number]: string } = { 1: "Hétfő", 2: "Kedd", 3: "Szerda", 4: "Csütörtök", 5: "Péntek", 6: "Szombat", 0: "Vasárnap" };
   const todayDayName = dayMap[new Date().getDay()];
   const mealTypes = ["Reggeli", "Ebéd", "Snack", "Vacsora"];
+  const userId = localStorage.getItem("userId") || "";
 
   useEffect(() => {
     const currentDateStr = new Date().toDateString();
@@ -75,7 +58,6 @@ const DashboardPage: React.FC = () => {
 
     const fetchData = async () => {
       const token = localStorage.getItem("authToken");
-      const userId = localStorage.getItem("userId");
       if (!token || !userId) {
         navigate("/");
         return;
@@ -100,8 +82,7 @@ const DashboardPage: React.FC = () => {
         if (weeklyResponse.ok) {
           const data = await weeklyResponse.json();
           const weeklyData = Array.isArray(data) ? data : [data];
-          setWeeklyMenus(weeklyData);  // <-- Ez a lépés biztosítja, hogy a state frissüljön!
-          
+          setWeeklyMenus(weeklyData);
           const total = weeklyData.reduce((acc: number, slot: any) => {
             const slotTotal = slot.mealFoods?.reduce((sum: number, mf: any) => sum + mf.totalCalories, 0) || 0;
             return acc + slotTotal;
@@ -113,9 +94,10 @@ const DashboardPage: React.FC = () => {
       } finally {
         setLoading(false);
       }
-    };    
+    };
+    
     fetchData();
-  }, [navigate]);
+  }, [navigate, userId]);
 
   const handleLogout = () => {
     localStorage.removeItem("authToken");
@@ -123,43 +105,59 @@ const DashboardPage: React.FC = () => {
     navigate("/");
   };
 
+  // Az itt lévő függvényből eltávolítottam a currentMealType beállítását,
+  // mert azt nem használjuk DashboardPage-ben.
   const handleFoodClick = (day: string, mealType: string) => {
     setSelectedCell({ day, mealType });
-    setCurrentMealType(mealType);
     setFoodPopupOpen(true);
   };
 
   const handleFoodSelected = async (food: Etel) => {
     const token = localStorage.getItem("authToken");
-    const userId = localStorage.getItem("userId");
     if (!token || !userId || !selectedCell) return;
   
     const newQuantity = 1;
-    const newTotalCalories = food.calories * newQuantity;
+    const additionalCalories = food.calories * newQuantity;
     
-    // Új MealFood objektum a backend által várt kulcsokkal (PascalCase)
-    const newMealFood = {
-      FoodId: food.foodId,
-      Quantity: newQuantity,
-      TotalCalories: newTotalCalories,
-    };
-  
+    // Keressük meg a megfelelő slotot
     const existingSlot = weeklyMenus.find(
       (slot) =>
         slot.dayOfWeek.toLowerCase() === selectedCell.day.toLowerCase() &&
         slot.mealTime.toLowerCase() === selectedCell.mealType.toLowerCase()
     );
-  
+    
     if (existingSlot) {
-      // A meglévő slot MealFoods listáját átalakítjuk a megfelelő kulcsokra
-      const updatedMealFoods = [
-        ...existingSlot.mealFoods.map((mf) => ({
-          FoodId: mf.foodId,
-          Quantity: mf.quantity,
-          TotalCalories: mf.totalCalories,
-        })),
-        newMealFood,
-      ];
+      // Ellenőrizzük, hogy van-e már ilyen étel (foodId alapján)
+      const existingFoodIndex = existingSlot.mealFoods.findIndex(
+        (mf) => mf.foodId === food.foodId
+      );
+      
+      let updatedMealFoods;
+      if (existingFoodIndex >= 0) {
+        // Ha már szerepel, növeljük az adagot
+        updatedMealFoods = existingSlot.mealFoods.map((mf, idx) => {
+          if (idx === existingFoodIndex) {
+            const newQty = mf.quantity + 1;
+            return {
+              ...mf,
+              quantity: newQty,
+              totalCalories: food.calories * newQty,
+              etel: food,
+            };
+          }
+          return mf;
+        });
+      } else {
+        // Egyébként hozzáadjuk újként
+        const newMealFood = {
+          foodId: food.foodId,
+          quantity: newQuantity,
+          totalCalories: additionalCalories,
+          etel: food,
+        };
+        updatedMealFoods = [...existingSlot.mealFoods, newMealFood];
+      }
+      
       const updatedSlotData = {
         PlanId: existingSlot.planId,
         UserId: existingSlot.userId,
@@ -178,30 +176,26 @@ const DashboardPage: React.FC = () => {
       });
   
       if (response.ok) {
-        setWeeklyMenus((prev) =>
-          prev.map((slot) =>
-            slot.planId === existingSlot.planId
-              ? {
-                  ...slot,
-                  mealFoods: [
-                    ...slot.mealFoods,
-                    {
-                      foodId: food.foodId, // a display miatt a korábbi struktúra marad, de backend küldéshez már a PascalCase kerül
-                      quantity: newQuantity,
-                      totalCalories: newTotalCalories,
-                    },
-                  ],
-                }
-              : slot
+        setWeeklyMenus(prev =>
+          prev.map(slot =>
+            slot.planId === existingSlot.planId ? { ...slot, mealFoods: updatedMealFoods } : slot
           )
         );
-        setCaloriesConsumed((prev) => prev + newTotalCalories);
+        // Ha az étel már szerepel, adjuk hozzá a food.calories; különben az additionalCalories
+        const totalDelta = existingFoodIndex >= 0 ? food.calories : additionalCalories;
+        setCaloriesConsumed(prev => prev + totalDelta);
       } else {
         const errorText = await response.text();
         console.error("Hiba a slot frissítésekor:", response.status, errorText);
       }
     } else {
-      // Új slot létrehozása – ügyeljünk a backend által várt kulcsokra!
+      // Ha nincs ilyen slot, hozzunk létre újat
+      const newMealFood = {
+        foodId: food.foodId,
+        quantity: newQuantity,
+        totalCalories: additionalCalories,
+        etel: food,
+      };
       const newSlotData = {
         UserId: userId,
         DayOfWeek: selectedCell.day,
@@ -220,8 +214,8 @@ const DashboardPage: React.FC = () => {
   
       if (response.ok) {
         const createdSlot = await response.json();
-        setWeeklyMenus((prev) => [...prev, createdSlot]);
-        setCaloriesConsumed((prev) => prev + newTotalCalories);
+        setWeeklyMenus(prev => [...prev, createdSlot]);
+        setCaloriesConsumed(prev => prev + additionalCalories);
       } else {
         const errorText = await response.text();
         console.error("Hiba az új slot létrehozásakor:", response.status, errorText);
@@ -230,7 +224,8 @@ const DashboardPage: React.FC = () => {
     setFoodPopupOpen(false);
   };
   
-
+  
+  
   const handleDeleteFood = async (day: string, mealType: string, foodIndex: number) => {
     const slot = weeklyMenus.find(
       (m) =>
@@ -327,9 +322,7 @@ const DashboardPage: React.FC = () => {
 
     setCaloriesConsumed(prev => prev - oldMealFoodCalories + newMealFoodCalories);
     setWeeklyMenus(prev =>
-      prev.map(s =>
-        s.planId === slot.planId ? { ...s, mealFoods: updatedMealFoods } : s
-      )
+      prev.map(s => s.planId === slot.planId ? { ...s, mealFoods: updatedMealFoods } : s)
     );
 
     setSelectedQuantityCell(null);
@@ -381,12 +374,8 @@ const DashboardPage: React.FC = () => {
           let recommended = Math.round(maintenanceCalories - dailyCalorieAdjustment);
           const minCalories = user.gender.toLowerCase().includes("férfi") ? 1500 : 1200;
           const maxCalories = maintenanceCalories + 1000;
-          if (recommended < minCalories) {
-            recommended = minCalories;
-          }
-          if (recommended > maxCalories) {
-            recommended = maxCalories;
-          }
+          if (recommended < minCalories) recommended = minCalories;
+          if (recommended > maxCalories) recommended = maxCalories;
           return recommended;
         }
       }
@@ -402,7 +391,7 @@ const DashboardPage: React.FC = () => {
   const recommended = computeRecommendedCalories() ?? 0;
 
   return (
-    <div className="dashboard-container fade-in">
+    <div className="dashboard-container">
       <aside className="dashboard-sidebar">
         <div className="sidebar-header">
           <h2 onClick={() => navigate("/")} className="logo animated-logo">TestreSzabva</h2>
@@ -468,29 +457,29 @@ const DashboardPage: React.FC = () => {
         </div>
 
         <section className="weekly-menu-section">
-        <h2>Heti Menü</h2>
-        <div className="weekly-menu-wrapper">
-          <WeeklyMenuTable
-            days={days}
-            mealTypes={mealTypes}
-            weeklyMenus={weeklyMenus}
-            onAddFoodClick={handleFoodClick}
-            onDeleteFood={handleDeleteFood}
-            onChangeQuantity={handleChangeQuantity}
-            currentDayName={todayDayName}
-          />
-        </div>
-      </section>
-
+          <h2>Heti Menü</h2>
+          <div className="weekly-menu-wrapper">
+            <WeeklyMenuTable
+              days={days}
+              mealTypes={mealTypes}
+              weeklyMenus={weeklyMenus}
+              onAddFoodClick={handleFoodClick}
+              onDeleteFood={handleDeleteFood}
+              onChangeQuantity={handleChangeQuantity}
+              currentDayName={todayDayName}
+            />
+          </div>
+        </section>
       </div>
 
-      {foodPopupOpen && (
-        <FoodSelectorPopup
-          mealType={currentMealType}
-          onFoodSelect={handleFoodSelected}
-          onClose={() => setFoodPopupOpen(false)}
-        />
-      )}
+      {foodPopupOpen && selectedCell && (
+          <FoodSelectorPopup
+            mealType={selectedCell.mealType} // itt adod át az adott étkezési típus értékét (pl. "Ebéd")
+            onFoodSelect={handleFoodSelected}
+            onClose={() => setFoodPopupOpen(false)}
+          />
+        )}
+
 
       {quantityModalOpen && selectedQuantityCell && (
         <QuantitySelectorModal
@@ -501,7 +490,6 @@ const DashboardPage: React.FC = () => {
                   m.dayOfWeek.toLowerCase() === selectedQuantityCell.day.toLowerCase() &&
                   m.mealTime.toLowerCase() === selectedQuantityCell.mealType.toLowerCase()
               );
-              // Használjuk a selectedQuantityCell-ben tárolt foodIndex-hez tartozó mennyiséget, ha elérhető
               return slot && slot.mealFoods && slot.mealFoods[selectedQuantityCell.foodIndex]
                 ? slot.mealFoods[selectedQuantityCell.foodIndex].quantity
                 : 1;
