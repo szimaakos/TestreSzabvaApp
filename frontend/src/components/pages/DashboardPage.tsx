@@ -92,16 +92,18 @@ const DashboardPage: React.FC = () => {
           const userData = await userResponse.json();
           setUser(userData);
         }
-
+    
         const weeklyResponse = await fetch(`http://localhost:5162/api/HetiEtrend/Felhasznalo/${userId}`, {
           method: "GET",
           headers: { "Content-Type": "application/json" },
         });
         if (weeklyResponse.ok) {
-          const weeklyData = await weeklyResponse.json();
-          setWeeklyMenus(weeklyData);
-          const total = weeklyData.reduce((acc: number, slot: HetiEtrend) => {
-            const slotTotal = slot.mealFoods?.reduce((sum, mf) => sum + mf.totalCalories, 0) || 0;
+          const data = await weeklyResponse.json();
+          const weeklyData = Array.isArray(data) ? data : [data];
+          setWeeklyMenus(weeklyData);  // <-- Ez a lépés biztosítja, hogy a state frissüljön!
+          
+          const total = weeklyData.reduce((acc: number, slot: any) => {
+            const slotTotal = slot.mealFoods?.reduce((sum: number, mf: any) => sum + mf.totalCalories, 0) || 0;
             return acc + slotTotal;
           }, 0);
           setCaloriesConsumed(total);
@@ -111,7 +113,7 @@ const DashboardPage: React.FC = () => {
       } finally {
         setLoading(false);
       }
-    };
+    };    
     fetchData();
   }, [navigate]);
 
@@ -131,25 +133,33 @@ const DashboardPage: React.FC = () => {
     const token = localStorage.getItem("authToken");
     const userId = localStorage.getItem("userId");
     if (!token || !userId || !selectedCell) return;
-
+  
     const newQuantity = 1;
     const newTotalCalories = food.calories * newQuantity;
-    const newMealFood = {
-      foodId: food.foodId,
-      quantity: newQuantity,
-      totalCalories: newTotalCalories,
-      etel: food, // Ezzel átadjuk a teljes étel objektumot
-    };
     
-
+    // Új MealFood objektum a backend által várt kulcsokkal (PascalCase)
+    const newMealFood = {
+      FoodId: food.foodId,
+      Quantity: newQuantity,
+      TotalCalories: newTotalCalories,
+    };
+  
     const existingSlot = weeklyMenus.find(
       (slot) =>
         slot.dayOfWeek.toLowerCase() === selectedCell.day.toLowerCase() &&
         slot.mealTime.toLowerCase() === selectedCell.mealType.toLowerCase()
     );
-
+  
     if (existingSlot) {
-      const updatedMealFoods = [...existingSlot.mealFoods, newMealFood];
+      // A meglévő slot MealFoods listáját átalakítjuk a megfelelő kulcsokra
+      const updatedMealFoods = [
+        ...existingSlot.mealFoods.map((mf) => ({
+          FoodId: mf.foodId,
+          Quantity: mf.quantity,
+          TotalCalories: mf.totalCalories,
+        })),
+        newMealFood,
+      ];
       const updatedSlotData = {
         PlanId: existingSlot.planId,
         UserId: existingSlot.userId,
@@ -157,7 +167,7 @@ const DashboardPage: React.FC = () => {
         MealTime: existingSlot.mealTime,
         MealFoods: updatedMealFoods,
       };
-
+  
       const response = await fetch(`http://localhost:5162/api/HetiEtrend/mealSlot/${existingSlot.planId}`, {
         method: "PUT",
         headers: {
@@ -166,25 +176,39 @@ const DashboardPage: React.FC = () => {
         },
         body: JSON.stringify(updatedSlotData),
       });
-
+  
       if (response.ok) {
-        setWeeklyMenus(prev =>
-          prev.map(slot =>
-            slot.planId === existingSlot.planId ? { ...slot, mealFoods: updatedMealFoods } : slot
+        setWeeklyMenus((prev) =>
+          prev.map((slot) =>
+            slot.planId === existingSlot.planId
+              ? {
+                  ...slot,
+                  mealFoods: [
+                    ...slot.mealFoods,
+                    {
+                      foodId: food.foodId, // a display miatt a korábbi struktúra marad, de backend küldéshez már a PascalCase kerül
+                      quantity: newQuantity,
+                      totalCalories: newTotalCalories,
+                    },
+                  ],
+                }
+              : slot
           )
         );
-        setCaloriesConsumed(prev => prev + newTotalCalories);
+        setCaloriesConsumed((prev) => prev + newTotalCalories);
       } else {
-        console.error("Hiba a slot frissítésekor:", response.status);
+        const errorText = await response.text();
+        console.error("Hiba a slot frissítésekor:", response.status, errorText);
       }
     } else {
+      // Új slot létrehozása – ügyeljünk a backend által várt kulcsokra!
       const newSlotData = {
         UserId: userId,
         DayOfWeek: selectedCell.day,
         MealTime: selectedCell.mealType,
         MealFoods: [newMealFood],
       };
-
+  
       const response = await fetch("http://localhost:5162/api/HetiEtrend/mealSlot", {
         method: "POST",
         headers: {
@@ -193,17 +217,19 @@ const DashboardPage: React.FC = () => {
         },
         body: JSON.stringify(newSlotData),
       });
-
+  
       if (response.ok) {
         const createdSlot = await response.json();
-        setWeeklyMenus(prev => [...prev, createdSlot]);
-        setCaloriesConsumed(prev => prev + newTotalCalories);
+        setWeeklyMenus((prev) => [...prev, createdSlot]);
+        setCaloriesConsumed((prev) => prev + newTotalCalories);
       } else {
-        console.error("Hiba az új slot létrehozásakor:", response.status);
+        const errorText = await response.text();
+        console.error("Hiba az új slot létrehozásakor:", response.status, errorText);
       }
     }
     setFoodPopupOpen(false);
   };
+  
 
   const handleDeleteFood = async (day: string, mealType: string, foodIndex: number) => {
     const slot = weeklyMenus.find(

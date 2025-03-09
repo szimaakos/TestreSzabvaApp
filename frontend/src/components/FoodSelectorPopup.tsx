@@ -25,13 +25,22 @@ const FoodSelectorPopup: React.FC<FoodSelectorPopupProps> = ({
   const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
-    // Példa endpoint: "http://localhost:5162/api/Etel"
-    // Itt az ételek lekérése a backendről
     fetch("http://localhost:5162/api/Etel")
       .then(response => response.json())
-      .then(data => setFoods(data))
+      .then(data => {
+        if (data && data.$values) {
+          setFoods(data.$values);
+        } else if (Array.isArray(data)) {
+          setFoods(data);
+        } else {
+          console.error("Váratlan adatstruktúra:", data);
+          setFoods([]);
+        }
+      })
       .catch(err => console.error("Hiba az ételek lekérésekor:", err));
   }, []);
+  
+  
 
   // Keresőmező szerinti szűrés
   const filteredFoods = foods.filter(food => {
