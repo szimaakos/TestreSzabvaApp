@@ -6,50 +6,20 @@ import WeeklyMenuPage from "./components/pages/WeeklyMenuPage";
 import ProgressPage from "./components/pages/ProgressPage";
 import ReceptekPage from "./components/ReceptekPage";
 import DashboardPage from "./components/pages/DashboardPage";
-
-/**
- * Gyökér App komponens:
- * - Itt kezelünk néhány alapállapotot (pl. be van-e jelentkezve a felhasználó).
- * - A különböző útvonalakhoz (Route) rendeljük a megfelelő oldalakat/komponenseket.
- */
+import SettingsPage from "./components/pages/SettingsPage";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   return (
     <Routes>
-      {/* Főoldal */}
-      <Route
-        path="/"
-        element={<Home isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />}
-      />
-
-      {/* Onboarding */}
-      <Route
-        path="/onboarding"
-        element={<OnboardingPage />}
-      />
-
-      {/* Heti Menü */}
-      <Route
-        path="/weekly-menu"
-        element={<WeeklyMenuPage isLoggedIn={isLoggedIn} />}
-      />
-
-      {/* Haladás */}
-      <Route
-        path="/progress"
-        element={<ProgressPage isLoggedIn={isLoggedIn} />}
-      />
-
-      {/* Receptek */}
+      <Route path="/" element={<Home isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />} />
+      <Route path="/onboarding" element={<OnboardingPage />} />
+      <Route path="/weekly-menu" element={<WeeklyMenuPage isLoggedIn={isLoggedIn} />} />
+      <Route path="/progress" element={<ProgressPage />} />
       <Route path="/receptek" element={<ReceptekPage />} />
-
-      {/* Dashboard */}
       <Route path="/dashboard" element={<DashboardPage />} />
-
-      {/* 404 - Nem talált */}
-      {/* <Route path="*" element={<NotFoundPage />} /> */}
+      <Route path="/settings" element={<SettingsPage />} />
     </Routes>
   );
 }

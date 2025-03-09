@@ -401,7 +401,7 @@ const DashboardPage: React.FC = () => {
           <button onClick={() => navigate("/weekly-menu")}>Heti Menü</button>
           <button onClick={() => navigate("/progress")}>Haladás</button>
           <button onClick={() => navigate("/receptek")}>Receptek</button>
-          <button onClick={() => navigate("/onboarding")}>Beállítások</button>
+          <button onClick={() => navigate("/settings")}>Beállítások</button>
         </nav>
         <div className="sidebar-footer">
           <button className="logout-button" onClick={handleLogout}>Kijelentkezés</button>
