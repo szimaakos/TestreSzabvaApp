@@ -93,7 +93,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 3,
+          "SelectedChildIndex": 2,
           "Children": [
             {
               "$type": "Document",
@@ -123,6 +123,19 @@
             },
             {
               "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "HetiEtrendController.cs",
+              "DocumentMoniker": "C:\\Users\\\u00C1kos\\Documents\\TestreSzabvaApp\\backend\\TestreSzabva\\Controllers\\HetiEtrendController.cs",
+              "RelativeDocumentMoniker": "TestreSzabva\\Controllers\\HetiEtrendController.cs",
+              "ToolTip": "C:\\Users\\\u00C1kos\\Documents\\TestreSzabvaApp\\backend\\TestreSzabva\\Controllers\\HetiEtrendController.cs*",
+              "RelativeToolTip": "TestreSzabva\\Controllers\\HetiEtrendController.cs*",
+              "ViewState": "AgIAAEIAAAAAAAAAAAAuwG8AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-01-30T10:04:50.618Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
               "DocumentIndex": 6,
               "Title": "FelhasznaloController.cs",
               "DocumentMoniker": "C:\\Users\\\u00C1kos\\Documents\\TestreSzabvaApp\\backend\\TestreSzabva\\Controllers\\FelhasznaloController.cs",
@@ -132,19 +145,6 @@
               "ViewState": "AgIAALoAAAAAAAAAAAAqwNYAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-01-30T10:04:39.92Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "HetiEtrendController.cs",
-              "DocumentMoniker": "C:\\Users\\\u00C1kos\\Documents\\TestreSzabvaApp\\backend\\TestreSzabva\\Controllers\\HetiEtrendController.cs",
-              "RelativeDocumentMoniker": "TestreSzabva\\Controllers\\HetiEtrendController.cs",
-              "ToolTip": "C:\\Users\\\u00C1kos\\Documents\\TestreSzabvaApp\\backend\\TestreSzabva\\Controllers\\HetiEtrendController.cs*",
-              "RelativeToolTip": "TestreSzabva\\Controllers\\HetiEtrendController.cs*",
-              "ViewState": "AgIAAF0AAAAAAAAAAAAuwJYAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-01-30T10:04:50.618Z",
               "EditorCaption": ""
             },
             {
