@@ -11,8 +11,8 @@ using TestreSzabva.Data;
 namespace TestreSzabva.Migrations
 {
     [DbContext(typeof(TestreSzabvaContext))]
-    [Migration("20250309182631_sqlite.local_migration_311")]
-    partial class sqlitelocal_migration_311
+    [Migration("20250310091028_sqlite.local_migration_893")]
+    partial class sqlitelocal_migration_893
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -355,6 +355,32 @@ namespace TestreSzabva.Migrations
                     b.ToTable("Kategoriak");
                 });
 
+            modelBuilder.Entity("TestreSzabva.Models.ProgressRecord", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<float>("Calories")
+                        .HasColumnType("REAL");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<float>("Weight")
+                        .HasColumnType("REAL");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("ProgressRecords");
+                });
+
             modelBuilder.Entity("HetiEtrend", b =>
                 {
                     b.HasOne("TestreSzabva.Models.Etel", null)
@@ -455,6 +481,17 @@ namespace TestreSzabva.Migrations
                     b.Navigation("Etel");
 
                     b.Navigation("Kategoria");
+                });
+
+            modelBuilder.Entity("TestreSzabva.Models.ProgressRecord", b =>
+                {
+                    b.HasOne("TestreSzabva.Models.Felhasznalo", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("HetiEtrend", b =>

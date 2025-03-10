@@ -16,11 +16,17 @@ namespace TestreSzabva.Data
         public DbSet<HetiEtrend> HetiEtrendek { get; set; }
         public DbSet<EtelKategoria> EtelKategoriak { get; set; }
         public DbSet<MealFood> MealFoods { get; set; }
-
+        public DbSet<ProgressRecord> ProgressRecords { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<ProgressRecord>()
+        .HasOne(p => p.User)
+        .WithMany()
+        .HasForeignKey(p => p.UserId)
+        .OnDelete(DeleteBehavior.Cascade);
 
             // HetiEtrend: a PlanId automatikus generálása
             modelBuilder.Entity<HetiEtrend>()

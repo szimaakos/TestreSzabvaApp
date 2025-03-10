@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace TestreSzabva.Migrations
 {
     /// <inheritdoc />
-    public partial class sqlitelocal_migration_242 : Migration
+    public partial class sqlitelocal_migration_893 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -196,6 +196,28 @@ namespace TestreSzabva.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "ProgressRecords",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    UserId = table.Column<string>(type: "TEXT", nullable: false),
+                    Date = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    Weight = table.Column<float>(type: "REAL", nullable: false),
+                    Calories = table.Column<float>(type: "REAL", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ProgressRecords", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ProgressRecords_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "HetiEtrendek",
                 columns: table => new
                 {
@@ -335,6 +357,11 @@ namespace TestreSzabva.Migrations
                 name: "IX_MealFoods_MealSlotId",
                 table: "MealFoods",
                 column: "MealSlotId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ProgressRecords_UserId",
+                table: "ProgressRecords",
+                column: "UserId");
         }
 
         /// <inheritdoc />
@@ -360,6 +387,9 @@ namespace TestreSzabva.Migrations
 
             migrationBuilder.DropTable(
                 name: "MealFoods");
+
+            migrationBuilder.DropTable(
+                name: "ProgressRecords");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");

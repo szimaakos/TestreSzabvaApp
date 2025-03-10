@@ -4053,23 +4053,23 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\Ákos\\.nuget\\packages\\": {},
+    "C:\\Users\\sutak.david.tamas\\.nuget\\packages\\": {},
     "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Ákos\\Documents\\TestreSzabvaApp\\backend\\TestreSzabva\\TestreSzabva.csproj",
+      "projectUniqueName": "C:\\sutakdavid\\TestreSzabvaApp\\backend\\TestreSzabva\\TestreSzabva.csproj",
       "projectName": "TestreSzabva",
-      "projectPath": "C:\\Users\\Ákos\\Documents\\TestreSzabvaApp\\backend\\TestreSzabva\\TestreSzabva.csproj",
-      "packagesPath": "C:\\Users\\Ákos\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Ákos\\Documents\\TestreSzabvaApp\\backend\\TestreSzabva\\obj\\",
+      "projectPath": "C:\\sutakdavid\\TestreSzabvaApp\\backend\\TestreSzabva\\TestreSzabva.csproj",
+      "packagesPath": "C:\\Users\\sutak.david.tamas\\.nuget\\packages\\",
+      "outputPath": "C:\\sutakdavid\\TestreSzabvaApp\\backend\\TestreSzabva\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
       ],
       "configFilePaths": [
-        "C:\\Users\\Ákos\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\sutak.david.tamas\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
@@ -4078,6 +4078,7 @@
       ],
       "sources": {
         "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+        "C:\\Program Files\\dotnet\\library-packs": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
