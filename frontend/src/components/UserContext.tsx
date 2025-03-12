@@ -1,122 +1,137 @@
-import React, { createContext, useState, useEffect, useContext, ReactNode } from "react";
+import React, { createContext, useContext, useState, useEffect } from "react";
 
 export interface Felhasznalo {
-    id: string;
-    userName: string;
-    email: string;
-    isProfileComplete: boolean;
-    weight?: number;
-    height?: number;
-    age?: number;
-    gender?: string;
-    activityLevel?: string;
-    goalWeight?: number;
-    goalDate?: string;
-    calorieGoal?: number;
-  }
-  
-
-
+  id: string;
+  userName: string;
+  email: string;
+  isProfileComplete: boolean;
+  weight?: number;
+  height?: number;
+  age?: number;
+  gender?: string;
+  activityLevel?: string;
+  goalWeight?: number;
+  goalDate?: string;
+  calorieGoal?: number;
+}
 
 interface UserContextType {
   user: Felhasznalo | null;
   loading: boolean;
   error: string | null;
-  fetchUserData: () => Promise<void>;
-  updateUserData: (updatedUser: Felhasznalo) => Promise<boolean>;
+  
+  updateUserData: (userData: Felhasznalo) => Promise<boolean>;
+  refreshUserData: () => Promise<void>; // Új függvény hozzáadása
+  caloriesConsumed: number;
+  
+  setCaloriesConsumed: (calories: number) => void;
 }
 
-const UserContext = createContext<UserContextType | undefined>(undefined);
+export const UserContext = createContext<UserContextType>({
+  user: null,
+  loading: true,
+  error: null,
+  
+  updateUserData: async () => false,
+  refreshUserData: async () => {}, // Új függvény hozzáadása a kontextushoz
+  caloriesConsumed: 0,
+  setCaloriesConsumed: () => {},
+});
 
-export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<Felhasznalo | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [caloriesConsumed, setCaloriesConsumed] = useState<number>(0);
 
-  const fetchUserData = async () => {
-    const token = localStorage.getItem("authToken");
+  // Új függvény a felhasználói adatok frissítéséhez
+  const refreshUserData = async () => {
+    setLoading(true);
+    setError(null);
+    
     const userId = localStorage.getItem("userId");
-
-    if (!token || !userId) {
+    const token = localStorage.getItem("authToken");
+    
+    if (!userId || !token) {
       setLoading(false);
       return;
     }
-
+    
     try {
-      setLoading(true);
       const response = await fetch(`http://localhost:5162/api/Felhasznalo/${userId}`, {
-        method: "GET",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
+          "Authorization": `Bearer ${token}`
+        }
       });
-
+      
       if (response.ok) {
         const userData = await response.json();
         setUser(userData);
-        setError(null);
       } else {
         setError("Hiba történt a felhasználói adatok lekérésekor.");
       }
     } catch (err) {
-      console.error("Hiba a felhasználó adatok lekérésekor:", err);
+      console.error("Error fetching user data:", err);
       setError("Hiba történt a felhasználói adatok lekérésekor.");
     } finally {
       setLoading(false);
     }
   };
 
-  const updateUserData = async (updatedUser: Felhasznalo): Promise<boolean> => {
-    const token = localStorage.getItem("authToken");
-    const userId = localStorage.getItem("userId");
+  // Az eredeti userEffect loadUserData helyett most meghívjuk a refreshUserData-t
+  useEffect(() => {
+    refreshUserData();
+  }, []);
 
-    if (!token || !userId) {
+  const updateUserData = async (userData: Felhasznalo): Promise<boolean> => {
+    setError(null);
+    const userId = localStorage.getItem("userId");
+    const token = localStorage.getItem("authToken");
+    
+    if (!userId || !token) {
       setError("Nincs bejelentkezve!");
       return false;
     }
-
+    
     try {
       const response = await fetch(`http://localhost:5162/api/Felhasznalo/${userId}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+          "Authorization": `Bearer ${token}`
         },
-        body: JSON.stringify(updatedUser),
+        body: JSON.stringify(userData)
       });
-
-      if (response.ok || response.status === 204) {
-        setUser(updatedUser);
-        setError(null);
+      
+      if (response.ok) {
+        // Itt most NEM állítjuk be a user state-et, ezt a refreshUserData fogja megtenni
         return true;
       } else {
-        const errorText = await response.text();
-        setError(`Hiba történt: ${errorText}`);
+        const errorData = await response.text();
+        setError(errorData || "Hiba történt a felhasználói adatok frissítésekor.");
         return false;
       }
     } catch (err) {
-      console.error("Hiba a felhasználói adatok frissítésekor:", err);
+      console.error("Error updating user data:", err);
       setError("Hiba történt a felhasználói adatok frissítésekor.");
       return false;
     }
   };
 
-  useEffect(() => {
-    fetchUserData();
-  }, []);
-
   return (
-    <UserContext.Provider value={{ user, loading, error, fetchUserData, updateUserData }}>
+    <UserContext.Provider value={{ 
+      user, 
+      loading, 
+      error, 
+      updateUserData, 
+      refreshUserData,  // Az új függvény hozzáadása a Provider értékéhez
+      caloriesConsumed,
+      setCaloriesConsumed
+    }}>
       {children}
     </UserContext.Provider>
   );
 };
 
-export const useUser = () => {
-  const context = useContext(UserContext);
-  if (context === undefined) {
-    throw new Error("useUser must be used within a UserProvider");
-  }
-  return context;
-};
+export const useUser = () => useContext(UserContext);

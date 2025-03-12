@@ -716,7 +716,6 @@ const ReceptekPage: React.FC = () => {
         </div>
         <nav className="sidebar-nav">
           <button onClick={() => navigate("/dashboard")}>Áttekintés</button>
-          <button onClick={() => navigate("/weekly-menu")}>Heti Menü</button>
           <button onClick={() => navigate("/progress")}>Haladás</button>
           <button onClick={() => navigate("/receptek")} className="active">
             Receptek

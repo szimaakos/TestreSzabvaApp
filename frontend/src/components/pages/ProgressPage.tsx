@@ -18,7 +18,7 @@ interface WeightLogEntry {
 
 const ProgressPage: React.FC = () => {
   const navigate = useNavigate();
-  const { user, loading: userLoading, fetchUserData, updateUserData } = useUser();
+  const { user, loading: userLoading, refreshUserData, updateUserData, caloriesConsumed } = useUser();
   const [loading, setLoading] = useState(true);
   const [newWeight, setNewWeight] = useState<number | undefined>(undefined);
   const [updateStatus, setUpdateStatus] = useState<string>("");
@@ -49,11 +49,12 @@ const ProgressPage: React.FC = () => {
     }));
     setWeightHistory(weightLog);
   }, []);
+  
   useEffect(() => {
     let isMounted = true;
     
     const loadAllData = async () => {
-      await fetchUserData();
+      await refreshUserData();
       if (isMounted) {
         loadProgressData();
         setLoading(false);
@@ -65,13 +66,14 @@ const ProgressPage: React.FC = () => {
     return () => {
       isMounted = false;
     };
-  }, []); 
+  }, []); // Remove the dependencies to prevent infinite rerendering
 
   useEffect(() => {
     if (user && newWeight === undefined) {
       setNewWeight(user.weight);
     }
   }, [user, newWeight]);
+  
   // Dátumszűrés a kiválasztott időtartam alapján
   const filterDataByDateRange = (data: ProgressRecord[]) => {
     if (selectedDateRange === "all") return data;
@@ -175,19 +177,46 @@ const ProgressPage: React.FC = () => {
     return { difference, trend };
   };
 
-  // Célsúly elérés százalékos aránya
   const calculateGoalProgress = () => {
     if (!user?.weight || !user?.goalWeight) return 0;
     const startWeight = weightHistory.length > 0 ? weightHistory[0].weight : user.weight;
     const currentWeightVal = user.weight;
     const goalWeight = user.goalWeight;
-    if (goalWeight > startWeight) {
-      if (currentWeightVal >= goalWeight) return 100;
-      return Math.round(((currentWeightVal - startWeight) / (goalWeight - startWeight)) * 100);
-    } else if (goalWeight < startWeight) {
-      if (currentWeightVal <= goalWeight) return 100;
-      return Math.round(((startWeight - currentWeightVal) / (startWeight - goalWeight)) * 100);
+    
+    if ((startWeight > goalWeight && currentWeightVal <= goalWeight) || 
+        (startWeight < goalWeight && currentWeightVal >= goalWeight)) {
+      return 100;
     }
+    
+    if (startWeight > goalWeight && currentWeightVal > goalWeight) {
+      const originalToLose = startWeight - goalWeight;
+      const alreadyLost = startWeight - currentWeightVal;
+      const progress = Math.min(99, Math.round((alreadyLost / originalToLose) * 100));
+      
+      if (currentWeightVal - goalWeight <= 1) {
+        return Math.max(progress, 95);
+      }
+      else if (currentWeightVal - goalWeight <= 5) {
+        return Math.max(progress, 80 + (5 - (currentWeightVal - goalWeight)) * 3);
+      }
+      
+      return progress;
+    } 
+    else if (startWeight < goalWeight && currentWeightVal < goalWeight) {
+      const originalToGain = goalWeight - startWeight;
+      const alreadyGained = currentWeightVal - startWeight;
+      const progress = Math.min(99, Math.round((alreadyGained / originalToGain) * 100));
+      
+      if (goalWeight - currentWeightVal <= 1) {
+        return Math.max(progress, 95);
+      }
+      else if (goalWeight - currentWeightVal <= 5) {
+        return Math.max(progress, 80 + (5 - (goalWeight - currentWeightVal)) * 3);
+      }
+      
+      return progress;
+    }
+    
     return 100;
   };
 
@@ -208,20 +237,11 @@ const ProgressPage: React.FC = () => {
     return { category: "Elhízott", color: "#EF5350" };
   };
 
+ 
   const bmi = calculateBMI();
   const bmiInfo = bmi ? getBMICategory(parseFloat(bmi)) : null;
   const weightDiff = calculateWeightDifference();
   const goalProgress = calculateGoalProgress();
-
-  // A mai kalóriabeviteli adat kiszámítása a progressData alapján
-  const todayIso = new Date().toISOString().split("T")[0];
-  const todayRecord = progressData.find(record =>
-    new Date(record.date).toISOString().split("T")[0] === todayIso
-  );
-  const todayConsumed = todayRecord ? todayRecord.calories : 0;
-  const calorieGoal = user?.calorieGoal || 0;
-  const calorieDifference = Math.abs(calorieGoal - todayConsumed);
-  const calorieLabel = todayConsumed > calorieGoal ? "Túllépett kalória" : "Hátralévő kalória";
 
   const handleWeightUpdate = async () => {
     if (!user || newWeight === undefined) return;
@@ -232,11 +252,35 @@ const ProgressPage: React.FC = () => {
         setUpdateStatus("Érvénytelen súlyérték!");
         return;
       }
+  
+      // Ellenőrizzük, hogy a választott dátum érvényes-e (nem jövőbeli és nem régebbi 2 hétnél)
+      const selectedDate = new Date(weightLogDate);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      
+      const twoWeeksAgo = new Date();
+      twoWeeksAgo.setDate(today.getDate() - 14);
+      twoWeeksAgo.setHours(0, 0, 0, 0);
+      
+      if (selectedDate > today) {
+        setUpdateStatus("Jövőbeli dátumra nem rögzíthetsz súlyadatot!");
+        setTimeout(() => setUpdateStatus(""), 3000);
+        return;
+      }
+      
+      if (selectedDate < twoWeeksAgo) {
+        setUpdateStatus("Csak az elmúlt 2 hét adatait módosíthatod!");
+        setTimeout(() => setUpdateStatus(""), 3000);
+        return;
+      }
+  
       const dateString = weightLogDate + "T00:00:00Z";
       const newRecord: ProgressRecord = {
         date: dateString,
         weight: weightValue,
-        calories: user.calorieGoal || 0,
+        calories: dateString.split("T")[0] === new Date().toISOString().split("T")[0] 
+          ? caloriesConsumed  // A mai napra a UserContext-ből származó értéket használjuk
+          : user.calorieGoal || 0, // Korábbi napokra a célt használjuk
       };
       const storedRecordsJson = localStorage.getItem("progressRecords");
       let storedRecords: ProgressRecord[] = storedRecordsJson ? JSON.parse(storedRecordsJson) : [];
@@ -249,14 +293,12 @@ const ProgressPage: React.FC = () => {
         storedRecords.push(newRecord);
       }
       localStorage.setItem("progressRecords", JSON.stringify(storedRecords));
-
-      // Ha mai napi súly, akkor frissítsük a felhasználó adatait is
+  
       if (weightLogDate === new Date().toISOString().split("T")[0]) {
-        // A kontextus frissítése
         const updatedUser = { ...user, weight: weightValue };
         await updateUserData(updatedUser);
       }
-
+  
       setUpdateStatus("Súlyadat sikeresen rögzítve!");
       loadProgressData();
       setTimeout(() => setUpdateStatus(""), 3000);
@@ -266,6 +308,7 @@ const ProgressPage: React.FC = () => {
       setTimeout(() => setUpdateStatus(""), 3000);
     }
   };
+  
   const handleLogout = () => {
     localStorage.removeItem("authToken");
     localStorage.removeItem("userId");
@@ -276,6 +319,7 @@ const ProgressPage: React.FC = () => {
     return <div className="dashboard-container">Betöltés...</div>;
   }
 
+
   return (
     <div className="dashboard-container fade-in">
       <aside className="dashboard-sidebar">
@@ -284,7 +328,6 @@ const ProgressPage: React.FC = () => {
         </div>
         <nav className="sidebar-nav">
           <button onClick={() => navigate("/dashboard")}>Áttekintés</button>
-          <button onClick={() => navigate("/weekly-menu")}>Heti Menü</button>
           <button onClick={() => navigate("/progress")} className="active">
             Haladás
           </button>
@@ -340,12 +383,7 @@ const ProgressPage: React.FC = () => {
             </div>
           )}
 
-          <div className="summary-card">
-            <h3>Napi kalóriaszükséglet</h3>
-            <div className="card-value">
-              {calorieLabel}: {calorieDifference} kcal
-            </div>
-          </div>
+          
         </div>
 
         {/* Időszakválasztó */}
@@ -394,29 +432,35 @@ const ProgressPage: React.FC = () => {
 
         {/* Súlyadat rögzítése */}
         <section className="weight-update-section">
-          <h2>Súlyadat rögzítése</h2>
-          <div className="weight-input-group">
-            <input
-              type="number"
-              value={newWeight}
-              onChange={(e) => setNewWeight(parseFloat(e.target.value))}
-              placeholder="Írd be a súlyodat (kg)"
-              step="0.1"
-            />
-            <input
-              type="date"
-              value={weightLogDate}
-              onChange={(e) => setWeightLogDate(e.target.value)}
-            />
-            <button onClick={handleWeightUpdate}>Rögzítés</button>
-          </div>
-          {updateStatus && <p className="update-status">{updateStatus}</p>}
-          <p className="info-text">
-            {weightLogDate === new Date().toISOString().split("T")[0]
-              ? "A mai napra rögzített súly automatikusan frissíti az aktuális profil súlyodat is."
-              : "Korábbi dátumra rögzített súly csak a haladási grafikonon jelenik meg."}
-          </p>
-        </section>
+    <h2>Súlyadat rögzítése</h2>
+    <div className="weight-input-group">
+      <input
+        type="number"
+        value={newWeight}
+        onChange={(e) => setNewWeight(parseFloat(e.target.value))}
+        placeholder="Írd be a súlyodat (kg)"
+        step="0.1"
+      />
+      <input
+        type="date"
+        value={weightLogDate}
+        onChange={(e) => setWeightLogDate(e.target.value)}
+        max={new Date().toISOString().split("T")[0]}
+        min={(() => {
+          const date = new Date();
+          date.setDate(date.getDate() - 14);
+          return date.toISOString().split("T")[0];
+        })()}
+      />
+      <button onClick={handleWeightUpdate}>Rögzítés</button>
+    </div>
+    {updateStatus && <p className="update-status">{updateStatus}</p>}
+    <p className="info-text">
+      {weightLogDate === new Date().toISOString().split("T")[0]
+        ? "A mai napra rögzített súly automatikusan frissíti az aktuális profil súlyodat is."
+        : "Korábbi dátumra (max. 2 hét) rögzített súly csak a haladási grafikonon jelenik meg."}
+    </p>
+  </section>
       </div>
     </div>
   );

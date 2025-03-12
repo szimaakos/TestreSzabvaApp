@@ -3,21 +3,19 @@ import { useNavigate } from "react-router-dom";
 import "./SettingsPage.css";
 import { useUser, Felhasznalo } from '../UserContext'
 
-
-
-  const SettingsPage: React.FC = () => {
-    const navigate = useNavigate();
-    const { user, loading: userLoading, error: userError, updateUserData } = useUser();
-    const [formData, setFormData] = useState<Felhasznalo | null>(null);
-    const [saving, setSaving] = useState<boolean>(false);
-    const [error, setError] = useState<string>("");
+const SettingsPage: React.FC = () => {
+  const navigate = useNavigate();
+  const { user, loading: userLoading, error: userError, updateUserData, refreshUserData } = useUser();
+  const [formData, setFormData] = useState<Felhasznalo | null>(null);
+  const [saving, setSaving] = useState<boolean>(false);
+  const [error, setError] = useState<string>("");
+  const [successMessage, setSuccessMessage] = useState<string>("");
 
   useEffect(() => {
     if (user) {
       setFormData(user);
     }
   }, [user]);
-
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     if (!formData) return;
@@ -34,10 +32,15 @@ import { useUser, Felhasznalo } from '../UserContext'
     if (!formData) return;
     setSaving(true);
     setError("");
+    setSuccessMessage("");
     try {
       const success = await updateUserData(formData);
       if (success) {
-        alert("Adatok sikeresen frissítve!");
+        // Frissítsük a felhasználói adatokat a sikeres mentés után
+        await refreshUserData();
+        setSuccessMessage("Adatok sikeresen frissítve!");
+        // Időzítő, hogy az üzenet 3 másodperc után eltűnjön
+        setTimeout(() => setSuccessMessage(""), 3000);
       } else {
         setError(userError || "Hiba történt a felhasználói adatok frissítésekor.");
       }
@@ -48,7 +51,6 @@ import { useUser, Felhasznalo } from '../UserContext'
       setSaving(false);
     }
   };
-
 
   const handleLogout = () => {
     localStorage.removeItem("authToken");
@@ -70,7 +72,6 @@ import { useUser, Felhasznalo } from '../UserContext'
         </div>
         <nav className="sidebar-nav">
           <button onClick={() => navigate("/dashboard")}>Áttekintés</button>
-          <button onClick={() => navigate("/weekly-menu")}>Heti Menü</button>
           <button onClick={() => navigate("/progress")}>Haladás</button>
           <button onClick={() => navigate("/receptek")}>Receptek</button>
           <button onClick={() => navigate("/settings")}>Beállítások</button>
@@ -87,6 +88,7 @@ import { useUser, Felhasznalo } from '../UserContext'
           <div className="settings-card">
             <h1>Profil beállítások</h1>
             {error && <div className="error">{error}</div>}
+            {successMessage && <div className="success">{successMessage}</div>}
             {formData && (
               <form onSubmit={handleSubmit} className="settings-form">
                 <div className="form-group">
