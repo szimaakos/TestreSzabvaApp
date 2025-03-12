@@ -24,17 +24,17 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/Etel"
+                "$ref": "#/components/schemas/CreateFoodDto"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/Etel"
+                "$ref": "#/components/schemas/CreateFoodDto"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/Etel"
+                "$ref": "#/components/schemas/CreateFoodDto"
               }
             }
           }
@@ -699,6 +699,47 @@
   },
   "components": {
     "schemas": {
+      "CreateFoodDto": {
+        "required": [
+          "calories",
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "calories": {
+            "type": "number",
+            "format": "float"
+          },
+          "protein": {
+            "type": "number",
+            "format": "float",
+            "nullable": true
+          },
+          "carbs": {
+            "type": "number",
+            "format": "float",
+            "nullable": true
+          },
+          "fats": {
+            "type": "number",
+            "format": "float",
+            "nullable": true
+          },
+          "categoryIds": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "CreateMealFoodDto": {
         "required": [
           "foodId",

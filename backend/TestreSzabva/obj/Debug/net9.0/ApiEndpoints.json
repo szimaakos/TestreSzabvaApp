@@ -18,8 +18,8 @@
     "Order": 0,
     "Parameters": [
       {
-        "Name": "etel",
-        "Type": "TestreSzabva.Models.Etel",
+        "Name": "dto",
+        "Type": "TestreSzabva.Models.CreateFoodDto",
         "IsRequired": true
       }
     ],
