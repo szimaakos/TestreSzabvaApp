@@ -11,8 +11,8 @@ using TestreSzabva.Data;
 namespace TestreSzabva.Migrations
 {
     [DbContext(typeof(TestreSzabvaContext))]
-    [Migration("20250310091028_sqlite.local_migration_893")]
-    partial class sqlitelocal_migration_893
+    [Migration("20250312085546_sqlite.local_migration_963")]
+    partial class sqlitelocal_migration_963
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

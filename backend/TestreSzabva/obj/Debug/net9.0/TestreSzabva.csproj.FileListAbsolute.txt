@@ -313,7 +313,6 @@ C:\Users\szima.akos\Documents\TestreSzabvaApp\backend\TestreSzabva\obj\Debug\net
 C:\Users\szima.akos\Documents\TestreSzabvaApp\backend\TestreSzabva\obj\Debug\net9.0\TestreSzabva.pdb
 C:\Users\szima.akos\Documents\TestreSzabvaApp\backend\TestreSzabva\obj\Debug\net9.0\TestreSzabva.genruntimeconfig.cache
 C:\Users\szima.akos\Documents\TestreSzabvaApp\backend\TestreSzabva\obj\Debug\net9.0\ref\TestreSzabva.dll
-C:\Users\szima.akos\Documents\TestreSzabvaApp\backend\TestreSzabva\obj\Debug\net9.0\staticwebassets.upToDateCheck.txt
 C:\Users\Ákos\Documents\TestreSzabvaApp\backend\TestreSzabva\bin\Debug\net9.0\appsettings.Development.json
 C:\Users\Ákos\Documents\TestreSzabvaApp\backend\TestreSzabva\bin\Debug\net9.0\appsettings.json
 C:\Users\Ákos\Documents\TestreSzabvaApp\backend\TestreSzabva\bin\Debug\net9.0\TestreSzabva.staticwebassets.endpoints.json
@@ -632,6 +631,7 @@ C:\sutakdavid\TestreSzabvaApp\backend\TestreSzabva\obj\Debug\net9.0\TestreSzabva
 C:\sutakdavid\TestreSzabvaApp\backend\TestreSzabva\obj\Debug\net9.0\TestreSzabva.genruntimeconfig.cache
 C:\sutakdavid\TestreSzabvaApp\backend\TestreSzabva\obj\Debug\net9.0\ref\TestreSzabva.dll
 C:\sutakdavid\TestreSzabvaApp\backend\TestreSzabva\obj\Debug\net9.0\staticwebassets.upToDateCheck.txt
+<<<<<<< HEAD
 C:\Users\sutak.david.tamas\Documents\sutakdavid\TestreSzabvaApp\backend\TestreSzabva\bin\Debug\net9.0\appsettings.Development.json
 C:\Users\sutak.david.tamas\Documents\sutakdavid\TestreSzabvaApp\backend\TestreSzabva\bin\Debug\net9.0\appsettings.json
 C:\Users\sutak.david.tamas\Documents\sutakdavid\TestreSzabvaApp\backend\TestreSzabva\bin\Debug\net9.0\TestreSzabva.staticwebassets.endpoints.json
@@ -791,3 +791,6 @@ C:\Users\sutak.david.tamas\Documents\sutakdavid\TestreSzabvaApp\backend\TestreSz
 C:\Users\sutak.david.tamas\Documents\sutakdavid\TestreSzabvaApp\backend\TestreSzabva\obj\Debug\net9.0\TestreSzabva.pdb
 C:\Users\sutak.david.tamas\Documents\sutakdavid\TestreSzabvaApp\backend\TestreSzabva\obj\Debug\net9.0\TestreSzabva.genruntimeconfig.cache
 C:\Users\sutak.david.tamas\Documents\sutakdavid\TestreSzabvaApp\backend\TestreSzabva\obj\Debug\net9.0\ref\TestreSzabva.dll
+=======
+C:\Users\szima.akos\Documents\TestreSzabvaApp\backend\TestreSzabva\obj\Debug\net9.0\staticwebassets.upToDateCheck.txt
+>>>>>>> 1beadb4c229cce3149d65545c1d393491c7ab3b3
