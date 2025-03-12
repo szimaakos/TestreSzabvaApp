@@ -3,21 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Line } from "react-chartjs-2";
 import "chart.js/auto";
 import "./ProgressPage.css";
-
-interface Felhasznalo {
-  id: string;
-  userName: string;
-  email: string;
-  isProfileComplete: boolean;
-  weight?: number;
-  height?: number;
-  age?: number;
-  gender?: string;
-  activityLevel?: string;
-  goalWeight?: number;
-  goalDate?: string;
-  calorieGoal?: number;
-}
+import { useUser } from "../UserContext";
 
 interface ProgressRecord {
   date: string;      // ISO string vagy más formázott dátum
@@ -32,7 +18,7 @@ interface WeightLogEntry {
 
 const ProgressPage: React.FC = () => {
   const navigate = useNavigate();
-  const [user, setUser] = useState<Felhasznalo | null>(null);
+  const { user, loading: userLoading, fetchUserData, updateUserData } = useUser();
   const [loading, setLoading] = useState(true);
   const [newWeight, setNewWeight] = useState<number | undefined>(undefined);
   const [updateStatus, setUpdateStatus] = useState<string>("");
@@ -43,34 +29,7 @@ const ProgressPage: React.FC = () => {
     new Date().toISOString().split("T")[0]
   );
 
-  // Felhasználó adatok lekérése a backendből
-  const fetchUserData = useCallback(async () => {
-    const token = localStorage.getItem("authToken");
-    const userId = localStorage.getItem("userId");
-    if (!token || !userId) {
-      navigate("/");
-      return;
-    }
-    try {
-      const response = await fetch(`http://localhost:5162/api/Felhasznalo/${userId}`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      if (response.ok) {
-        const userData = await response.json();
-        setUser(userData);
-        if (newWeight === undefined) {
-          setNewWeight(userData.weight);
-        }
-      }
-    } catch (error) {
-      console.error("Hiba a felhasználó adatok lekérésekor:", error);
-    }
-  }, [navigate, newWeight]);
-
+  
   // LocalStorage-ból betöltjük a progress adatokat
   const loadProgressData = useCallback(() => {
     const storedRecordsJson = localStorage.getItem("progressRecords");
@@ -90,16 +49,29 @@ const ProgressPage: React.FC = () => {
     }));
     setWeightHistory(weightLog);
   }, []);
+  useEffect(() => {
+    let isMounted = true;
+    
+    const loadAllData = async () => {
+      await fetchUserData();
+      if (isMounted) {
+        loadProgressData();
+        setLoading(false);
+      }
+    };
+    
+    loadAllData();
+    
+    return () => {
+      isMounted = false;
+    };
+  }, []); 
 
   useEffect(() => {
-    const fetchAllData = async () => {
-      await fetchUserData();
-      loadProgressData();
-      setLoading(false);
-    };
-    fetchAllData();
-  }, [fetchUserData, loadProgressData]);
-
+    if (user && newWeight === undefined) {
+      setNewWeight(user.weight);
+    }
+  }, [user, newWeight]);
   // Dátumszűrés a kiválasztott időtartam alapján
   const filterDataByDateRange = (data: ProgressRecord[]) => {
     if (selectedDateRange === "all") return data;
@@ -251,7 +223,6 @@ const ProgressPage: React.FC = () => {
   const calorieDifference = Math.abs(calorieGoal - todayConsumed);
   const calorieLabel = todayConsumed > calorieGoal ? "Túllépett kalória" : "Hátralévő kalória";
 
-  // Új súlyadat rögzítése – localStorage-ban tároljuk a progress rekordokat
   const handleWeightUpdate = async () => {
     if (!user || newWeight === undefined) return;
     setUpdateStatus("Feldolgozás...");
@@ -278,9 +249,14 @@ const ProgressPage: React.FC = () => {
         storedRecords.push(newRecord);
       }
       localStorage.setItem("progressRecords", JSON.stringify(storedRecords));
-      if (weightLogDate === todayIso) {
-        setUser({ ...user, weight: weightValue });
+
+      // Ha mai napi súly, akkor frissítsük a felhasználó adatait is
+      if (weightLogDate === new Date().toISOString().split("T")[0]) {
+        // A kontextus frissítése
+        const updatedUser = { ...user, weight: weightValue };
+        await updateUserData(updatedUser);
       }
+
       setUpdateStatus("Súlyadat sikeresen rögzítve!");
       loadProgressData();
       setTimeout(() => setUpdateStatus(""), 3000);
@@ -290,14 +266,13 @@ const ProgressPage: React.FC = () => {
       setTimeout(() => setUpdateStatus(""), 3000);
     }
   };
-
   const handleLogout = () => {
     localStorage.removeItem("authToken");
     localStorage.removeItem("userId");
     navigate("/");
   };
 
-  if (loading) {
+  if (loading || userLoading) {
     return <div className="dashboard-container">Betöltés...</div>;
   }
 
