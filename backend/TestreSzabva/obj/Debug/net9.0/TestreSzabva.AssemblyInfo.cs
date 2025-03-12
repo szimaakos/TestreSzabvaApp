@@ -15,7 +15,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("TestreSzabva")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+b20763ee006df6af50246d3afd0a6d691149d68c")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+f8ea580858f5788ea6ba37da3e29119bde55a04e")]
 [assembly: System.Reflection.AssemblyProductAttribute("TestreSzabva")]
 [assembly: System.Reflection.AssemblyTitleAttribute("TestreSzabva")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

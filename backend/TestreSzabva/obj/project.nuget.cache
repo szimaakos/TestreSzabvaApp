@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "xryFoG7vJQY=",
+  "dgSpecHash": "8v8wLm6ua1c=",
   "success": true,
-  "projectFilePath": "C:\\sutakdavid\\TestreSzabvaApp\\backend\\TestreSzabva\\TestreSzabva.csproj",
+  "projectFilePath": "C:\\Users\\sutak.david.tamas\\Documents\\sutakdavid\\TestreSzabvaApp\\backend\\TestreSzabva\\TestreSzabva.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\sutak.david.tamas\\.nuget\\packages\\humanizer.core\\2.14.1\\humanizer.core.2.14.1.nupkg.sha512",
     "C:\\Users\\sutak.david.tamas\\.nuget\\packages\\microsoft.aspnetcore.authentication.jwtbearer\\9.0.1\\microsoft.aspnetcore.authentication.jwtbearer.9.0.1.nupkg.sha512",
