@@ -1,56 +1,23 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./SettingsPage.css";
+import { useUser, Felhasznalo } from '../UserContext'
 
-interface User {
-  id: string;
-  userName: string;
-  email: string;
-  weight?: number;
-  height?: number;
-  age?: number;
-  gender?: string;
-  activityLevel?: string;
-  goalWeight?: number;
-  goalDate?: string;
-  calorieGoal?: number;
-}
 
-const SettingsPage: React.FC = () => {
-  const navigate = useNavigate();
-  const [formData, setFormData] = useState<User | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [saving, setSaving] = useState<boolean>(false);
-  const [error, setError] = useState<string>("");
 
-  const userId = localStorage.getItem("userId") || "";
-  const token = localStorage.getItem("authToken") || "";
+  const SettingsPage: React.FC = () => {
+    const navigate = useNavigate();
+    const { user, loading: userLoading, error: userError, updateUserData } = useUser();
+    const [formData, setFormData] = useState<Felhasznalo | null>(null);
+    const [saving, setSaving] = useState<boolean>(false);
+    const [error, setError] = useState<string>("");
 
   useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const response = await fetch(`http://localhost:5162/api/Felhasznalo/${userId}`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        if (response.ok) {
-          const data = await response.json();
-          setFormData(data);
-        } else {
-          setError("Hiba történt a felhasználói adatok lekérésekor.");
-        }
-      } catch (err) {
-        console.error("Fetch user error:", err);
-        setError("Hiba történt a felhasználói adatok lekérésekor.");
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchUserData();
-  }, [userId, token]);
+    if (user) {
+      setFormData(user);
+    }
+  }, [user]);
+
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     if (!formData) return;
@@ -68,22 +35,11 @@ const SettingsPage: React.FC = () => {
     setSaving(true);
     setError("");
     try {
-      const response = await fetch(`http://localhost:5162/api/Felhasznalo/${userId}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(formData),
-      });
-      // Tekintsük sikeresnek, ha 200-299 vagy 204-es választ kapunk
-      if (response.ok || response.status === 204) {
-        const updatedUser = response.ok ? await response.json() : formData;
-        setFormData(updatedUser);
+      const success = await updateUserData(formData);
+      if (success) {
         alert("Adatok sikeresen frissítve!");
       } else {
-        const errorText = await response.text();
-        setError(`Hiba történt: ${errorText}`);
+        setError(userError || "Hiba történt a felhasználói adatok frissítésekor.");
       }
     } catch (err) {
       console.error("Update user error:", err);
@@ -93,13 +49,14 @@ const SettingsPage: React.FC = () => {
     }
   };
 
+
   const handleLogout = () => {
     localStorage.removeItem("authToken");
     localStorage.removeItem("userId");
     navigate("/");
   };
 
-  if (loading) {
+  if (userLoading) {
     return <div className="dashboard-container">Betöltés...</div>;
   }
 
